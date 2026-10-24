@@ -1,0 +1,125 @@
+# Karo Online — Customer APK (phone se hi build)
+# Kaise chalayein: repo me ZIP upload karte hi ye apne-aap chalega,
+# ya Actions → "Build Customer APK" → Run workflow.
+# 10-12 minute baad: Actions → is run par tap → neeche "Artifacts" → karo-online-apk (ZIP) download.
+#
+# Play Store ki purani listing par update karne ke liye (baad me):
+#   Settings → Secrets and variables → Actions →
+#     Variables: APP_ID = app.karoonline.twa
+#     Secrets:   KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
+# Abhi ke liye test APK alag naam (com.filipra.karoonline) se banti hai,
+# taaki phone me lagi purani Play wali ऐप se takraaye nahi.
+
+name: Build Customer APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths: ['**.zip', '.github/workflows/build.yml']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      APP_ID: ${{ vars.APP_ID || 'com.filipra.karoonline' }}
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZIP se code nikalo
+        run: |
+          Z=$(ls -t *.zip | head -1)
+          echo "ZIP mili: $Z"
+          mkdir -p /tmp/src && unzip -q -o "$Z" -d /tmp/src
+          D=$(dirname "$(find /tmp/src -name pubspec.yaml | head -1)")
+          mkdir -p app && cp -r "$D"/. app/
+          ls -la app
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Android project banao
+        working-directory: app
+        run: |
+          flutter create --platforms=android --org com.filipra --project-name karo_online .
+          rm -rf test
+
+      - name: Naam, package aur permissions
+        working-directory: app
+        run: |
+          python3 - <<'PY'
+          import os,re
+          appid=os.environ['APP_ID']
+          g='android/app/build.gradle.kts'
+          if not os.path.exists(g): g='android/app/build.gradle'
+          s=open(g).read()
+          s=re.sub(r'applicationId\s*=?\s*"[^"]+"','applicationId = "%s"'%appid,s)
+          s=re.sub(r'minSdk\s*=\s*flutter\.minSdkVersion','minSdk = 23',s)
+          open(g,'w').write(s)
+          m='android/app/src/main/AndroidManifest.xml'
+          s=open(m).read()
+          s=re.sub(r'android:label="[^"]*"','android:label="Karo Online"',s)
+          perms='''    <uses-permission android:name="android.permission.INTERNET"/>
+              <uses-permission android:name="android.permission.CAMERA"/>
+          '''
+          if 'android.permission.INTERNET' not in s:
+              s=s.replace('<application','%s<application'%perms,1)
+          q='''    <queries>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="https"/></intent>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="tel"/></intent>
+                  <intent><action android:name="android.intent.action.SENDTO"/><data android:scheme="mailto"/></intent>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="upi"/></intent>
+                  <package android:name="com.whatsapp"/>
+                  <package android:name="com.whatsapp.w4b"/>
+              </queries>
+          '''
+          if '<queries>' in s:
+              s=s.replace('<queries>',q.strip()[:-len('</queries>')].replace('<queries>','<queries>',1),1)
+          else:
+              s=s.replace('</manifest>',q+'</manifest>')
+          open(m,'w').write(s)
+          print(open(m).read())
+          PY
+
+      - run: flutter pub get
+        working-directory: app
+      - run: dart run flutter_launcher_icons
+        working-directory: app
+
+      - name: APK banao
+        working-directory: app
+        run: flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE
+
+      - name: Play Store ke liye AAB (agar key di ho)
+        working-directory: app
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then echo "Key nahi di — sirf test APK"; exit 0; fi
+          flutter build appbundle --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE
+          AAB=build/app/outputs/bundle/release/app-release.aab
+          echo "$KEYSTORE_BASE64" | base64 -d > upload.jks
+          zip -d "$AAB" 'META-INF/*' || true
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore upload.jks \
+            -storepass "$KEYSTORE_PASSWORD" -keypass "${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" "$AAB" "$KEY_ALIAS"
+          rm -f upload.jks
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: karo-online-apk
+          path: |
+            app/build/app/outputs/flutter-apk/app-release.apk
+            app/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: warn
