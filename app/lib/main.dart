@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:ota_update/ota_update.dart';
+import 'dart:io';
+
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -178,41 +181,58 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
-  void _startUpdate() {
+  Future<void> _startUpdate() async {
     setState(() {
       _prog = 0;
       _updMsg = 'Download ho raha hai…';
     });
+    final client = http.Client();
     try {
-      OtaUpdate()
-          .execute('$kRel/karo-online.apk?t=${DateTime.now().millisecondsSinceEpoch}',
-              destinationFilename: 'karo-online-$_newBuild.apk')
-          .listen((OtaEvent e) {
-        if (!mounted) return;
-        setState(() {
-          switch (e.status) {
-            case OtaStatus.DOWNLOADING:
-              _prog = int.tryParse(e.value ?? '') ?? _prog;
-              _updMsg = 'Download ho raha hai…';
-              break;
-            case OtaStatus.INSTALLING:
-              _prog = 100;
-              _updMsg = 'Install screen par "Update" dabayein';
-              break;
-            case OtaStatus.PERMISSION_NOT_GRANTED_ERROR:
-              _prog = null;
-              _updMsg = 'Settings me "Install unknown apps" ki anumati dein, phir dobara Update dabayein';
-              break;
-            default:
-              _prog = null;
-              _updMsg = 'Update nahi ho paya — net check karke dobara try karein';
-          }
-        });
-      }, onError: (_) {
-        if (mounted) setState(() { _prog = null; _updMsg = 'Update nahi ho paya — dobara try karein'; });
+      final dir = await getTemporaryDirectory();
+      final f = File('${dir.path}/karo-online-$_newBuild.apk');
+      final resp = await client.send(http.Request('GET',
+          Uri.parse('$kRel/karo-online.apk?t=${DateTime.now().millisecondsSinceEpoch}')));
+      if (resp.statusCode != 200) throw Exception('HTTP ${resp.statusCode}');
+      final total = resp.contentLength ?? 0;
+      final sink = f.openWrite();
+      var got = 0;
+      await for (final chunk in resp.stream) {
+        sink.add(chunk);
+        got += chunk.length;
+        if (total > 0 && mounted) {
+          final p = (got * 100 ~/ total).clamp(0, 100).toInt();
+          if (p != _prog) setState(() => _prog = p);
+        }
+      }
+      await sink.close();
+      if (!mounted) return;
+      setState(() {
+        _prog = 100;
+        _updMsg = 'Install screen par "Update" dabayein';
       });
+      final r = await OpenFilex.open(f.path, type: 'application/vnd.android.package-archive');
+      if (!mounted) return;
+      if (r.type != ResultType.done) {
+        setState(() {
+          _prog = null;
+          _updMsg = r.type == ResultType.permissionDenied
+              ? 'Settings me "Install unknown apps" ki anumati dein, phir dobara Update dabayein'
+              : 'Install nahi khula — dobara Update dabayein';
+        });
+      } else {
+        Future.delayed(const Duration(seconds: 4), () {
+          if (mounted) setState(() => _prog = null);
+        });
+      }
     } catch (_) {
-      setState(() { _prog = null; _updMsg = 'Update nahi ho paya — dobara try karein'; });
+      if (mounted) {
+        setState(() {
+          _prog = null;
+          _updMsg = 'Update nahi ho paya — net check karke dobara try karein';
+        });
+      }
+    } finally {
+      client.close();
     }
   }
 

@@ -101,17 +101,7 @@ jobs:
               s=s.replace('<queries>',q.strip()[:-len('</queries>')].replace('<queries>','<queries>',1),1)
           else:
               s=s.replace('</manifest>',q+'</manifest>')
-          prov='''        <provider android:name="sk.fourq.otaupdate.OtaUpdateFileProvider"
-                      android:authorities="${applicationId}.ota_update_provider"
-                      android:exported="false" android:grantUriPermissions="true">
-                  <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths"/>
-              </provider>
-          '''
-          if 'OtaUpdateFileProvider' not in s:
-              s=s.replace('</application>',prov+'    </application>',1)
           open(m,'w').write(s)
-          os.makedirs('android/app/src/main/res/xml',exist_ok=True)
-          open('android/app/src/main/res/xml/filepaths.xml','w').write('<?xml version="1.0" encoding="utf-8"?>\n<paths><files-path name="internal_apk_storage" path="ota_update/"/></paths>\n')
           print(open(m).read())
           PY
 
