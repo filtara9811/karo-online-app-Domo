@@ -122,7 +122,16 @@ jobs:
 
       - name: APK banao
         working-directory: app
-        run: flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE 2>&1 | tee /tmp/build.log
+      - name: Error dikhao (agar build fail ho)
+        if: failure()
+        shell: bash
+        run: |
+          grep -nE "error|Error|ERROR|What went wrong|FAILURE|Exception|requires|namespace|desugar" /tmp/build.log | grep -v "^\s*$" | tail -40 | while IFS= read -r l; do echo "::error::${l:0:900}"; done
+          tail -60 /tmp/build.log | tail -25 | while IFS= read -r l; do echo "::warning::${l:0:900}"; done
 
       - name: Play Store ke liye AAB (agar key di ho)
         working-directory: app
