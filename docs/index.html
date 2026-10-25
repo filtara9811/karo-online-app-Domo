@@ -13600,8 +13600,8 @@ const _sdOpen180=sdOpen; sdOpen=function(){ TKX.pe=-1; TKX.ren=null; return _sdO
 /* V181 */
 tkView='v'; Object.assign(TKX,{opn:{},fl:-1,mn:-1,asg:-1,flin:-1});
 const PQ_TEAM=[['Main (Owner)','Shop owner','+91 95400 6****'],['Raju','Delivery boy','+91 98765 4****'],['Salim','Helper','+91 99110 2****'],['Asif','Tailor / karigar','+91 98111 7****']];
-function pqOpen(o,pi){ const k=(o.id||'o')+'_'+pi; if(TKX.opn[k]===undefined) return pi===pqCurPh(o); return TKX.opn[k]; }
-function pqTgl(pi){ const o=pqO(), k=(o.id||'o')+'_'+pi; TKX.opn[k]=!pqOpen(o,pi); TKX.mn=-1; TKX.asg=-1; sdShRender(); }
+function pqOpenTk(o,pi){ const k=(o.id||'o')+'_'+pi; if(TKX.opn[k]===undefined) return pi===pqCurPh(o); return TKX.opn[k]; }
+function pqTgl(pi){ const o=pqO(), k=(o.id||'o')+'_'+pi; TKX.opn[k]=!pqOpenTk(o,pi); TKX.mn=-1; TKX.asg=-1; sdShRender(); }
 function pqFlip(pi){ TKX.fl=TKX.fl===pi?-1:pi; TKX.flin=pi; TKX.mn=-1; TKX.asg=-1; sdShRender(); TKX.flin=-1; }
 let pqLP=null; function pqLpS(pi){ clearTimeout(pqLP); pqLP=setTimeout(()=>{ pqLP='done'; if(navigator.vibrate) navigator.vibrate(20); pqFlip(pi); },550); }
 function pqLpE(pi,ev){ if(pqLP==='done'){ pqLP=null; return; } clearTimeout(pqLP); pqLP=null; pqTgl(pi); }
@@ -13616,7 +13616,7 @@ function pqAsgNew(pi){ const n=(document.getElementById('pqAn').value||'').trim(
 tkTl=function(o,cust,live){ const P=tkPh(o), N=tkSteps(o).length, cp=pqCurPh(o), C=P[cp];
   let h=(o.cancel?'':`<div class="pq-now" style="background:linear-gradient(135deg,${C.col},${C.col}cc)"><span class="av">${C.ic}</span><span class="tx"><small>${o.cur>=N?'ORDER POORA':'ABHI KAAM KAR RAHE'}</small><b>${xEsc(C.nm)} · ${xEsc(C.r)}</b><em>📞 ${xEsc(C.tel)}</em></span><button onclick="toast('📞 ${xEsc(C.nm)} ko call ho rahi hai (demo)')">📞</button></div>`)
    +`<div class="pq-top"><b>PROGRESS · ${Math.min(o.cur,N)}/${N}</b>${TKX.undo&&TKX.undo.id===o.id?`<button style="color:#2563eb" onclick="pqUndo()">↩ Undo</button>`:''}${(!live&&!o.cancel)?`<button onclick="tkCancelO()">✕ Kaam nahi hua</button>`:''}</div>`;
-  h+=P.map((p,pi)=>{ const st=pqStart(o,pi), act=pi===cp&&!o.cancel, op=pqOpen(o,pi), fl=TKX.fl===pi&&!live, dn=p.steps.filter((x,si)=>st+si<o.cur).length;
+  h+=P.map((p,pi)=>{ const st=pqStart(o,pi), act=pi===cp&&!o.cancel, op=pqOpenTk(o,pi), fl=TKX.fl===pi&&!live, dn=p.steps.filter((x,si)=>st+si<o.cur).length;
     const curName=act&&o.cur<N?p.steps[o.cur-st][1]:'';
     const head=`<div class="pq-hd" onpointerdown="pqLpS(${pi})" onpointerup="pqLpE(${pi},event)" onpointerleave="clearTimeout(pqLP)"><span class="a">${xEsc((p.nm||'?')[0]).toUpperCase()}</span><span class="t"><b>${xEsc(p.nm||'Assign karein')}</b><small>${xEsc(p.r)} · ${xEsc(p.tel||'')}</small><span class="sm">${dn}/${p.steps.length} done${curName?' · abhi: '+xEsc(curName):''}</span></span><button class="c" onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="event.stopPropagation();toast('📞 ${xEsc(p.nm)} ko call (demo)')">📞</button>${live?'':`<button onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="event.stopPropagation();TKX.mn=TKX.mn===${pi}?-1:${pi};TKX.asg=-1;sdShRender()">⋯</button>`}<i class="cv">▾</i></div>`;
     const menu=TKX.mn===pi?`<div class="pq-mn"><button onclick="TKX.mn=-1;pqFlip(${pi})">✏️ Edit tasks & role</button><button onclick="TKX.mn=-1;TKX.asg=${pi};TKX.opn[(pqO().id||'o')+'_${pi}']=true;sdShRender()">👤 Assign karein</button>${P.length>1&&!(o.cur>st)?`<button class="r" onclick="TKX.mn=-1;pqDelP(${pi})">🗑 Role delete</button>`:''}</div>`:'';
@@ -24532,7 +24532,7 @@ function csxClear(){ const i=document.getElementById('csxQ'); if(i){ i.value='';
   const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const brand=dk=>`<div class="zs-brand${dk?' dk':''}"><img src="${L()}" alt=""><span>Karo Online</span></div>`;
   /* vendor ki apni dukaan — Store profile (VS) se naam, logo, photo */
-  function me(){ let v={}; try{ v=VS||{}; }catch(e){}
+  function me(){ if(window._zxMe) return window._zxMe; let v={}; try{ v=VS||{}; }catch(e){}
     return { name:(v.name||'').trim()||'Sharma General Store', logo:v.logo||'', photo:(v.photos&&v.photos[0])||'', area:(v.addr||'').trim()||'Bara Hindu Rao, Delhi', since:'1QR-2043' }; }
   window.zxMe=me;
 
@@ -25381,6 +25381,505 @@ img[src^="data:image/jpeg"]{object-position:50% 14%}
       try{ const hd=document.querySelector('#lgOv .hd'); const b=hd&&hd.querySelector('b'); if(hd&&b&&!hd.querySelector('.lg-ic')){ const tt=document.createElement('div'); tt.className='lg-tt'; b.replaceWith(tt); tt.appendChild(b); tt.insertAdjacentHTML('beforeend','<small>Filipra Private Limited · Karo Online</small>'); hd.insertAdjacentHTML('afterbegin',`<span class="lg-ic zi-keep">${LIC[i]||LIC[0]}</span>`); } }catch(e){}
       return r; }; }
 })();
+/* ===== V315: product sheet, shop customer sheet, categories editor ===== */
+(function(){
+const css=`
+#prodOv{align-items:flex-end!important}
+#prodOv .pd-page{height:93vh!important;border-radius:26px 26px 0 0!important;transform:translateY(100%)!important;opacity:1!important;transition:transform .5s cubic-bezier(.22,1,.36,1)!important;box-shadow:0 -14px 40px rgba(20,12,4,.28)}
+#prodOv.open .pd-page{transform:none!important}
+#prodOv.open{background:rgba(18,12,6,.46)!important}
+#prodOv .pd-page::before{content:'';position:absolute;left:50%;top:7px;width:40px;height:4.5px;border-radius:3px;background:rgba(255,255,255,.85);transform:translateX(-50%);z-index:8;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+#prodOv .pd-top{padding:calc(16px + env(safe-area-inset-top,0px)*0) 12px 0;gap:8px}
+#prodOv .pd-ib{width:36px;height:36px;font-size:18px;box-shadow:0 3px 10px rgba(0,0,0,.14)}
+#prodOv .pd-ib svg{width:18px;height:18px}
+#prodOv .pd-cn{min-width:17px;height:17px;font-size:10px;right:-5px;top:-5px}
+#prodOv .pd-gal{overflow:visible}
+#prodOv .pd-gal::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:30px;background:#FFFCF3;border-radius:30px 30px 0 0;box-shadow:0 -12px 22px -10px rgba(60,38,10,.30);z-index:2;pointer-events:none}
+#prodOv .pd-gal::before{content:'';position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(to top,rgba(30,18,6,.20),transparent);z-index:1;pointer-events:none}
+#prodOv .pd-cnt{bottom:40px;z-index:3;font-size:12px;padding:4px 10px}
+#prodOv .px-edit{bottom:40px!important;top:auto!important;z-index:3}
+#prodOv #pdActW{position:relative;z-index:4}
+/* shop customer sheet */
+.sm-ov.cso{z-index:161}
+#csoOv .sm-sheet{height:auto;max-height:88vh}
+.cso-b{overflow-y:auto;padding:0 18px 22px}
+.cso-gr{width:40px;height:4.5px;border-radius:3px;background:#d9cfbd;margin:9px auto 4px}
+.cso-hd{display:flex;gap:14px;align-items:center;padding:10px 0 14px}
+.cso-av{flex:none;width:66px;height:66px;border-radius:50%;background:#fff center/cover no-repeat;border:3px solid #fff;box-shadow:0 6px 16px rgba(40,25,5,.22);display:flex;align-items:center;justify-content:center;font-size:30px}
+.cso-hd h3{margin:0;font-size:19px;line-height:1.2;color:#2B2B2B}
+.cso-hd p{margin:4px 0 0;font-size:12.5px;color:#7a7263;font-weight:600}
+.cso-k{display:inline-block;margin-top:5px;font-size:10px;font-weight:800;letter-spacing:.5px;color:#fff;background:#2F6FD6;padding:3px 9px;border-radius:999px}
+.cso-act{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.cso-act button{border:1px solid #ece3d2;background:#fff;border-radius:16px;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#3a342a;cursor:pointer}
+.cso-act button i{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal}
+.cso-act button.call i{background:#0FA968;color:#fff}.cso-act button.wa i{background:#25D366;color:#fff}.cso-act button.rq i{background:#FFF1D6;color:#B8650A}.cso-act button.bc i{background:#eef2ff;color:#2F6FD6}
+.cso-info{background:#fff;border:1px solid #ece3d2;border-radius:18px;padding:4px 14px;margin-bottom:14px}
+.cso-info div{display:flex;gap:10px;align-items:center;padding:10px 0;font-size:13.5px;color:#3a342a;border-bottom:1px dashed #eee4d3}
+.cso-info div:last-child{border:none}.cso-info b{font-weight:700;margin-left:auto;color:#0a8a55;font-size:12px}
+.cso-h{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 8px}
+.cso-h h4{margin:0;font-size:15px;color:#2B2B2B}.cso-h button{border:none;background:none;color:#EE6A0D;font-weight:800;font-size:12.5px;cursor:pointer}
+.cso-od{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #ece3d2;border-radius:16px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.cso-od .im{width:42px;height:42px;border-radius:12px;background:#FFF6E6 center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+.cso-od .tx{flex:1;min-width:0}.cso-od .tx b{display:block;font-size:13.5px;color:#2B2B2B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cso-od .tx span{font-size:11.5px;color:#8a8373}.cso-od em{font-style:normal;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;margin-left:6px}
+.cso-od em.go{background:#FFF1D6;color:#B8650A}.cso-od em.ok{background:#e3f6ec;color:#0a8a55}
+.cso-od strong{font-size:13.5px;color:#2B2B2B}
+.cso-rq{display:none;background:#FFF9EE;border:1px solid #f3dfb8;border-radius:18px;padding:12px 14px;margin-bottom:14px}
+.cso-rq.on{display:block;animation:ytIn .35s ease both}
+.cso-rq p{margin:0 0 8px;font-size:13px;font-weight:700;color:#5b4a2c}
+.cso-ch{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.cso-ch button{border:1px solid #e8d9bd;background:#fff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;color:#5b4a2c;cursor:pointer}
+.cso-ch button.on{background:#EE6A0D;border-color:#EE6A0D;color:#fff}
+.cso-rq textarea{width:100%;box-sizing:border-box;border:1px solid #e8d9bd;border-radius:12px;padding:9px 11px;font:inherit;font-size:13px;min-height:54px;resize:none;background:#fff}
+.cso-go{width:100%;margin-top:10px;border:none;border-radius:14px;padding:12px;background:#EE6A0D;color:#fff;font-weight:800;font-size:14px;cursor:pointer}
+/* categories */
+#bpCats .bc-add i{background:#fff!important;border:2px dashed #EE6A0D;color:#EE6A0D}
+#bpCats .bc-add b{font-size:22px;font-weight:700;color:#EE6A0D}
+#shopBody.se-on #bpCats button:not(.bc-add) i{outline:2px dashed rgba(238,106,13,.55);outline-offset:2px}
+.bp-subs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:2px 14px 10px}
+.bp-subs::-webkit-scrollbar{display:none}
+.bp-subs button{flex:none;border:1px solid #e8dcc6;background:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:700;color:#5b4a2c;cursor:pointer}
+.bp-subs button.on{background:#2B2B2B;border-color:#2B2B2B;color:#fff}
+.ce-row{background:#fff;border:1px solid #ece3d2;border-radius:16px;padding:10px;margin-bottom:10px}
+.ce-top{display:flex;gap:8px;align-items:center}
+.ce-top input{border:1px solid #e8dcc6;border-radius:10px;padding:9px 10px;font:inherit;font-size:14px;min-width:0}
+.ce-top input.e{width:46px;text-align:center;font-size:20px;padding:6px}
+.ce-top input.n{flex:1;font-weight:700}
+.ce-x{flex:none;width:32px;height:32px;border-radius:50%;border:none;background:#fdecec;color:#c0392b;font-weight:800;cursor:pointer}
+.ce-lock{font-size:11px;color:#8a8373;font-weight:700;padding:0 6px}
+.ce-subs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.ce-subs span{display:inline-flex;align-items:center;gap:5px;background:#f6efe2;border-radius:999px;padding:5px 6px 5px 11px;font-size:12px;font-weight:700;color:#5b4a2c}
+.ce-subs span button{border:none;background:#fff;width:18px;height:18px;border-radius:50%;font-size:10px;cursor:pointer;color:#c0392b}
+.ce-subs input{flex:1;min-width:110px;border:1px dashed #d9c9a8;border-radius:999px;padding:6px 11px;font:inherit;font-size:12px}
+.ce-subs .ce-sa{border:none;background:#2B2B2B;color:#fff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer}
+.ce-new{width:100%;border:2px dashed #EE6A0D;background:#FFF6EC;color:#EE6A0D;border-radius:16px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:6px}
+.ce-emo{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.ce-emo button{width:36px;height:36px;border-radius:10px;border:1px solid #ece3d2;background:#fff;font-size:18px;cursor:pointer}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+/* ---------- 1. Shop avatar → customer sheet ---------- */
+const ov=document.createElement('div'); ov.className='sm-ov cso'; ov.id='csoOv';
+ov.setAttribute('onclick',"if(event.target.id==='csoOv')closeSm('csoOv')");
+ov.innerHTML='<div class="sm-sheet"><div class="cso-gr"></div><div class="cso-b" id="csoBody"></div></div>';
+document.body.appendChild(ov);
+let csoI=0, csoSlot='Abhi turant';
+function csoOrders(i){ const nm=SHOPS[i][0]; let L=ORDERS.map((o,k)=>({o,k})).filter(x=>x.o[2]===nm).map(x=>({ic:x.o[1],t:x.o[0],d:x.o[3],p:x.o[4],go:x.o[5],k:x.k}));
+  if(!L.length){ const pr=PROD[SHOPS[i][2]]||[]; L=pr.slice(0,3).map((p,j)=>({ic:p[0],img:p[3],t:p[1],d:['18 Oct','09 Oct','27 Sep'][j],p:p[2],go:j===0?1:0,k:-1})); }
+  return L; }
+window.csoOpen=function(i){ csoI=i; const s=SHOPS[i], k=SHOP_KIND(i), ph=bcPhone(i), av=(i===MY_SHOP&&typeof SE!=='undefined'&&SE.av)?SE.av:'';
+  const avEl=document.querySelector('#shopBody .sl-av'); let bg=av?`url(${av})`:(avEl?getComputedStyle(avEl).backgroundImage:'none'); if(!/url\(/.test(bg)) bg='none';
+  const L=csoOrders(i);
+  document.getElementById('csoBody').innerHTML=`
+   <div class="cso-hd"><div class="cso-av" style="background-image:${bg};${bg==='none'?'background:'+s[6]:''}">${bg==='none'?s[1]:''}</div>
+    <div><h3>${s[0]}</h3><p>${s[1]} ${s[2]} · ★ ${s[4]} (${s[5]}) · ${s[3]}</p><span class="cso-k" style="${k==='Manufacturer'?'background:#8A4FD6':k==='Wholesaler'?'':'background:#0FA968'}">✔ ${k}</span></div></div>
+   <div class="cso-act">
+    <button class="call" onclick="csoCall()"><i>📞</i>Call</button>
+    <button class="wa" onclick="csoWa()"><i>💬</i>WhatsApp</button>
+    <button class="rq" onclick="csoRqT()"><i>📲</i>Call request</button>
+    <button class="bc" onclick="closeSm('csoOv');bcOpen(${i})"><i>🪪</i>Card / QR</button></div>
+   <div class="cso-rq" id="csoRq"><p>Dukaandar aapko kab call kare?</p>
+    <div class="cso-ch" id="csoCh">${['Abhi turant','1 ghante mein','Shaam 5–8','Kal subah'].map(t=>`<button class="${t===csoSlot?'on':''}" onclick="csoSl(this)">${t}</button>`).join('')}</div>
+    <textarea id="csoNote" placeholder="Kis baare mein baat karni hai? (optional)"></textarea>
+    <button class="cso-go" onclick="csoRqSend()">📲 Call request bhejein</button></div>
+   <div class="cso-info"><div>📞 ${ph}<b>Verified</b></div><div>📍 Bara Hindu Rao, Delhi · ${s[3]}</div><div>🕘 9 AM – 9 PM<b>● Open</b></div><div>🧾 GST registered · 1QR digital dukaan</div></div>
+   <div class="cso-h"><h4>🛍️ Is dukaan se aapke orders <small style="color:#8a8373;font-weight:600">(${L.length})</small></h4><button onclick="closeSm('csoOv');openOrders();openSm('ordersOv')">Sab orders ›</button></div>
+   ${L.map(o=>`<div class="cso-od" onclick="${o.k>=0?`closeSm('csoOv');openTrack(${o.k})`:`toast('📦 Order details jald hi')`}"><div class="im" style="${o.img?`background-image:url(${o.img})`:''}">${o.img?'':o.ic}</div><div class="tx"><b>${o.t}</b><span>${o.d}</span><em class="${o.go?'go':'ok'}">${o.go?'● In progress':'✓ Delivered'}</em></div><strong>${o.p}</strong></div>`).join('')}
+   <button class="cso-go" style="background:#2B2B2B" onclick="closeSm('csoOv');toast('🔁 Wahi saaman dobara cart mein')">🔁 Dobara order karein</button>`;
+  openSm('csoOv'); };
+window.csoCall=function(){ const n=bcPhone(csoI).replace(/[^\d+]/g,''); window.open('tel:'+n); };
+window.csoWa=function(){ const n=bcPhone(csoI).replace(/\D/g,''); window.open('https://wa.me/'+(n.length===10?'91'+n:n)+'?text='+encodeURIComponent('Namaste, 1QR / Karo Online par aapki dukaan dekhi — '+SHOPS[csoI][0])); };
+window.csoRqT=function(){ document.getElementById('csoRq').classList.toggle('on'); };
+window.csoSl=function(b){ csoSlot=b.textContent; document.querySelectorAll('#csoCh button').forEach(x=>x.classList.toggle('on',x===b)); };
+window.csoRqSend=function(){ document.getElementById('csoRq').classList.remove('on'); toast('✅ Call request bhej di — '+csoSlot+' call aayega'); };
+document.addEventListener('click',function(e){ const a=e.target.closest&&e.target.closest('#shopBody .sl-av'); if(!a) return;
+  const b=document.getElementById('shopBody'); if(b&&b.classList.contains('se-on')) return;
+  e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); csoOpen(typeof shCur==='number'?shCur:0); },true);
+
+/* ---------- 2. Categories + sub-categories ---------- */
+window.SUBC=window.SUBC||{};
+const isSe=()=>{ const b=document.getElementById('shopBody'); return !!(b&&b.classList.contains('se-on')); };
+let bpSub='';
+function catDeco(){ const c=document.getElementById('bpCats'); if(!c) return; c.querySelectorAll('.bc-add').forEach(x=>x.remove());
+  if(isSe()&&shCur===MY_SHOP){ const b=document.createElement('button'); b.className='bc-add'; b.innerHTML='<i><b>＋</b></i><span>Category</span>'; c.prepend(b); }
+  let sw=document.getElementById('bpSubs'); const lab=(BP_C[bpCatI]||[])[1], subs=SUBC[lab]||[];
+  if(!subs.length){ if(sw) sw.remove(); return; }
+  if(!sw){ sw=document.createElement('div'); sw.id='bpSubs'; sw.className='bp-subs'; c.after(sw); }
+  sw.innerHTML=['Sab',...subs].map(s=>`<button class="${(s==='Sab'?'':s)===bpSub?'on':''}" data-sub="${s==='Sab'?'':s}">${s}</button>`).join(''); }
+function catFilter(i,k){ const lab=(BP_C[k]||[])[1]; const pr=PROD[SHOPS[i][2]]||[]; const g=document.getElementById('slGrid'); if(!g) return;
+  let shown=0; g.querySelectorAll('.sl-p').forEach(c=>{ const m=(c.getAttribute('onclick')||'').match(/openProd\((\d+),(\d+)\)/); if(!m) return; const X=(pr[+m[2]]||[])[6]||{};
+    let ok=true; if(k>=5) ok=X.cat===lab; if(ok&&bpSub) ok=(X.sub||'').trim().toLowerCase()===bpSub.toLowerCase(); c.style.display=ok?'':'none'; if(ok) shown++; });
+  let em=g.querySelector('.bp-empty.v315'); if(!shown&&(k>=5||bpSub)){ if(!em){ em=document.createElement('div'); em.className='bp-empty v315'; g.prepend(em); } em.textContent='Is category mein abhi kuch nahi'+(isSe()?' — product mein category chunein':''); } else if(em) em.remove(); }
+const _bpC315=bpCat;
+bpCat=function(i,k,quiet){ if(k!==bpCatI) bpSub=''; const custom=k>=5; const r=_bpC315.call(this,i,custom?0:k,quiet);
+  bpCatI=k; document.querySelectorAll('#bpCats button:not(.bc-add)').forEach((b,j)=>b.classList.toggle('on',j===k));
+  try{ catFilter(i,k); catDeco(); }catch(e){} return r; };
+const _seT315=seToggle; seToggle=function(){ const r=_seT315.apply(this,arguments); try{ catDeco(); }catch(e){} return r; };
+document.addEventListener('click',function(e){ const t=e.target; if(!t.closest) return;
+  const sb=t.closest('#bpSubs button'); if(sb){ bpSub=sb.dataset.sub; bpCat(shCur,bpCatI,true); return; }
+  const cb=t.closest('#bpCats button'); if(!cb||!isSe()||shCur!==MY_SHOP) return;
+  e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+  const btns=[...document.querySelectorAll('#bpCats button:not(.bc-add)')]; ceOpen(cb.classList.contains('bc-add')?'new':btns.indexOf(cb)); },true);
+window.CE=null;
+const EMO=['🛍️','👕','👗','👟','🧥','💄','💅','🍔','🍰','☕','📱','🔧','🧴','🎁','🧸','📚','🏷️','⭐'];
+window.ceOpen=function(focus){ window.CE={rows:BP_C.map(c=>({e:c[0],n:c[1],s:(SUBC[c[1]]||[]).slice(),o:c[1]})),focus};
+  if(focus==='new') CE.rows.push({e:'🛍️',n:'',s:[],o:''}); ceRender(); };
+function ceRender(){ const fixed=5;
+  seOpen('🗂️ Categories & sub-categories',`<p class="pq-hint" style="margin:0 0 10px">Category ka naam / icon badlein, sub-category jodein (jaise Kurta → Cotton, Silk). Pehli 5 default hain.</p>
+   ${CE.rows.map((r,i)=>`<div class="ce-row" data-i="${i}"><div class="ce-top"><input class="e" value="${seEsc(r.e)}" oninput="CE.rows[${i}].e=this.value"><input class="n" value="${seEsc(r.n)}" placeholder="Category ka naam" oninput="CE.rows[${i}].n=this.value" ${i===0?'readonly':''}>${i>=fixed?`<button class="ce-x" onclick="ceDel(${i})">✕</button>`:'<span class="ce-lock">default</span>'}</div>
+    ${i===0?'':`<div class="ce-subs">${r.s.map((s,k)=>`<span>${seEsc(s)}<button onclick="ceSubDel(${i},${k})">✕</button></span>`).join('')}<input id="ceS${i}" placeholder="+ Sub-category" onkeydown="if(event.key==='Enter')ceSubAdd(${i})"><button class="ce-sa" onclick="ceSubAdd(${i})">Add</button></div>`}</div>`).join('')}
+   <button class="ce-new" onclick="ceNew()">＋ Nayi category jodein</button>
+   <div class="ce-emo">${EMO.map(x=>`<button onclick="ceEmo('${x}')">${x}</button>`).join('')}</div>
+   ${seBtns('ceSave()')}`);
+  setTimeout(()=>{ if(CE.focus==='new'||typeof CE.focus==='number'){ const rows=document.querySelectorAll('#seBody .ce-row'); const el=rows[CE.focus==='new'?rows.length-1:CE.focus]; if(el){ el.scrollIntoView({block:'center'}); const n=el.querySelector('input.n'); if(CE.focus==='new'&&n) n.focus(); } CE.focus=null; } },60); }
+window.ceDel=function(i){ CE.rows.splice(i,1); ceRender(); };
+window.ceNew=function(){ CE.rows.push({e:'🛍️',n:'',s:[],o:''}); CE.focus='new'; ceRender(); };
+window.ceEmo=function(x){ const r=CE.rows[CE.rows.length-1]; if(r&&!r.o) r.e=x; else toast('Nayi category ke liye icon — pehle ＋ dabaiye'); ceRender(); };
+window.ceSubAdd=function(i){ const inp=document.getElementById('ceS'+i); const v=(inp&&inp.value||'').trim(); if(!v) return; if(!CE.rows[i].s.includes(v)) CE.rows[i].s.push(v); ceRender(); setTimeout(()=>{ const x=document.getElementById('ceS'+i); x&&x.focus(); },80); };
+window.ceSubDel=function(i,k){ CE.rows[i].s.splice(k,1); ceRender(); };
+window.ceSave=function(){ const rows=CE.rows.filter((r,i)=>i<5||r.n.trim()); const pr=PROD[SHOPS[MY_SHOP][2]]||[];
+  rows.forEach(r=>{ if(r.o&&r.o!==r.n.trim()) pr.forEach(p=>{ if(p[6]&&p[6].cat===r.o) p[6].cat=r.n.trim(); }); });
+  BP_C.splice(0,BP_C.length,...rows.map(r=>[r.e.trim()||'🛍️',r.n.trim()]));
+  Object.keys(SUBC).forEach(k=>delete SUBC[k]); rows.forEach(r=>{ if(r.s.length) SUBC[r.n.trim()]=r.s; });
+  if(bpCatI>=BP_C.length) bpCatI=0; closeSm('seOv'); const c=document.getElementById('bpCats'); if(c) c.innerHTML=bpCatsHtml(shCur); bpCat(shCur,bpCatI,true); toast('✅ Categories save ho gayi'); };
+
+/* product editor: category + sub-category select */
+const _pqR315=pqRender;
+pqRender=function(){ const r=_pqR315.apply(this,arguments); try{ if(PQ&&PQ.tab==='basic'){ const b=document.getElementById('pqBody'); const sub=b.querySelector('input[data-p="sub"]'); if(sub&&!b.querySelector('select[data-p="cat"]')){
+    const d=PQ.d, cats=BP_C.slice(5).map(c=>c[1]); const subs=d.cat?(SUBC[d.cat]||[]):Object.values(SUBC).flat();
+    const w=document.createElement('div'); w.innerHTML=`<label>Category</label><select data-p="cat"><option value="">Default (All / Popular / New…)</option>${cats.map(c=>`<option ${d.cat===c?'selected':''}>${seEsc(c)}</option>`).join('')}</select>${cats.length?'':'<p class="pq-hint" style="margin:4px 0 0">Shop ke Edit mode mein categories par tap karke nayi category banayein</p>'}`;
+    const g=sub.closest('.pq-g2'); g.parentNode.insertBefore(w,g);
+    sub.setAttribute('list','pqSubL'); const dl=document.createElement('datalist'); dl.id='pqSubL'; dl.innerHTML=subs.map(s=>`<option value="${seEsc(s)}">`).join(''); b.appendChild(dl);
+    w.querySelector('select').addEventListener('change',function(){ PQ.d.cat=this.value; }); } } }catch(e){} return r; };
+})();
+
+/* ===== V316: scanner, POS direct, inline product edit, nearby cards, shop shutter ===== */
+(function(){
+const css=`
+/* scanner */
+#scOv .sm-head{gap:8px}
+#scOv .sm-head h2{flex:1}
+.sqz-demo{border:1px dashed #d9c39a;background:#FFF9EE;color:#9a6a12;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+#scOv .sc-demo{display:none!important}
+#scOv .sc-view{height:230px;background:radial-gradient(120% 90% at 50% 40%,#2a241d,#0f0c09)}
+#scOv .sc-view video{background:transparent}
+#scOv .sc-view video:not(.live){opacity:0}
+.sqz-line{position:absolute;left:44px;right:44px;top:40px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#FF8A2B,#FFD08A,#FF8A2B,transparent);box-shadow:0 0 18px 4px rgba(255,138,43,.55);animation:sqzScan 2.2s ease-in-out infinite;pointer-events:none;z-index:2}
+.sqz-line::after{content:'';position:absolute;left:0;right:0;bottom:3px;height:60px;background:linear-gradient(to top,rgba(255,138,43,.22),transparent)}
+@keyframes sqzScan{0%{top:40px}50%{top:calc(100% - 44px)}100%{top:40px}}
+#scOv .sc-frame i{animation:sqzPulse 1.6s ease-in-out infinite}
+@keyframes sqzPulse{50%{opacity:.55;transform:scale(.96)}}
+.sqz-cam{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#d8cbb4;font-size:12px;font-weight:600;text-align:center;padding:0 40px;z-index:1}
+.sqz-cam b{font-size:30px;opacity:.85}
+.sqz-cam button{margin-top:4px;border:none;background:#EE6A0D;color:#fff;border-radius:999px;padding:7px 14px;font-weight:800;font-size:12px;cursor:pointer}
+#scOv .sc-view.on .sqz-cam{display:none}
+.sqz-hd{display:flex;justify-content:space-between;align-items:center;margin:16px 2px 8px;font-weight:800;font-size:14.5px;color:#2B2B2B}
+.sqz-hd small{color:#8a8373;font-weight:600;font-size:11.5px}
+.sqz-list{display:flex;flex-direction:column;gap:10px}
+.sqz-c{display:flex;gap:12px;align-items:stretch;background:#fff;border:1px solid #ece3d2;border-radius:18px;padding:8px;cursor:pointer;text-align:left;font:inherit;animation:sqzIn .45s cubic-bezier(.22,1,.36,1) both}
+.sqz-c.hit{border-color:#0FA968;box-shadow:0 0 0 3px rgba(15,169,104,.18)}
+@keyframes sqzIn{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.sqz-im{flex:none;width:84px;height:84px;border-radius:14px;background:#eee center/cover no-repeat;position:relative}
+.sqz-im i{position:absolute;left:5px;top:5px;font-style:normal;font-size:9px;font-weight:700;background:rgba(15,169,104,.92);color:#fff;border-radius:999px;padding:1px 6px}
+.sqz-im i.cl{background:rgba(192,57,43,.9)}
+.sqz-tx{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.sqz-tx b{font-size:14.5px;color:#2B2B2B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sqz-tx span{font-size:12px;color:#7a7263;font-weight:600}
+.sqz-tx em{font-style:normal;font-size:10.5px;font-weight:800;color:#0a8a55}
+.sqz-go{align-self:center;flex:none;width:30px;height:30px;border-radius:50%;background:#FFF1D6;color:#B8650A;display:flex;align-items:center;justify-content:center;font-weight:800}
+#scOv .sc-hh,#scOv .sc-hist{display:none}
+/* nearby cards */
+#ytFeed .yt-open{font-size:9.5px!important;font-weight:600!important;letter-spacing:.3px;padding:2px 7px!important;border-radius:999px!important;background:rgba(15,169,104,.85)!important;line-height:1.5!important;top:10px!important;left:10px!important;backdrop-filter:blur(4px)}
+#ytFeed .yt-badge{font-size:11px!important;font-weight:700!important;padding:3px 9px!important;border-radius:999px!important;background:rgba(0,0,0,.55)!important;backdrop-filter:blur(4px);max-width:78%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ytFeed .yt-badge small{font-weight:500;opacity:.9}
+.yt-chip.nbz-all{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #EE6A0D!important;color:#EE6A0D}
+.nbz-empty{padding:30px 20px;text-align:center;color:#8a8373;font-weight:600;font-size:13px}
+/* product inline edit */
+.pdz-bar{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20;display:none;gap:8px;background:#17130f;border-radius:20px;padding:8px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+#prodOv.pdz-on .pdz-bar{display:flex;animation:sqzIn .35s ease both}
+.pdz-bar button{border:none;border-radius:14px;padding:11px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.pdz-bar .sv{flex:1;background:#EE6A0D;color:#fff}.pdz-bar .cn{background:#2f2a24;color:#e8dcc6}.pdz-bar .ad{background:#2f2a24;color:#e8dcc6}
+#prodOv.pdz-on [data-pz]{outline:2px dashed rgba(238,106,13,.6);outline-offset:3px;border-radius:8px;cursor:text;background:rgba(255,241,214,.35)}
+#prodOv.pdz-on [data-pz]:focus{outline:2px solid #EE6A0D;background:#fff}
+#prodOv.pdz-on .px-edit{background:#EE6A0D!important}
+#prodOv.pdz-on .pd-scroll{padding-bottom:90px}
+.pdz-strip{display:none;gap:10px;padding:12px 16px 6px;overflow-x:auto;scrollbar-width:none}
+#prodOv.pdz-on .pdz-strip{display:flex}
+#prodOv.pdz-on #pdThumbs{display:none!important}
+.pdz-m{flex:0 0 74px;height:74px;border-radius:16px;background:#222 center/cover no-repeat;position:relative;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pdz-m.cv{box-shadow:0 0 0 3px #EE6A0D}
+.pdz-m button{position:absolute;width:22px;height:22px;border-radius:50%;border:none;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pdz-m .x{right:-5px;top:-5px;background:#fff;color:#c0392b;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.pdz-m .st{left:4px;bottom:4px;background:rgba(0,0,0,.6);color:#FFD08A}
+.pdz-m.cv .st{background:#EE6A0D;color:#fff}
+.pdz-m .ml,.pdz-m .mr{bottom:4px;background:rgba(255,255,255,.85);color:#333}.pdz-m .ml{right:28px}.pdz-m .mr{right:4px}
+.pdz-add{flex:0 0 74px;height:74px;border-radius:16px;border:2px dashed #EE6A0D;background:#FFF6EC;color:#EE6A0D;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:800;cursor:pointer;position:relative;gap:2px}
+.pdz-add b{font-size:22px;line-height:1}
+.pdz-add input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.pdz-card{display:none;background:#fff;border:1px solid #ece3d2;border-radius:18px;padding:12px 14px;margin:12px 0}
+#prodOv.pdz-on .pdz-card{display:block}
+.pdz-card h4{margin:0 0 8px;font-size:13.5px;color:#2B2B2B;display:flex;justify-content:space-between;align-items:center}
+.pdz-card textarea{width:100%;box-sizing:border-box;border:1px solid #e8dcc6;border-radius:12px;padding:9px 11px;font:inherit;font-size:13.5px;min-height:80px;resize:vertical}
+.pdz-r{display:flex;gap:6px;margin-bottom:6px}.pdz-r input{flex:1;min-width:0;border:1px solid #e8dcc6;border-radius:10px;padding:8px 10px;font:inherit;font-size:13px}
+.pdz-r button{flex:none;width:30px;border:none;border-radius:10px;background:#fdecec;color:#c0392b;font-weight:800;cursor:pointer}
+.pdz-plus{border:1px dashed #d9c9a8;background:#fffaf1;border-radius:10px;padding:7px 10px;font:inherit;font-size:12px;font-weight:700;color:#8a5a06;cursor:pointer}
+.pdz-tg{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:#3a342a;padding:4px 0}
+.pdz-tg input{width:20px;height:20px;accent-color:#EE6A0D}
+.pdz-rec{position:absolute;left:12px;top:56px;z-index:4;background:linear-gradient(135deg,#F5B83D,#EE6A0D);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;box-shadow:0 4px 12px rgba(238,106,13,.35)}
+.sl-pt .pdz-rt{position:absolute;left:6px;top:6px;z-index:3;background:linear-gradient(135deg,#F5B83D,#EE6A0D);color:#fff;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const pic=i=>{ try{ return shVidOf(i).p; }catch(e){ return ''; } };
+const meta=i=>(SHOPS[i]&&SHOPS[i][8])||{};
+const place=i=>{ const m=meta(i); return [m.area,m.city].filter(Boolean).join(', ')||'Delhi'; };
+
+/* ---------- 1. Scanner ---------- */
+(function(){ const ov=document.getElementById('scOv'); if(!ov) return;
+  const hd=ov.querySelector('.sm-head'); if(hd&&!hd.querySelector('.sqz-demo')){ const b=document.createElement('button'); b.className='sqz-demo'; b.textContent='🧪 Demo'; b.onclick=()=>scDemo(); hd.insertBefore(b,hd.querySelector('.cs-x')); }
+  const vw=ov.querySelector('.sc-view'); if(vw){ vw.insertAdjacentHTML('beforeend','<div class="sqz-line"></div><div class="sqz-cam" id="sqzCam"><b>📷</b><span id="sqzCamT">Camera chalu ho raha hai…</span><button onclick="sqzRetry()">Camera chalu karein</button></div>');
+    const v=document.getElementById('scVid'); if(v){ v.removeAttribute('poster'); v.setAttribute('poster','data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='); v.addEventListener('playing',()=>{ v.classList.add('live'); vw.classList.add('on'); }); } }
+  const hist=ov.querySelector('.sc-hist'); if(hist) hist.insertAdjacentHTML('afterend','<div class="sqz-hd"><span id="sqzH">📍 Aas-paas ki 1QR dukaanein</span><small id="sqzN"></small></div><div class="sqz-list" id="sqzList"></div>');
+})();
+let sqzHit=-1;
+function sqzCard(i,hit){ const s=SHOPS[i]; const im=pic(i);
+  return `<button class="sqz-c ${hit?'hit':''}" onclick="scOpenShop(${i})"><div class="sqz-im" style="background-image:url('${im}')"><i class="${s[7]?'':'cl'}">${s[7]?'Open':'Closed'}</i></div>
+   <div class="sqz-tx"><b>${esc(s[0])}</b><span>${s[1]} ${esc(s[2])} · ★ ${s[4]} (${s[5]})</span><span>📍 ${esc(s[3])} · ${esc(place(i))}</span>${hit?'<em>✔ Abhi scan hua — dukaan khul rahi hai</em>':`<em>${esc(SHOP_KIND(i))}</em>`}</div><div class="sqz-go">›</div></button>`; }
+window.sqzRender=function(){ const L=document.getElementById('sqzList'); if(!L) return; const h=(typeof scHistGet==='function'?scHistGet():[]).map(x=>x.i).reverse();
+  const seen=new Set(); const order=[]; if(sqzHit>=0){ order.push(sqzHit); seen.add(sqzHit); }
+  h.forEach(i=>{ if(!seen.has(i)&&SHOPS[i]){ seen.add(i); order.push(i); } });
+  const near=SHOPS.map((x,i)=>i).filter(i=>!seen.has(i)).sort((a,b)=>(meta(a).km||9)-(meta(b).km||9));
+  document.getElementById('sqzH').textContent=h.length?'🕘 Scan ki gayi + aas-paas ki dukaanein':'📍 Aas-paas ki 1QR dukaanein';
+  document.getElementById('sqzN').textContent=(order.length+near.length)+' dukaan';
+  L.innerHTML=order.concat(near).map((i,k)=>sqzCard(i,i===sqzHit)).join(''); };
+const _scR=scRender; scRender=function(){ const r=_scR.apply(this,arguments); try{ sqzRender(); }catch(e){} return r; };
+window.sqzRetry=function(){ try{ scStop(); }catch(e){} document.getElementById('sqzCamT').textContent='Camera chalu ho raha hai…'; scStart(); };
+const _scSt=scStart; scStart=async function(){ const r=await _scSt.apply(this,arguments); try{ const t=document.getElementById('scSt').textContent||''; const c=document.getElementById('sqzCamT');
+    if(/permission|nahi mil/i.test(t)&&c){ c.textContent='Camera ki permission chahiye — phone ki settings mein Karo Online ko Camera allow karein'; document.getElementById('scSt').textContent='Ya neeche QR ka link / code daalein'; } }catch(e){} return r; };
+scDone=function(t){ if(scLock) return; const i=scFind(t); if(i<0){ toast('Ye 1QR dukaan ka QR nahi hai'); return; }
+  scLock=true; scStop(); const h=scHistGet(); h.push({i,t:tnow()}); scHistSet(h.slice(-50)); sqzHit=i; sqzRender();
+  const L=document.getElementById('sqzList'); if(L) L.scrollIntoView({behavior:'smooth',block:'start'}); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){}
+  toast('✔ '+SHOPS[i][0]+' mili');
+  setTimeout(()=>{ closeSm('scOv'); setTimeout(()=>{ scLock=false; sqzHit=-1; openShop(i); },250); },1100); };
+
+/* ---------- 2. POS panel button: seedha POS ---------- */
+window.vbPos=function(){ try{ closeSm('shopOv'); }catch(e){} setTimeout(()=>{ window._zxNoSplash=1; try{ openSellerDash(0); }catch(e){} window._zxNoSplash=0;
+  const go=()=>{ try{ sdTab(1); }catch(e){} const p=document.getElementById('sdPos'); const sec=p&&(p.closest('.sd-card,.sd-box')||p.parentNode); const hd=[...document.querySelectorAll('#sdOv .sd-sec b')].find(b=>/POS/.test(b.textContent));
+    const t=hd?hd.parentNode:p; const sc=document.getElementById('sdBody'); if(t&&sc){ const y=t.getBoundingClientRect().top-sc.getBoundingClientRect().top+sc.scrollTop-70; sc.scrollTo({top:y,behavior:'smooth'}); } };
+  setTimeout(go,250); setTimeout(go,700); toast('🧾 POS — naya bill banayein'); },200); };
+
+/* ---------- 3. Product page par hi edit ---------- */
+window.PZ=null;
+const prodEl=()=>document.getElementById('prodOv');
+function pzRow(){ return PROD[SHOPS[MY_SHOP][2]][pd.pi]; }
+function pzX(p){ return Object.assign(pxDef(),p[6]?JSON.parse(JSON.stringify(p[6])):{stock:p[4]===undefined?10:+p[4],media:p[3]?[{t:'img',u:p[3]}]:[]}); }
+window.pdzStart=function(){ if(!pd||pd.si!==MY_SHOP) return; const p=pzRow(); const X=pzX(p);
+  PZ={X,name:p[1],price:String(pxN(p[2])||''),mrp:String(pxN(p[5])||''),emoji:p[0]};
+  prodEl().classList.add('pdz-on'); pzDecorate(); toast('✏️ Edit mode — kisi bhi text par tap karke badlein'); };
+function pzDecorate(){ const o=prodEl(); if(!o||!PZ) return; const sw=o.querySelector('.pd-swap'); if(!sw) return;
+  const h1=o.querySelector('.pd-h1'); if(h1){ h1.dataset.pz='name'; h1.contentEditable='true'; }
+  const pb=o.querySelector('.pd-price b'); if(pb){ pb.dataset.pz='price'; pb.contentEditable='true'; pb.inputMode='decimal'; }
+  let ps=o.querySelector('.pd-price s'); if(!ps&&o.querySelector('.pd-price')){ ps=document.createElement('s'); ps.textContent='MRP'; o.querySelector('.pd-price b').after(ps); } if(ps){ ps.dataset.pz='mrp'; ps.contentEditable='true'; }
+  const tx=o.querySelector('.pd-tax'); if(tx){ tx.dataset.pz='tax'; tx.contentEditable='true'; }
+  if(!o.querySelector('.pdz-bar')){ const b=document.createElement('div'); b.className='pdz-bar'; b.innerHTML='<button class="cn" onclick="pdzCancel()">✕</button><button class="ad" onclick="pdzAdv()">⚙️ Aur options</button><button class="sv" onclick="pdzSave()">💾 Save karein</button>'; o.querySelector('.pd-page').appendChild(b); }
+  let strip=sw.querySelector('.pdz-strip'); if(!strip){ strip=document.createElement('div'); strip.className='pdz-strip'; const th=sw.querySelector('#pdThumbs'); (th||sw.querySelector('.pd-info')).before(strip); } pzStrip();
+  const info=sw.querySelector('.pd-info'); let card=sw.querySelector('.pdz-card.d'); if(!card&&info){ card=document.createElement('div'); card.className='pdz-card d'; const after=info.querySelector('.px-attrs')||info.querySelector('.pd-tax'); (after||info.lastChild).after(card); } pzCard(); }
+function pzStrip(){ const s=document.querySelector('#prodOv .pdz-strip'); if(!s) return; const M=PZ.X.media;
+  s.innerHTML=M.map((m,i)=>`<div class="pdz-m ${i===0?'cv':''}" style="${m.t==='img'?`background-image:url(${m.u})`:''}">${m.t==='vid'?'🎬':''}<button class="x" onclick="pdzM('rm',${i})">✕</button><button class="st" onclick="pdzM('cv',${i})" title="Cover">★</button>${i>0?`<button class="ml" onclick="pdzM('l',${i})">‹</button>`:''}${i<M.length-1?`<button class="mr" onclick="pdzM('r',${i})">›</button>`:''}</div>`).join('')
+   +`<label class="pdz-add"><input type="file" accept="image/*,video/*" multiple onchange="pdzUp(this)"><b>＋</b>Photo / Video</label>`; }
+function pzCard(){ const c=document.querySelector('#prodOv .pdz-card.d'); if(!c) return; const X=PZ.X;
+  c.innerHTML=`<h4>📄 Description</h4><textarea oninput="PZx('desc',this.value)" placeholder="Product ke baare mein likhiye…">${esc(X.desc||'')}</textarea>
+   <h4 style="margin-top:12px">🏷️ Details (Color, Fabric, Brand…)</h4>${X.attrs.map((a,i)=>`<div class="pdz-r"><input value="${esc(a[0])}" placeholder="Naam" oninput="PZa(${i},0,this.value)"><input value="${esc(a[1])}" placeholder="Value" oninput="PZa(${i},1,this.value)"><button onclick="PZad(${i})">✕</button></div>`).join('')}
+   <button class="pdz-plus" onclick="PZadd()">＋ Detail jodein</button>
+   <h4 style="margin-top:12px">📦 Stock</h4><div class="pdz-r"><input inputmode="numeric" value="${esc(X.stock)}" oninput="PZx('stock',this.value)" placeholder="Kitne pcs"></div>
+   <label class="pdz-tg"><input type="checkbox" ${X.rec?'checked':''} onchange="PZx('rec',this.checked)"> ⭐ Recommended — dukaan mein sabse upar dikhe</label>
+   <label class="pdz-tg"><input type="checkbox" ${X.best?'checked':''} onchange="PZx('best',this.checked)"> 🏆 Bestseller badge</label>`; }
+window.PZx=(k,v)=>{ PZ.X[k]=v; };
+window.PZa=(i,j,v)=>{ PZ.X.attrs[i][j]=v; };
+window.PZad=i=>{ PZ.X.attrs.splice(i,1); pzCard(); };
+window.PZadd=()=>{ PZ.X.attrs.push(['','']); pzCard(); const c=document.querySelectorAll('#prodOv .pdz-card .pdz-r input'); if(c.length) c[c.length-2].focus(); };
+window.pdzM=function(a,i){ const M=PZ.X.media; if(a==='rm'){ M.splice(i,1); } else if(a==='cv'){ M.unshift(M.splice(i,1)[0]); toast('★ Cover photo ban gayi'); } else if(a==='l'){ [M[i-1],M[i]]=[M[i],M[i-1]]; } else if(a==='r'){ [M[i+1],M[i]]=[M[i],M[i+1]]; } pzStrip(); };
+window.pdzUp=function(inp){ const fs=[...(inp.files||[])]; let n=0; fs.forEach(f=>{ const r=new FileReader(); r.onload=()=>{ PZ.X.media.push({t:f.type.startsWith('video')?'vid':'img',u:r.result}); if(++n===fs.length){ pzStrip(); toast('✅ '+n+' file jud gayi'); } }; r.readAsDataURL(f); }); };
+function pzRead(){ const o=prodEl(); const g=k=>{ const e=o.querySelector(`[data-pz="${k}"]`); return e?e.textContent.trim():''; };
+  const nm=g('name'); if(nm) PZ.name=nm; const pr=pxN(g('price')); if(pr>0) PZ.price=String(pr); const mr=pxN(g('mrp')); PZ.mrp=mr>0?String(mr):''; const tx=g('tax'); if(tx) PZ.X.tax=tx; }
+function pzClean(){ const o=prodEl(); o.classList.remove('pdz-on'); o.querySelectorAll('[data-pz]').forEach(e=>{ e.removeAttribute('contenteditable'); delete e.dataset.pz; }); }
+window.pdzSave=function(){ if(!PZ) return; pzRead(); if(!PZ.name){ toast('⚠️ Naam likhiye'); return; } if(!(pxN(PZ.price)>0)){ toast('⚠️ Price likhiye'); return; }
+  const X=PZ.X; X.attrs=X.attrs.filter(a=>(a[0]||'').trim()&&(a[1]||'').trim()); X.stock=Math.max(0,Math.round(pxN(X.stock))||0);
+  const cover=X.media.find(m=>m.t==='img'); const pr=PROD[SHOPS[MY_SHOP][2]]; const j=pd.pi;
+  const row=[PZ.emoji||'🛍️',PZ.name,'₹'+Math.round(pxN(PZ.price)),cover?cover.u:'',pxStockOf(['','','','',X.stock,'',X]),pxN(PZ.mrp)?'₹'+Math.round(pxN(PZ.mrp)):'',X];
+  pr[j]=row; PZ=null; pzClean(); pd.pr=row; pd.unit=pxN(row[2]); pd.vKeep=true; try{ pdBuild(); }catch(e){} try{ bpCat(shCur,bpCatI,true); }catch(e){} toast('✅ Product save ho gaya'); };
+window.pdzCancel=function(){ PZ=null; pzClean(); try{ pdBuild(); }catch(e){} toast('Badlav cancel'); };
+window.pdzAdv=function(){ const j=pd.pi; if(PZ){ pzRead(); } PZ=null; pzClean(); pqOpen(j); };
+document.addEventListener('click',function(e){ const b=e.target.closest&&e.target.closest('#prodOv .px-edit'); if(!b) return; e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); if(prodEl().classList.contains('pdz-on')) pdzSave(); else pdzStart(); },true);
+const _cs316=closeSm; closeSm=function(id){ if(id==='prodOv'&&PZ){ PZ=null; pzClean(); } return _cs316.apply(this,arguments); };
+const _pdB316=pdBuild; pdBuild=function(){ const r=_pdB316.apply(this,arguments); try{ const o=prodEl(); const X=pd&&pd.pr&&pd.pr[6]; const g=o.querySelector('.pd-gal'); if(g){ let t=g.querySelector('.pdz-rec'); if(X&&X.rec){ if(!t){ t=document.createElement('span'); t.className='pdz-rec'; t.textContent='⭐ Recommended'; g.appendChild(t); } } else if(t) t.remove(); } const eb=o.querySelector('.px-edit'); if(eb&&!eb.dataset.z){ eb.dataset.z=1; } if(PZ) pzDecorate(); }catch(e){} return r; };
+/* dukaan grid mein Recommended sabse pehle + badge */
+const _bp316=bpCat; bpCat=function(i,k,quiet){ const r=_bp316.apply(this,arguments); try{ const pr=PROD[SHOPS[i][2]]||[]; const g=document.getElementById('slGrid'); if(g){ const tiles=[...g.querySelectorAll('.sl-p')]; const recs=[];
+    tiles.forEach(c=>{ const m=(c.getAttribute('onclick')||'').match(/openProd\((\d+),(\d+)\)/); if(!m) return; const X=(pr[+m[2]]||[])[6]; if(X&&X.rec){ const pt=c.querySelector('.sl-pt'); if(pt&&!pt.querySelector('.pdz-rt')) pt.insertAdjacentHTML('beforeend','<span class="pdz-rt">⭐ Recommended</span>'); recs.push(c); } });
+    const first=g.querySelector('.sl-p:not(.se-add)'); recs.reverse().forEach(c=>{ const f=g.querySelector('.sl-p:not(.se-add)'); if(f&&f!==c) f.before(c); }); } }catch(e){} return r; };
+
+/* ---------- 4. Nearby: patli Open, area/city, categories, default Large ---------- */
+function nbzDeco(){ const f=document.getElementById('ytFeed'); if(!f) return;
+  f.querySelectorAll('.yt-card').forEach(c=>{ const m=(c.getAttribute('onclick')||'').match(/openShop\((\d+)\)/); if(!m) return; const i=+m[1];
+    const o=c.querySelector('.yt-open'); if(o&&!o.dataset.z){ o.dataset.z=1; o.textContent='● Open'; }
+    const b=c.querySelector('.yt-badge'); if(b&&!b.dataset.z){ b.dataset.z=1; b.innerHTML=`📍 ${esc(SHOPS[i][3])} <small>· ${esc(place(i))}</small>`; } });
+  const ch=document.getElementById('ytChips'); if(ch&&!ch.querySelector('.nbz-all')){ const a=document.createElement('button'); a.className='yt-chip nbz-all'; a.innerHTML='▦ All categories'; a.onclick=()=>{ window._nbzPick=1; openAllCats(); };
+    const all=ch.querySelector('.yt-chip'); if(all) all.after(a); else ch.prepend(a); }
+  if(!f.querySelector('.yt-card')&&!f.querySelector('.nbz-empty')) f.innerHTML='<div class="nbz-empty">Is category mein aas-paas abhi koi dukaan nahi<br><button class="yt-chip" style="margin-top:10px" onclick="renderShops(\'All\')">Sab dukaanein dekhein</button></div>'; }
+const _rs316=renderShops; renderShops=function(f){ if(f&&f!=='All'&&!SHOP_CHIPS.includes(f)) SHOP_CHIPS.push(f); const r=_rs316.apply(this,arguments); try{ nbzDeco(); }catch(e){} return r; };
+new MutationObserver(()=>{ try{ nbzDeco(); }catch(e){} }).observe(document.getElementById('ytFeed')||document.body,{childList:true});
+const _pac=pickAllCat; pickAllCat=function(k){ if(!window._nbzPick) return _pac.apply(this,arguments); window._nbzPick=0; closeSm('allCatOv');
+  let lab=k; try{ lab=agMeta(k).l; }catch(e){} const kinds=[...new Set(SHOPS.map(x=>x[2]))]; const lw=(lab+' '+k).toLowerCase();
+  const hit=kinds.find(t=>lw.includes(t.toLowerCase()))||kinds.find(t=>t.toLowerCase().includes(String(k).toLowerCase()))||lab;
+  setTimeout(()=>renderShops(hit),200); };
+const _cs2=closeSm; closeSm=function(id){ if(id==='allCatOv') setTimeout(()=>{ window._nbzPick=0; },400); return _cs2.apply(this,arguments); };
+let nbzFirst=true; const _os316=openSm; openSm=function(id){ const r=_os316.apply(this,arguments); if(id==='shopsOv'){ if(nbzFirst){ nbzFirst=false; setTimeout(()=>{ try{ ylSet('big',true); }catch(e){} },30); } setTimeout(()=>{ try{ nbzDeco(); }catch(e){} },60); } return r; };
+
+try{ const K=[...new Set(SHOPS.map(x=>x[2]))]; SHOP_CHIPS.splice(1,SHOP_CHIPS.length,...K); }catch(e){}
+/* ---------- 5. Dukaan khulne se pehle shutter (1.3 sec) ---------- */
+const _osh316=openShop; openShop=function(i){ try{ if(!window._shzSkip&&typeof zxShutterShow==='function'&&!document.getElementById('zxVL')&&SHOPS[i]){ const s=SHOPS[i];
+      window._zxMe={name:s[0],logo:'',photo:pic(i),area:place(i),since:'1QR'}; zxShutterShow('open',null,1350); window._zxMe=null;
+      const p=document.querySelector('#zxVL .zsh-tt p'); if(p) p.innerHTML=`${s[1]} ${esc(s[2])} · 📍 ${esc(s[3])} · <b style="color:#F47B20">dukaan khul rahi hai…</b>`;
+      const sk=document.querySelector('#zxVL .zx-skip'); if(sk) sk.textContent='tap karke seedha andar jaayein'; } }catch(e){ window._zxMe=null; }
+  return _osh316.apply(this,arguments); };
+})();
+
+/* ===== V317: tab editors on product page, compact edit bar, gallery layout, editor single scroll ===== */
+(function(){
+const css=`
+/* compact edit bar */
+#prodOv .pdz-bar{left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;max-width:calc(100% - 24px);height:auto!important;padding:6px!important;gap:6px!important;border-radius:999px!important;align-items:center!important;flex-direction:row!important}
+#prodOv .pdz-bar button{height:40px!important;min-height:0!important;min-width:0!important;width:auto!important;flex:none!important;padding:0 16px!important;border-radius:999px!important;font-size:13px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px;white-space:nowrap;box-shadow:none!important;margin:0!important}
+#prodOv .pdz-bar .cn{width:40px!important;padding:0!important;font-size:15px!important}
+#prodOv .pdz-bar .sv{padding:0 20px!important}
+/* gallery: photo poori dikhe, Edit upar kone mein, Add neeche daayein kone mein */
+#prodOv .pd-slides{height:410px}
+#prodOv .pd-gal::after{height:22px;border-radius:24px 24px 0 0}
+#prodOv .px-edit{top:60px!important;bottom:auto!important;left:12px!important;font-size:11.5px!important;padding:6px 11px!important;border-radius:999px!important;background:rgba(23,19,15,.72)!important;backdrop-filter:blur(6px)}
+#prodOv.pdz-on .px-edit{background:#EE6A0D!important}
+#prodOv .pd-cnt{left:14px!important;right:auto!important;bottom:32px!important}
+#prodOv .pdz-rec{top:96px}
+#prodOv #pdActW{height:0!important;margin:0!important;padding:0 14px!important;align-items:flex-end!important;overflow:visible}
+#prodOv #pdActW .pd-act{transform:translateY(-62px);font-size:14px!important;padding:4px 16px 4px 4px!important;gap:8px!important;box-shadow:0 6px 18px rgba(238,106,13,.35)!important}
+#prodOv #pdActW .pd-act > *:first-child{transform:scale(.8)}
+/* tab editors */
+.pdz-te{display:flex;flex-direction:column;gap:8px;padding:6px 0}
+.pdz-te h5{margin:6px 0 2px;font-size:13px;color:#2B2B2B}
+.pdz-te textarea,.pdz-te input,.pdz-te select{width:100%;box-sizing:border-box;border:1px solid #e8dcc6;border-radius:12px;padding:9px 11px;font:inherit;font-size:13.5px;background:#fff}
+.pdz-te textarea{min-height:90px;resize:vertical}
+.pdz-te .r{display:flex;gap:6px;align-items:center}.pdz-te .r input{flex:1;min-width:0}
+.pdz-te .r select{width:74px;flex:none}
+.pdz-te .x{flex:none;width:34px;height:38px;border:none;border-radius:10px;background:#fdecec;color:#c0392b;font-weight:800;cursor:pointer}
+.pdz-te .rv{background:#fffaf1;border:1px solid #efe2c8;border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.pdz-te .ad{border:1.5px dashed #EE6A0D;background:#FFF6EC;color:#EE6A0D;border-radius:12px;padding:10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.pdz-te .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pdz-te label{font-size:11px;color:#8a8373;font-weight:700}
+#prodOv .pdz-card.d > h4:first-child,#prodOv .pdz-card.d > textarea:first-of-type{display:none}
+#prodOv.pdz-on #pdTabs button{position:relative}
+#prodOv.pdz-on #pdTabs button::after{content:'✎';margin-left:4px;font-size:11px;color:#EE6A0D}
+/* product editor: sab ek ke neeche ek */
+.pqs-sec{scroll-margin-top:8px}
+.pqs-h{display:flex;align-items:center;gap:8px;margin:14px 4px 8px;font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#9a7b45}
+.pqs-h::after{content:'';flex:1;height:1px;background:#EAD9B0}
+.pqs-sec:first-child .pqs-h{margin-top:4px}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+/* ---- Details / Specs / Reviews: edit mode mein seedha likhein ---- */
+function teHTML(i){ const X=PZ.X;
+  if(i===0) return `<div class="pdz-te"><h5>📄 Description</h5><textarea oninput="PZ.X.desc=this.value" placeholder="Product ke baare mein poori jaankari…">${esc(X.desc||'')}</textarea>
+    <h5>✔ Highlights</h5>${(X.hl||[]).map((h,k)=>`<div class="r"><input value="${esc(h)}" placeholder="Jaise: 7 din exchange" oninput="PZ.X.hl[${k}]=this.value"><button class="x" onclick="pdzTe('hl-',${k})">✕</button></div>`).join('')}
+    <button class="ad" onclick="pdzTe('hl+')">＋ Highlight jodein</button></div>`;
+  if(i===1) return `<div class="pdz-te"><h5>📋 Specifications</h5>${(X.specs||[]).map((a,k)=>`<div class="r"><input value="${esc(a[0])}" placeholder="Jaise: Fabric" oninput="PZ.X.specs[${k}][0]=this.value"><input value="${esc(a[1])}" placeholder="Cotton linen" oninput="PZ.X.specs[${k}][1]=this.value"><button class="x" onclick="pdzTe('sp-',${k})">✕</button></div>`).join('')}
+    <button class="ad" onclick="pdzTe('sp+')">＋ Spec jodein</button></div>`;
+  return `<div class="pdz-te"><h5>⭐ Rating</h5><div class="g3"><div><label>Rating</label><input inputmode="decimal" value="${esc(X.rate||pd.rate||'')}" oninput="PZ.X.rate=this.value"></div><div><label>Reviews</label><input inputmode="numeric" value="${esc(X.rev||pd.rev||'')}" oninput="PZ.X.rev=this.value"></div><div><label>Booked</label><input value="${esc(X.sold||'')}" oninput="PZ.X.sold=this.value"></div></div>
+    <h5>💬 Reviews</h5>${(X.reviews||[]).map((r,k)=>`<div class="rv"><div class="r"><input value="${esc(r[0])}" placeholder="Customer ka naam" oninput="PZ.X.reviews[${k}][0]=this.value"><select onchange="PZ.X.reviews[${k}][3]=+this.value">${[5,4,3,2,1].map(s=>`<option value="${s}" ${+r[3]===s?'selected':''}>${s}★</option>`).join('')}</select><button class="x" onclick="pdzTe('rv-',${k})">✕</button></div>
+      <textarea style="min-height:56px" placeholder="Review" oninput="PZ.X.reviews[${k}][1]=this.value">${esc(r[1])}</textarea><input value="${esc(r[4]||'')}" placeholder="Aapka reply (optional)" oninput="PZ.X.reviews[${k}][4]=this.value"></div>`).join('')}
+    <button class="ad" onclick="pdzTe('rv+')">＋ Review jodein</button></div>`; }
+window.pdzTe=function(a,k){ const X=PZ.X; X.hl=X.hl||[]; X.specs=X.specs||[]; X.reviews=X.reviews||[];
+  if(a==='hl+') X.hl.push(''); if(a==='hl-') X.hl.splice(k,1); if(a==='sp+') X.specs.push(['','']); if(a==='sp-') X.specs.splice(k,1); if(a==='rv+') X.reviews.unshift(['','','Abhi',5,'']); if(a==='rv-') X.reviews.splice(k,1);
+  teDraw(); if(/\+$/.test(a)){ const ins=document.querySelectorAll('#pdTP .pdz-te input'); const t=a==='rv+'?ins[3]:ins[ins.length-(a==='sp+'?2:1)]; if(t) t.focus(); } };
+function teDraw(){ const box=document.getElementById('pdTP'); if(box&&window.PZ) box.innerHTML=teHTML(pd.tab||0); }
+const _pdT=pdTab; pdTab=function(i){ const r=_pdT.apply(this,arguments); try{ if(window.PZ) teDraw(); }catch(e){} return r; };
+const _st=pdzStart; window.pdzStart=pdzStart=function(){ const r=_st.apply(this,arguments); try{ if(window.PZ){ const X=PZ.X; if(!X.specs||!X.specs.length) X.specs=(pd.specs||[]).map(a=>[a[0],a[1]]); teDraw(); } }catch(e){} return r; };
+
+/* ---- product editor (Naya product): Media, Basic, Price & Stock… sab ek ke neeche ek ---- */
+let pqsLast=null;
+const _pqR=pqRender;
+pqRender=function(){ if(!PQ) return _pqR.apply(this,arguments); const b=document.getElementById('pqBody'); const want=PQ.tab, y=b.scrollTop; let html='';
+  PQ_TABS.forEach(t=>{ PQ.tab=t[0]; _pqR.apply(this,arguments); html+=`<section class="pqs-sec" id="pqs-${t[0]}"><div class="pqs-h">${t[1]} ${t[2]}</div>${b.innerHTML}</section>`; });
+  PQ.tab=want; b.innerHTML=html; pqTabs();
+  /* category select ka datalist ek hi rahe */
+  const dls=b.querySelectorAll('#pqSubL'); dls.forEach((d,k)=>{ if(k) d.remove(); });
+  if(pqsLast!==want){ pqsLast=want; requestAnimationFrame(()=>{ const s=document.getElementById('pqs-'+want); if(s) b.scrollTop=want==='media'?0:s.offsetTop-6; }); } else { b.scrollTop=y; requestAnimationFrame(()=>{ b.scrollTop=y; }); }
+  try{ pqProg(); }catch(e){} };
+const _pqO=pqOpen; pqOpen=function(){ pqsLast=null; return _pqO.apply(this,arguments); };
+window.pqOpen=pqOpen; seProd=function(j){ pqOpen(j); };
+/* scroll karte waqt upar ka tab apne aap highlight */
+(function(){ const b=document.getElementById('pqBody'); if(!b) return; b.addEventListener('scroll',()=>{ if(!PQ) return; const secs=[...b.querySelectorAll('.pqs-sec')]; let cur=secs[0];
+  secs.forEach(s=>{ if(s.offsetTop-40<=b.scrollTop) cur=s; }); if(!cur) return; const id=cur.id.replace('pqs-',''); if(id!==PQ.tab){ PQ.tab=id; pqsLast=id; document.querySelectorAll('#pqTabs button').forEach(x=>x.classList.toggle('on',x.dataset.v===id)); const on=document.querySelector('#pqTabs button.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); } },{passive:true}); })();
+})();
+
+/* ===== V318: Leads / My Shop — Chrome-tab jaisa switch, Lead Bazar uske neeche ===== */
+(function(){
+const css=`
+#sdOv #sdSeg2.ctab{position:relative;display:flex;height:56px;margin:-16px 0 8px!important;padding:0!important;border:0!important;box-shadow:none!important;border-radius:28px 28px 0 0!important;overflow:hidden;
+  background:linear-gradient(135deg,#4a3c26,#1f1a12)!important}
+#sdOv .sd-sheet.shut #sdSeg2.ctab{border-radius:0!important;margin:0 0 58px!important}
+#sdOv #sdSeg2.ctab .ind{left:0!important;top:0!important;bottom:0!important;width:calc(52% - 46px)!important;border-radius:0!important;background:var(--iv,#FAF6EC)!important;box-shadow:none!important;transform:none!important;clip-path:none!important;overflow:visible;
+  transition:left .45s cubic-bezier(.22,1,.36,1)!important}
+#sdOv #sdSeg2.ctab .ind::before,#sdOv #sdSeg2.ctab .ind::after{content:'';position:absolute;top:0;bottom:-1px;width:46px;background:none;background-size:100% 100%;transition:opacity .3s}
+#sdOv #sdSeg2.ctab .ind::after{right:-45px;left:auto;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 56' preserveAspectRatio='none'><path d='M0 0 C26 0 18 56 46 56 L0 56 Z' fill='%23F6F2E9'/></svg>");opacity:1}
+#sdOv #sdSeg2.ctab .ind::before{left:-45px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 56' preserveAspectRatio='none'><path d='M46 0 C20 0 28 56 0 56 L46 56 Z' fill='%23F6F2E9'/></svg>");opacity:0}
+#sdOv #sdSeg2.ctab.r .ind{left:calc(48% + 46px)!important;width:calc(52% - 46px)!important}
+#sdOv #sdSeg2.ctab.r .ind::after{opacity:0}
+#sdOv #sdSeg2.ctab.r .ind::before{opacity:1}
+#sdOv #sdSeg2.ctab button{flex:none;width:50%!important;padding:0 18px!important;height:56px;display:flex;align-items:center;gap:8px;font-size:15.5px!important;font-weight:800!important;letter-spacing:.2px;color:#E9C97E!important;transition:color .3s;background:none!important}
+#sdOv #sdSeg2.ctab button#sdC0{justify-content:flex-start}
+#sdOv #sdSeg2.ctab button#sdC1{justify-content:flex-end}
+#sdOv #sdSeg2.ctab button.on{color:#2a2418!important}
+#sdOv #sdSeg2.ctab button svg{width:18px!important;height:18px!important}
+#sdOv .sd-sheet.shut{padding-top:env(safe-area-inset-top,0px)!important}
+#sdOv .sd-sheet.shut .sd-mh{top:calc(70px + env(safe-area-inset-top,0px))!important}
+#sdOv .sd-sheet.shut .sd-arrow{top:calc(62px + env(safe-area-inset-top,0px))!important}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+function place(){ const seg=document.getElementById('sdSeg2'), sh=document.getElementById('sdSheetEl'); if(!seg||!sh) return; seg.classList.add('ctab');
+  const mh=sh.querySelector('.sd-mh'); if(mh&&seg.nextElementSibling!==mh){ mh.before(seg); mh.classList.add('ctab-mh'); }
+  else if(mh){ mh.classList.add('ctab-mh'); }
+  /* seg ko Lead Bazar heading se upar le aao */
+  if(mh&&mh.previousElementSibling!==seg) mh.parentNode.insertBefore(seg,mh); }
+place();
+const _o=openSellerDash; window.openSellerDash=openSellerDash=function(){ const r=_o.apply(this,arguments); try{ place(); }catch(e){} return r; }; openSellerDash._zx303=1;
+})();
+
+/* ===== V319: tab par ginti + swipe se Leads/My Shop badlein ===== */
+(function(){
+const st=document.createElement('style'); st.textContent=`
+#sdOv #sdSeg2.ctab button em{font-style:normal;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#EE6A0D;color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+#sdOv #sdSeg2.ctab button em:empty{display:none}
+#sdOv #sdSeg2.ctab button.on em{background:#2a2418;color:#F5D58A}
+#sdOv .sdx-hint{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:99;background:rgba(23,19,15,.85);color:#F5D58A;font-size:12px;font-weight:700;padding:7px 14px;border-radius:999px;pointer-events:none;animation:sdxH 2.6s ease forwards}
+@keyframes sdxH{0%{opacity:0;transform:translate(-50%,10px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+#sdOv .sd-body.sdx-l{animation:sdxL .35s ease}#sdOv .sd-body.sdx-r{animation:sdxR .35s ease}
+@keyframes sdxL{from{transform:translateX(18px);opacity:.7}}@keyframes sdxR{from{transform:translateX(-18px);opacity:.7}}`;
+document.head.appendChild(st);
+function counts(){ const b0=document.getElementById('sdC0'), b1=document.getElementById('sdC1'); if(!b0||!b1) return;
+  let nl=0, no=0; try{ nl=SD_L.filter(l=>l.st==='live').length; }catch(e){} try{ no=SD_ORD.filter(o=>o.st==='new').length; }catch(e){}
+  [[b0,nl],[b1,no]].forEach(([b,n])=>{ let e=b.querySelector('em'); if(!e){ e=document.createElement('em'); b.appendChild(e); } e.textContent=n>0?(n>99?'99+':n):''; }); }
+const _t=sdTab; sdTab=function(){ const r=_t.apply(this,arguments); try{ counts(); }catch(e){} return r; };
+setInterval(()=>{ const o=document.getElementById('sdOv'); if(o&&o.classList.contains('on')) counts(); },3000);
+/* swipe */
+let sx=0, sy=0, ok=false;
+const hScroll=el=>{ for(let x=el;x&&x.id!=='sdBody';x=x.parentElement){ if(x.scrollWidth>x.clientWidth+4){ const ox=getComputedStyle(x).overflowX; if(ox==='auto'||ox==='scroll') return true; } } return false; };
+document.addEventListener('touchstart',e=>{ const b=e.target.closest&&e.target.closest('#sdBody'); ok=!!b&&!hScroll(e.target)&&!e.target.closest('input,textarea,.sd-map,#sdMap'); if(!ok) return; sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+document.addEventListener('touchend',e=>{ if(!ok) return; ok=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)<80||Math.abs(dy)>Math.abs(dx)*.6) return;
+  const cur=(typeof sdCur==='number')?sdCur:0, nx=dx<0?1:0; if(nx===cur) return; sdTab(nx); const bd=document.getElementById('sdBody'); if(bd){ bd.classList.remove('sdx-l','sdx-r'); void bd.offsetWidth; bd.classList.add(dx<0?'sdx-l':'sdx-r'); } },{passive:true});
+/* pehli baar hint */
+const _o=openSellerDash; window.openSellerDash=openSellerDash=function(){ const r=_o.apply(this,arguments); setTimeout(()=>{ try{ counts(); let seen=false; try{ seen=localStorage.getItem('1qr_sdx')==='1'; }catch(e){} if(!seen){ try{ localStorage.setItem('1qr_sdx','1'); }catch(e){} const h=document.createElement('div'); h.className='sdx-hint'; h.textContent='👆 Baayein-daayein swipe karke Leads / My Shop badlein'; document.getElementById('sdOv').appendChild(h); setTimeout(()=>h.remove(),2800); } }catch(e){} },400); return r; }; openSellerDash._zx303=1;
+})();
+
 </script>
 </body>
 </html>

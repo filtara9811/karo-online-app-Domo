@@ -79,6 +79,8 @@ jobs:
           s=re.sub(r'android:label="[^"]*"','android:label="Karo Online"',s)
           perms='''    <uses-permission android:name="android.permission.INTERNET"/>
               <uses-permission android:name="android.permission.CAMERA"/>
+              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+              <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
           '''
           if 'android.permission.INTERNET' not in s:
               s=s.replace('<application','%s<application'%perms,1)

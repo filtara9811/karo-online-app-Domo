@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -65,7 +66,7 @@ class _WebHomeState extends State<WebHome> {
   @override
   void initState() {
     super.initState();
-    final c = WebViewController()
+    final c = WebViewController(onPermissionRequest: _onPermission)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF3ECDD))
       ..addJavaScriptChannel('KaroApp', onMessageReceived: (m) => _openExternal(m.message))
@@ -114,6 +115,26 @@ class _WebHomeState extends State<WebHome> {
     // har baar taaza version (cache se purana na aaye)
     c.loadRequest(Uri.parse('$kLiveUrl?v=${DateTime.now().millisecondsSinceEpoch}'),
         headers: const {'Cache-Control': 'no-cache'});
+  }
+
+  // QR scanner (camera) aur voice search (mic) ke liye phone se permission maang kar WebView ko dena
+  Future<void> _onPermission(WebViewPermissionRequest req) async {
+    var ok = true;
+    if (req.types.contains(WebViewPermissionResourceType.camera)) {
+      ok = (await Permission.camera.request()).isGranted && ok;
+    }
+    if (req.types.contains(WebViewPermissionResourceType.microphone)) {
+      ok = (await Permission.microphone.request()).isGranted && ok;
+    }
+    if (ok) {
+      await req.grant();
+    } else {
+      await req.deny();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Camera / mic ki permission chahiye — Settings › Apps › Karo Online › Permissions')));
+      }
+    }
   }
 
   Future<List<String>> _pickFiles(FileSelectorParams params) async {
