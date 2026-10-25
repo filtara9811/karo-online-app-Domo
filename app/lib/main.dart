@@ -380,8 +380,14 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
+      onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
+        // pehle web ki khuli sheet / popup band karo
+        try {
+          final r = await _c.runJavaScriptReturningResult('window.karoBack ? window.karoBack() : "none"');
+          if ('$r'.contains('closed')) return;
+        } catch (_) {}
+        if (!mounted) return;
         final now = DateTime.now();
         if (_lastBack != null && now.difference(_lastBack!) < const Duration(seconds: 2)) {
           SystemNavigator.pop();

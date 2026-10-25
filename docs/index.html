@@ -22067,15 +22067,18 @@ function paper(D,f){ const S=D.S;
 const FM=[['t3','🧾','3 inch','Thermal 80mm'],['t4','🧾','4 inch','Thermal 104mm'],['a4','📄','A4','Bada page']];
 window.ivOpen=function(i,cust){ IV.i=i; IV.c=cust!==undefined?cust:IV.next; IV.next=undefined; IV.cache={}; const b=sdBills[i]; IV.qr=!!(shopInfo().upi); IV.D=ivData(i,IV.c);
   let o=document.getElementById('ivxOv'); if(!o){ o=document.createElement('div'); o.id='ivxOv'; document.body.appendChild(o); } ivR(); o.classList.add('on'); setTimeout(ivPrep,60); };
-function ivR(){ IV.D=ivData(IV.i,IV.c); const o=document.getElementById('ivxOv'), D=IV.D;
-  o.innerHTML=`<div class="iv-tp"><span class="ok">✓</span><div><b>Bill ban gaya!</b><small>${E(D.id)} · ${E(D.tm)} · ${E(D.mode)} · ${D.c?E(D.c.n):'Walk-in'}</small></div><button onclick="ivX()" aria-label="Band">✕</button></div>
-   <div class="iv-fm">${FM.map(f=>`<button class="${IV.fmt===f[0]?'on':''}" onclick="ivFmt('${f[0]}')"><em>${f[1]}</em><b>${f[2]}</b><small>${f[3]}</small></button>`).join('')}</div>
-   <div class="iv-ch"><button class="${IV.qr?'on':''}" onclick="ivQr()">${IV.qr?'☑':'☐'} QR se payment</button>${!D.c||!D.c.m?'<button onclick="ivCust()">＋ Customer jodein</button>':''}<span>${R(D.grand)}</span></div>
-   <div class="iv-sc" id="ivSc"><div class="iv-pw ${IV.fmt}" id="ivPw">${paper(IV.D,IV.fmt)}</div></div>
-   <div class="iv-bb"><button class="sh" onclick="ivShare()">📤 Bhejein / Print <small>WhatsApp · Printer · PDF</small></button><button class="dn" onclick="ivX()">Done</button></div>`;
-  ivFit(); }
-function ivFit(){ const w=document.getElementById('ivPw'), sc=document.getElementById('ivSc'); if(!w||!sc) return; const p=w.firstElementChild; w.style.height=''; p.style.transform='';
-  if(IV.fmt==='a4'){ const s=Math.min(1,(sc.clientWidth-24)/794); p.style.transform=`scale(${s})`; w.style.height=(p.offsetHeight*s)+'px'; w.style.width=(794*s)+'px'; } else w.style.width=''; }
+function ivR(){ IV.D=ivData(IV.i,IV.c); const o=document.getElementById('ivxOv'), D=IV.D, k=FM.findIndex(f=>f[0]===IV.fmt);
+  const st=(window.upiStatus&&window.upiStatus(D.id))||'';
+  o.innerHTML=`<div class="iv-tp"><span class="ok">✓</span><div><b>Bill ban gaya! · ${R(D.grand)}</b><small>${E(D.id)} · ${E(D.tm)} · ${E(D.mode)} · ${D.c?E(D.c.n):'Walk-in'}</small></div><button onclick="ivX()" aria-label="Band">✕</button></div>
+   <div class="ivz-car" id="ivCar">${FM.map(f=>`<section class="ivz-sl" data-f="${f[0]}"><div class="iv-sc"><div class="iv-pw ${f[0]}">${paper(D,f[0])}</div></div></section>`).join('')}</div>
+   <div class="ivz-nav">${FM.map((f,i)=>`<button class="${i===k?'on':''}" onclick="ivGoSl(${i})">${f[2]}</button>`).join('')}<span>← swipe →</span></div>
+   ${IV.qr&&D.mode!=='Cash'?`<div class="ivz-pay ${st}" id="ivzPay">${st==='paid'?`<b>✓ ${R(D.grand)} mil gaye</b><small>UPI payment history mein save</small>`:`<i></i><b>Payment ka intezaar · ${R(D.grand)}</b><button onclick="upiMark('${E(D.id)}',${D.grand})">✓ Paisa mil gaya</button>`}</div>`:''}
+   <div class="iv-bb ivz-bb"><button class="sh" onclick="ivShare()"><em>📤</em><span><b>Bhejein / Print</b><small>WhatsApp · Photo · Printer · PDF</small></span></button><button class="dn" onclick="ivX()" aria-label="Done">✓<small>Done</small></button></div>`;
+  const car=document.getElementById('ivCar'); requestAnimationFrame(()=>{ car.scrollLeft=k*car.clientWidth; ivFit(); });
+  let tm=null; car.addEventListener('scroll',()=>{ clearTimeout(tm); tm=setTimeout(()=>{ const i=Math.round(car.scrollLeft/car.clientWidth), f=FM[i]&&FM[i][0]; if(f&&f!==IV.fmt){ IV.fmt=f; try{ localStorage.setItem('ivFmt',f); }catch(e){} o.querySelectorAll('.ivz-nav button').forEach((b,j)=>b.classList.toggle('on',j===i)); setTimeout(ivPrep,30); } },90); },{passive:true}); }
+window.ivGoSl=i=>{ const car=document.getElementById('ivCar'); if(car) car.scrollTo({left:i*car.clientWidth,behavior:'smooth'}); };
+function ivFit(){ document.querySelectorAll('#ivxOv .ivz-sl').forEach(sl=>{ const w=sl.querySelector('.iv-pw'), sc=sl.querySelector('.iv-sc'); if(!w||!sc) return; const p=w.firstElementChild; w.style.height=''; p.style.transform='';
+  if(w.classList.contains('a4')){ const s=Math.min(1,(sc.clientWidth-24)/794); p.style.transform=`scale(${s})`; w.style.height=(p.offsetHeight*s)+'px'; w.style.width=(794*s)+'px'; } else w.style.width=''; }); }
 window.addEventListener('resize',()=>{ if(document.getElementById('ivxOv')&&document.getElementById('ivxOv').classList.contains('on')) ivFit(); });
 window.ivFmt=f=>{ IV.fmt=f; try{ localStorage.setItem('ivFmt',f); }catch(e){} const sc=document.getElementById('ivSc'), t=sc?sc.scrollTop:0; ivR(); setTimeout(ivPrep,30); };
 window.ivQr=()=>{ IV.qr=!IV.qr; IV.cache={}; ivR(); setTimeout(ivPrep,30); };
@@ -26130,7 +26133,7 @@ const UK='1qr_upi';
 function upiGet(){ try{ const v=JSON.parse(localStorage.getItem(UK)||'null'); if(v&&v.id) return v; }catch(e){} return {id:'ashugarments@okaxis',name:'',def:1}; }
 try{ const u=upiGet(); if(typeof SHOP!=='undefined'){ SHOP.upi=u.id; if(u.name) SHOP.nm=u.name; } }catch(e){}
 const css=`
-.upz-ov{position:fixed;inset:0;z-index:400;background:rgba(20,14,8,.5);display:flex;align-items:flex-end;justify-content:center}
+.upz-ov{position:fixed;inset:0;z-index:100400;background:rgba(20,14,8,.5);display:flex;align-items:flex-end;justify-content:center}
 .upz{width:100%;max-width:430px;background:#FDFAF3;border-radius:24px 24px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));animation:sqzIn .3s ease both}
 .upz h3{margin:0 0 4px;font-size:17px}.upz p{margin:0 0 12px;font-size:12.5px;color:#7a7263;font-weight:600}
 .upz label{display:block;font-size:11.5px;font-weight:800;color:#8a7f68;margin:10px 2px 4px;letter-spacing:.3px}
@@ -26202,7 +26205,7 @@ window.upiSet=function(after){ const u=upiGet(); const o=document.createElement(
     try{ localStorage.setItem(UK,JSON.stringify({id:v,name:N.value.trim()})); }catch(e){} try{ SHOP.upi=v; if(N.value.trim()) SHOP.nm=N.value.trim(); }catch(e){}
     o.remove(); toast('✅ UPI save — ab har bill par aapka QR aayega'); if(typeof after==='function') after(); }; };
 /* bill sheet me UPI chip */
-new MutationObserver(()=>{ const ch=document.querySelector('#ivxOv .iv-ch'); if(ch&&!ch.querySelector('.upz-chip')){ const u=upiGet(); const b=document.createElement('button'); b.className='upz-chip'; b.textContent=u.def?'💳 Apni UPI ID daalein':'💳 '+u.id+' ✎'; b.onclick=()=>upiSet(()=>{ try{ ivQr(); ivQr(); }catch(e){} }); ch.insertBefore(b,ch.querySelector('span')); } }).observe(document.body,{childList:true,subtree:true});
+new MutationObserver(()=>{ const ch=document.querySelector('#ivxOv .ivz-nav'); if(ch&&!ch.querySelector('.upz-chip')){ const u=upiGet(); const b=document.createElement('button'); b.className='upz-chip'; b.textContent=u.def?'💳 Apni UPI ID daalein':'💳 '+u.id+' ✎'; b.onclick=()=>upiSet(()=>{ try{ ivQr(); ivQr(); }catch(e){} }); ch.insertBefore(b,ch.querySelector('span')); } }).observe(document.body,{childList:true,subtree:true});
 /* POS heading me UPI button */
 function posUpiBtn(){ const h=[...document.querySelectorAll('#sdOv .sd-sec')].find(x=>/POS/.test(x.textContent)); if(h&&!h.querySelector('.pos-upi')){ const b=document.createElement('button'); b.className='pos-upi'; b.textContent='💳 UPI'; b.onclick=()=>upiSet(); const s=h.querySelector('.pos-set'); if(s) s.after(b); else h.appendChild(b); } }
 const _osd=openSellerDash; window.openSellerDash=openSellerDash=function(){ const r=_osd.apply(this,arguments); setTimeout(posUpiBtn,500); return r; }; openSellerDash._zx303=1;
@@ -26272,6 +26275,118 @@ window.bczDl=async function(){ toast('⏳ Card ki photo ban rahi hai…'); try{ 
 window.bczShare=async function(){ const s=SHOPS[BCZ], url=bcUrl(BCZ), tx=`🏪 *${s[0]}*\n${s[1]} ${s[2]} · ⭐ ${s[4]}\n📞 ${bcPhone(BCZ)}\n\nHamari digital dukaan dekhein, order karein 👇\n${url}`;
   try{ const b=await bczBlob(); if(b&&await karoFile(b,slug(s[0])+'-card.png',tx,'share')) return; if(b){ const f=new File([b],'card.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],text:tx}); return; } } }catch(e){ if(e&&e.name==='AbortError') return; }
   window.open('https://wa.me/?text='+encodeURIComponent(tx),'_blank'); };
+})();
+
+/* ===== V324: invoice carousel UI, UPI payment history, Back se sheet band, freeze guard, ticker patti ===== */
+(function(){
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const R=n=>'₹'+Math.round(+n||0).toLocaleString('en-IN');
+const css=`
+/* invoice */
+#ivxOv .iv-fm,#ivxOv .iv-ch{display:none!important}
+#ivxOv .iv-tp b{font-size:16px}
+.ivz-car{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;background:#EFE7D6}
+.ivz-car::-webkit-scrollbar{display:none}
+.ivz-sl{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;min-width:0}
+.ivz-sl .iv-sc{flex:1;overflow:auto;padding:14px 12px 18px}
+.ivz-nav{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#fff;border-top:1px solid #e9dfcb;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.ivz-nav::-webkit-scrollbar{display:none}
+.ivz-nav button{flex:none;border:1px solid #E6DAC1;background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;font-weight:800;color:#6b5a3a;cursor:pointer}
+.ivz-nav button.on{background:#17130f;border-color:#17130f;color:#F5D58A}
+.ivz-nav span{margin-left:auto;font-size:10.5px;color:#a39880;font-weight:700;white-space:nowrap}
+.ivz-nav .upz-chip{margin-left:4px;padding:6px 10px!important}
+.ivz-pay{display:flex;align-items:center;gap:10px;margin:0;padding:9px 14px;background:#FFF8E8;border-top:1px solid #F1DFB4;flex-shrink:0}
+.ivz-pay i{width:10px;height:10px;border-radius:50%;background:#F2A01E;box-shadow:0 0 0 0 rgba(242,160,30,.6);animation:ivzP 1.4s infinite}
+@keyframes ivzP{70%{box-shadow:0 0 0 10px rgba(242,160,30,0)}}
+.ivz-pay b{flex:1;font-size:13px;color:#7a5410}.ivz-pay small{font-size:11.5px;color:#4b7a5e;font-weight:700}
+.ivz-pay button{border:0;background:#16A34A;color:#fff;border-radius:999px;padding:8px 13px;font:inherit;font-weight:800;font-size:12.5px;cursor:pointer}
+.ivz-pay.paid{background:#EAF8F0;border-color:#C6EBD5}.ivz-pay.paid b{color:#0a7a4a}
+.ivz-bb{gap:10px!important;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px))!important}
+.ivz-bb .sh{flex:1;display:flex!important;flex-direction:row!important;height:auto!important;min-height:58px;align-items:center;gap:12px;justify-content:flex-start!important;text-align:left;padding:10px 16px!important;border-radius:18px!important}
+.ivz-bb .sh em{font-style:normal;font-size:22px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center}
+.ivz-bb .sh span{display:flex;flex-direction:column}.ivz-bb .sh b{font-size:16px}.ivz-bb .sh small{font-size:11px;opacity:.9;font-weight:600}
+.ivz-bb .dn{flex:none!important;width:64px;border-radius:18px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;font-size:22px!important;line-height:1;padding:6px!important}
+.ivz-bb .dn small{font-size:10.5px;font-weight:800;margin-top:3px}
+/* UPI history */
+.uph{width:100%;max-width:430px;max-height:86vh;overflow:auto;background:#FDFAF3;border-radius:24px 24px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.uph h3{margin:0;font-size:17px}.uph .sub{font-size:12px;color:#7a7263;font-weight:600;margin:4px 0 12px}
+.uph .tot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.uph .tot div{background:#fff;border:1px solid #ece3d2;border-radius:14px;padding:10px;text-align:center}.uph .tot b{display:block;font-size:16px}.uph .tot small{font-size:10.5px;color:#8a7f68;font-weight:700}
+.uph .tot .g b{color:#0a8a55}.uph .tot .p b{color:#B8650A}
+.uph .row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ece3d2;border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.uph .row i{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:16px;background:#FFF1D6}
+.uph .row.paid i{background:#E3F6EC}
+.uph .row div{flex:1;min-width:0}.uph .row b{display:block;font-size:13.5px}.uph .row small{display:block;font-size:11.5px;color:#7a7263}
+.uph .row strong{font-size:14px}.uph .row button{border:0;background:#16A34A;color:#fff;border-radius:999px;padding:6px 10px;font:inherit;font-size:11.5px;font-weight:800;cursor:pointer;margin-left:6px}
+.uph .note{font-size:11.5px;color:#7a6a4e;background:#FFF8E8;border:1px dashed #EBCF8F;border-radius:12px;padding:9px 11px;margin-top:8px;line-height:1.45}
+.uph .bt{display:flex;gap:8px;margin-top:12px}.uph .bt button{flex:1;border:1.5px solid #EADFC8;background:#fff;border-radius:14px;padding:12px;font:inherit;font-weight:800;cursor:pointer}
+/* ticker patti: profile ke peeche se nikalti, chalti rahe */
+#shopBody .scz-st{left:58px!important;right:12px!important;max-width:none!important;width:auto!important;padding:6px 0 6px 52px!important;overflow:hidden;z-index:1!important;border-radius:0 999px 999px 0!important;display:block!important;
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 0,#000 85%,transparent)}
+#shopBody .sl-av{z-index:3!important}
+#shopBody .scz-st .tkz{display:inline-flex;gap:18px;white-space:nowrap;animation:tkz 22s linear infinite;padding-right:18px}
+#shopBody .scz-st .tkz span{display:inline-flex!important;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#3a3226}
+#shopBody .scz-st .tkz b{color:#17130f}
+#shopBody .scz-st .tkz em{font-style:normal;color:#0a8a55;font-weight:800}
+#shopBody .scz-st .tkz i.d{width:4px;height:4px;border-radius:50%;background:#D9C59A;display:inline-block}
+@keyframes tkz{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+/* ---------- UPI payment history ---------- */
+const PK='1qr_upipaid';
+const pget=()=>{ try{ return JSON.parse(localStorage.getItem(PK)||'{}'); }catch(e){ return {}; } };
+const pset=o=>{ try{ localStorage.setItem(PK,JSON.stringify(o)); }catch(e){} };
+window.upiStatus=id=>pget()[id]?'paid':'';
+window.upiMark=function(id,amt){ const o=pget(); o[id]={a:+amt,t:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),d:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})}; pset(o);
+  try{ navigator.vibrate&&navigator.vibrate([30,40,30]); }catch(e){} toast('✅ '+R(amt)+' UPI se mil gaye — history mein save');
+  const el=document.getElementById('ivzPay'); if(el){ el.className='ivz-pay paid'; el.innerHTML=`<b>✓ ${R(amt)} mil gaye</b><small>UPI payment history mein save</small>`; }
+  const ov=document.querySelector('.uph-ov'); if(ov){ ov.remove(); upiHist(); } };
+window.upiHist=function(){ let bills=[]; try{ bills=sdBills||[]; }catch(e){} const P=pget();
+  const L=bills.filter(b=>b&&b[0]&&((b[5]||'')==='UPI'||P[b[0]])).map(b=>({id:b[0],a:+b[2],tm:b[3],c:b[7]||'Walk-in',p:P[b[0]]}));
+  const got=L.filter(x=>x.p).reduce((s,x)=>s+x.a,0), pen=L.filter(x=>!x.p).reduce((s,x)=>s+x.a,0);
+  let upi=''; try{ upi=(JSON.parse(localStorage.getItem('1qr_upi')||'null')||{}).id||''; }catch(e){}
+  const o=document.createElement('div'); o.className='upz-ov uph-ov'; o.onclick=e=>{ if(e.target===o) o.remove(); };
+  o.innerHTML=`<div class="uph"><h3>💳 UPI payment history</h3><div class="sub">${upi?'UPI: '+esc(upi):'UPI ID abhi set nahi'} · aaj ke bill</div>
+   <div class="tot"><div class="g"><b>${R(got)}</b><small>MIL GAYE</small></div><div class="p"><b>${R(pen)}</b><small>BAAKI</small></div><div><b>${L.length}</b><small>UPI BILL</small></div></div>
+   ${L.length?L.map(x=>`<div class="row ${x.p?'paid':''}"><i>${x.p?'✓':'⏳'}</i><div><b>${esc(x.c)} · ${esc(x.id)}</b><small>${x.p?'Mila '+esc(x.p.d)+', '+esc(x.p.t):'Bill '+esc(x.tm)+' · intezaar'}</small></div><strong>${R(x.a)}</strong>${x.p?'':`<button onclick="upiMark('${esc(x.id)}',${x.a})">✓ Mila</button>`}</div>`).join(''):'<div class="row"><div><b>Abhi koi UPI bill nahi</b><small>Bill banate waqt payment mein UPI chunein</small></div></div>'}
+   <div class="note">ℹ️ PhonePe / GPay ki UPI ID par aaya paisa app apne-aap nahi dekh sakta — ye bank ka data hai. Abhi "✓ Mila" dabakar history rakhein. Paisa aate hi apne-aap "Paid" ho, iske liye Razorpay / PhonePe Business jaisa payment gateway jodna hoga.</div>
+   <div class="bt"><button onclick="upiSet()">⚙️ UPI ID badlein</button><button onclick="this.closest('.uph-ov').remove()">Band</button></div></div>`;
+  document.body.appendChild(o); };
+/* POS ke UPI button par history bhi */
+document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('.pos-upi'); if(!b) return; e.stopPropagation(); e.preventDefault(); upiHist(); },true);
+
+/* ---------- Android Back: pehle upar wali cheez band ---------- */
+window.karoBack=function(){ try{
+  const rm=sel=>{ const e=document.querySelector(sel); if(e){ e.remove(); return true; } return false; };
+  if(rm('.upz-ov')||rm('.sqz-tx-ov')||rm('#ivShO')||rm('#ivNc')||rm('.iv-ncw')) return 'closed';
+  const zx=document.getElementById('zxVL'); if(zx){ zx.click(); return 'closed'; }
+  const qv=document.querySelector('#vcOv.on .vc9-qv'); if(qv&&typeof vcQx==='function'){ vcQx(); return 'closed'; }
+  const iv=document.getElementById('ivxOv'); if(iv&&iv.classList.contains('on')){ ivX(); return 'closed'; }
+  const vc=document.getElementById('vcOv'); if(vc&&vc.classList.contains('on')){ vcClose(); return 'closed'; }
+  const pq=document.getElementById('pqOv'); if(pq&&pq.classList.contains('open')){ try{ pqClose(); }catch(e){ closeSm('pqOv'); } return 'closed'; }
+  const sh=document.getElementById('sdSh'); if(sh&&(sh.classList.contains('on')||sh.classList.contains('open'))&&typeof sdShClose==='function'){ sdShClose(); return 'closed'; }
+  const ops=[...document.querySelectorAll('.cfm-ov.open,.sm-ov.open')].filter(e=>e.id).sort((a,b)=>(+getComputedStyle(b).zIndex||0)-(+getComputedStyle(a).zIndex||0));
+  if(ops.length){ closeSm(ops[0].id); return 'closed'; }
+  const sd=document.getElementById('sdOv'); if(sd&&sd.classList.contains('on')){ closeSellerDash(); return 'closed'; }
+  }catch(e){} return 'none'; };
+
+/* ---------- freeze guard: koi adrishya parda taps na roke ---------- */
+let zxSeen=0;
+setInterval(()=>{ try{
+  const zx=document.getElementById('zxVL'); if(zx){ zxSeen=zxSeen||Date.now(); if(Date.now()-zxSeen>5000){ zx.remove(); zxSeen=0; } } else zxSeen=0;
+  const W=innerWidth, H=innerHeight; [[W/2,H/2],[W/2,H*.8]].forEach(([x,y])=>{ let el=document.elementFromPoint(x,y); for(let n=el;n&&n!==document.body;n=n.parentElement){ const cs=getComputedStyle(n);
+      if(cs.position==='fixed'&&n.offsetWidth>=W*.9&&n.offsetHeight>=H*.9){ if(+cs.opacity<.05&&cs.pointerEvents!=='none'){ if(n.dataset.fg1){ n.style.pointerEvents='none'; n.dataset.fg='1'; console.log('[freeze-guard] unblocked',n.id||n.className); } else n.dataset.fg1='1'; } else delete n.dataset.fg1; break; } } });
+  document.querySelectorAll('[data-fg]').forEach(n=>{ if(+getComputedStyle(n).opacity>.5){ n.style.pointerEvents=''; delete n.dataset.fg; delete n.dataset.fg1; } });
+}catch(e){} },1500);
+
+/* ---------- ticker patti ---------- */
+function tick(){ const s=document.querySelector('#shopBody .scz-st'); if(!s||s.querySelector('.tkz')) return; const i=(typeof shCur==='number')?shCur:0, sh=SHOPS[i]||[];
+  const seed=String(sh[0]||'').length*37+(+sh[5]||50)*13, v=1200+seed*7, f=300+seed*3, fmt=n=>n>=1000?(n/1000).toFixed(1).replace('.0','')+'K':n;
+  const items=[`👁 <b>${fmt(v)}</b> visits`,`👥 <b>${fmt(f)}</b> followers`,`🟢 <em>${3+seed%9} log</em> abhi dekh rahe`,`🛍️ <b>${120+seed%300}</b> orders`,`⭐ <b>${sh[4]||'4.7'}</b> (${sh[5]||0} reviews)`,`📦 <b>${200+seed%400}</b> items`,`🕘 9 AM – 9 PM`,`📍 ${esc(sh[3]||'')}`];
+  const row=items.map(x=>`<span>${x}</span><i class="d"></i>`).join('');
+  s.innerHTML=`<div class="tkz">${row}${row}</div>`; }
+new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getElementById('shopOv')||document.body,{childList:true,subtree:true});
 })();
 
 </script>
