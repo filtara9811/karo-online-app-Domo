@@ -16,11 +16,13 @@
 
 name: Build Customer APK
 
+# Nayi APK sirf tab banti hai jab app/version.txt badle ("go ahead" par Claude badalta hai)
+# ya Actions → Run workflow dabayein. docs/ ke badlav APK banaye bina seedhe LIVE jaate hain.
 on:
   workflow_dispatch:
   push:
     branches: [main, master]
-    paths: ['app/**', 'docs/**', '.github/workflows/build.yml']
+    paths: ['app/version.txt']
 
 jobs:
   build:
@@ -38,6 +40,11 @@ jobs:
           cp -r docs/. app/assets/web/
           rm -f app/assets/web/.nojekyll
           ls -la app app/assets/web
+
+      - name: Hamesha ek hi signing key (taaki nayi APK purani ke upar update ho jaye)
+        run: |
+          mkdir -p ~/.android
+          cp signing/test-debug.keystore ~/.android/debug.keystore
 
       - uses: actions/setup-java@v4
         with:
