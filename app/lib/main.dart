@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gal/gal.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -93,6 +95,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF3ECDD))
       ..addJavaScriptChannel('KaroApp', onMessageReceived: (m) => _openExternal(m.message))
+      ..addJavaScriptChannel('KaroFile', onMessageReceived: (m) => _onFile(m.message))
       ..setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) async {
           await _c.runJavaScript(_bridge);
@@ -294,6 +297,39 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  /// Web se file (bill photo / PDF / card): share = WhatsApp wagairah, save = gallery me
+  Future<void> _onFile(String raw) async {
+    try {
+      final j = jsonDecode(raw) as Map<String, dynamic>;
+      final name = ('${j['name'] ?? 'karo-online.png'}').replaceAll(RegExp(r'[^\w.\-]'), '_');
+      final bytes = base64Decode('${j['b64'] ?? ''}');
+      final text = '${j['text'] ?? ''}';
+      final act = '${j['act'] ?? 'share'}';
+      final dir = await getTemporaryDirectory();
+      final f = File('${dir.path}/$name');
+      await f.writeAsBytes(bytes, flush: true);
+      if (act == 'save' && (name.endsWith('.png') || name.endsWith('.jpg'))) {
+        try {
+          if (!await Gal.hasAccess()) await Gal.requestAccess();
+          await Gal.putImage(f.path, album: 'Karo Online');
+          _snack('✓ Photo gallery me save ho gayi (Karo Online album)');
+          return;
+        } catch (_) {
+          // gallery nahi mili to share sheet se save karne do
+        }
+      }
+      await Share.shareXFiles([XFile(f.path, mimeType: '${j['mime'] ?? ''}'.isEmpty ? null : '${j['mime']}')],
+          text: text.isEmpty ? null : text);
+    } catch (_) {
+      _snack('File bhej nahi paye — dobara try karein');
+    }
+  }
+
+  void _snack(String t) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t)));
   }
 
   Future<void> _onPermission(WebViewPermissionRequest req) async {

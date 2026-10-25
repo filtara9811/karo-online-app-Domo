@@ -85,6 +85,7 @@ jobs:
               <uses-permission android:name="android.permission.RECORD_AUDIO"/>
               <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
               <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/>
           '''
           if 'android.permission.INTERNET' not in s:
               s=s.replace('<application','%s<application'%perms,1)
