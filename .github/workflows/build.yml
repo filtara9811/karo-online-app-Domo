@@ -1,5 +1,9 @@
 # Karo Online — Customer APK (phone se hi build)
-# Kaise chalayein: repo me ZIP upload karte hi ye apne-aap chalega,
+# Repo ka dhaancha:
+#   docs/  = ऐप ki screens (prototype) — yahi GitHub Pages par LIVE chalta hai,
+#            ऐप khulte hi yahin se taaza version leti hai (APK dobara install nahi)
+#   app/   = Flutter ऐप (WebView) — docs/ ki copy offline backup ke roop me andar
+# Kaise chalayein: app/ ya docs/ me badlav push hote hi apne-aap,
 # ya Actions → "Build Customer APK" → Run workflow.
 # 10-12 minute baad: Actions → is run par tap → neeche "Artifacts" → karo-online-apk (ZIP) download.
 #
@@ -16,7 +20,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main, master]
-    paths: ['**.zip', '.github/workflows/build.yml']
+    paths: ['app/**', 'docs/**', '.github/workflows/build.yml']
 
 jobs:
   build:
@@ -28,14 +32,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: ZIP se code nikalo
+      - name: Screens (docs/) ko ऐप ke andar offline copy ke roop me rakho
         run: |
-          Z=$(ls -t *.zip | head -1)
-          echo "ZIP mili: $Z"
-          mkdir -p /tmp/src && unzip -q -o "$Z" -d /tmp/src
-          D=$(dirname "$(find /tmp/src -name pubspec.yaml | head -1)")
-          mkdir -p app && cp -r "$D"/. app/
-          ls -la app
+          mkdir -p app/assets/web
+          cp -r docs/. app/assets/web/
+          rm -f app/assets/web/.nojekyll
+          ls -la app app/assets/web
 
       - uses: actions/setup-java@v4
         with:
