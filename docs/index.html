@@ -25880,6 +25880,235 @@ document.addEventListener('touchend',e=>{ if(!ok) return; ok=false; const t=e.ch
 const _o=openSellerDash; window.openSellerDash=openSellerDash=function(){ const r=_o.apply(this,arguments); setTimeout(()=>{ try{ counts(); let seen=false; try{ seen=localStorage.getItem('1qr_sdx')==='1'; }catch(e){} if(!seen){ try{ localStorage.setItem('1qr_sdx','1'); }catch(e){} const h=document.createElement('div'); h.className='sdx-hint'; h.textContent='👆 Baayein-daayein swipe karke Leads / My Shop badlein'; document.getElementById('sdOv').appendChild(h); setTimeout(()=>h.remove(),2800); } }catch(e){} },400); return r; }; openSellerDash._zx303=1;
 })();
 
+/* ===== V320: scanner — torch, gallery se QR, koi bhi QR seedha khule, bada scan area, sahi dukaan match ===== */
+(function(){
+const css=`
+#scOv .sc-view{height:min(360px,46vh)!important}
+#scOv .sc-frame{inset:22px 30px!important}
+#scOv .sqz-line{left:34px;right:34px}
+.sqz-gl{position:absolute;right:12px;bottom:12px;z-index:4;display:flex;gap:10px}
+.sqz-gl button{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.35);position:relative;padding:0}
+.sqz-gl button svg{width:21px;height:21px}
+.sqz-gl button.on{background:rgba(255,214,120,.92);color:#3a2a06;border-color:#FFE7A8;box-shadow:0 0 22px rgba(255,200,80,.7)}
+.sqz-gl button.off{opacity:.45}
+.sqz-gl input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.sqz-gl small{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);font-size:9.5px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);white-space:nowrap}
+.sqz-oth{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #ece3d2;border-radius:16px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;width:100%;animation:sqzIn .4s ease both}
+.sqz-oth.hit{border-color:#0FA968;box-shadow:0 0 0 3px rgba(15,169,104,.18)}
+.sqz-oth i{flex:none;width:42px;height:42px;border-radius:12px;background:#FFF1D6;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:20px}
+.sqz-oth div{flex:1;min-width:0}.sqz-oth b{display:block;font-size:13.5px;color:#2B2B2B}
+.sqz-oth span{display:block;font-size:11.5px;color:#7a7263;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sqz-tx-ov{position:fixed;inset:0;z-index:300;background:rgba(20,14,8,.5);display:flex;align-items:flex-end;justify-content:center}
+.sqz-tx-ov>div{width:100%;max-width:430px;background:#FDFAF3;border-radius:24px 24px 0 0;padding:18px 18px 24px}
+.sqz-tx-ov h4{margin:0 0 10px;font-size:16px}.sqz-tx-ov pre{white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid #ece3d2;border-radius:14px;padding:12px;font:inherit;font-size:14px;max-height:40vh;overflow:auto;margin:0 0 12px}
+.sqz-tx-ov .bt{display:flex;gap:8px}.sqz-tx-ov button{flex:1;border:none;border-radius:14px;padding:12px;font:inherit;font-weight:800;cursor:pointer;background:#EE6A0D;color:#fff}.sqz-tx-ov button.g{background:#efe6d3;color:#3a342a}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const slug=t=>String(t||'').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+/* ---- dukaan pehchaan: URL / slug / naam ---- */
+window.scFind=scFind=function(t){ t=(t||'').trim(); if(!t) return -1; let s=t;
+  try{ if(/^https?:\/\//i.test(t)){ const u=new URL(t); s=u.pathname.includes('/s/')?u.pathname.split('/s/').pop():u.pathname.split('/').filter(Boolean).pop()||''; if(!/karoonline|1qr/i.test(u.hostname)&&!u.pathname.includes('/s/')) return -1; } }catch(e){}
+  s=slug(decodeURIComponent(s.split('?')[0].split('#')[0])); if(!s) return -1;
+  const SL=SHOPS.map(x=>slug(x[0]));
+  let i=SL.indexOf(s); if(i>=0) return i;
+  const q=(typeof QR_DATA!=='undefined')?QR_DATA.find(x=>x.s===s||x.p===t):null; if(q){ const j=SL.indexOf(q.s); if(j>=0) return j; }
+  const w=s.split('-').filter(x=>x.length>2); if(w.length){ i=SL.findIndex(n=>{ const nw=n.split('-'); return w.every(x=>nw.includes(x)); }); if(i>=0) return i; }
+  try{ const me=slug((VS&&VS.name)||''); if(me&&(me===s||w.every(x=>me.split('-').includes(x)))) return MY_SHOP; }catch(e){}
+  return -1; };
+/* ---- koi bhi QR: dukaan → seedha dukaan, link → khule, UPI → payment app, baaki → text ---- */
+function kind(t){ if(/^upi:/i.test(t)) return ['upi','💳','UPI payment']; if(/^https?:\/\//i.test(t)) return ['url','🔗','Website link']; if(/^tel:/i.test(t)) return ['tel','📞','Phone number'];
+  if(/^(mailto:|MATMSG)/i.test(t)) return ['mail','✉️','Email']; if(/^WIFI:/i.test(t)) return ['wifi','📶','Wi-Fi']; if(/^BEGIN:VCARD/i.test(t)) return ['card','👤','Contact card']; return ['text','📝','Text']; }
+function upiName(t){ try{ const m=t.match(/[?&]pn=([^&]+)/i); return m?decodeURIComponent(m[1].replace(/\+/g,' ')):''; }catch(e){ return ''; } }
+function textSheet(t,title){ const o=document.createElement('div'); o.className='sqz-tx-ov'; o.onclick=e=>{ if(e.target===o) o.remove(); };
+  o.innerHTML=`<div><h4>${esc(title)}</h4><pre>${esc(t)}</pre><div class="bt"><button class="g" id="sqzCl">Band</button><button id="sqzCp">📋 Copy</button></div></div>`; document.body.appendChild(o);
+  o.querySelector('#sqzCl').onclick=()=>o.remove(); o.querySelector('#sqzCp').onclick=()=>{ try{ navigator.clipboard.writeText(t); toast('📋 Copy ho gaya'); }catch(e){ toast('Copy nahi hua'); } }; }
+window.sqzOpenRaw=function(t){ const k=kind(t)[0];
+  if(k==='url'){ toast('🔗 Link khul raha hai…'); window.open(t,'_blank'); }
+  else if(k==='upi'||k==='tel'){ toast(k==='upi'?'💳 Payment app khul raha hai…':'📞 Call…'); window.open(t,'_blank'); }
+  else if(k==='mail'&&/^mailto:/i.test(t)){ window.open(t,'_blank'); }
+  else textSheet(t,kind(t)[2]); };
+let lastRaw='', lastAt=0;
+scDone=function(t){ t=String(t||'').trim(); if(!t||scLock) return; if(t===lastRaw&&Date.now()-lastAt<4000) return; lastRaw=t; lastAt=Date.now();
+  try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){}
+  const i=scFind(t), h=scHistGet();
+  if(i>=0){ scLock=true; scStop(); h.push({i,t:tnow()}); scHistSet(h.slice(-50)); toast('✔ '+SHOPS[i][0]); closeSm('scOv'); setTimeout(()=>{ scLock=false; openShop(i); },220); return; }
+  h.push({u:t,t:tnow()}); scHistSet(h.slice(-50)); window._sqzHitRaw=t; try{ sqzRender(); }catch(e){}
+  scLock=true; sqzOpenRaw(t); setTimeout(()=>{ scLock=false; },2500); };
+/* history mein dusre QR bhi */
+const _sr=sqzRender; window.sqzRender=sqzRender=function(){ const r=_sr.apply(this,arguments); try{ const L=document.getElementById('sqzList'); if(!L) return r;
+  const oth=scHistGet().filter(x=>x.u).reverse(); const seen=new Set(); const rows=oth.filter(x=>{ if(seen.has(x.u)) return false; seen.add(x.u); return true; }).slice(0,8);
+  if(rows.length){ L.insertAdjacentHTML('afterbegin',rows.map((x,k)=>{ const K=kind(x.u), nm=K[0]==='upi'?(upiName(x.u)||'UPI payment'):K[2]; return `<button class="sqz-oth ${x.u===window._sqzHitRaw?'hit':''}" data-raw="${esc(x.u)}"><i>${K[1]}</i><div><b>${esc(nm)} · ${esc(x.t)}</b><span>${esc(x.u)}</span></div><div class="sqz-go" style="flex:none;width:30px">›</div></button>`; }).join(''));
+    L.querySelectorAll('.sqz-oth').forEach(b=>b.onclick=()=>sqzOpenRaw(b.dataset.raw)); document.getElementById('sqzH').textContent='🕘 Scan history + aas-paas ki dukaanein'; } }catch(e){} return r; };
+/* ---- glass buttons: torch + gallery ---- */
+(function(){ const vw=document.querySelector('#scOv .sc-view'); if(!vw||vw.querySelector('.sqz-gl')) return;
+  vw.insertAdjacentHTML('beforeend',`<div class="sqz-gl"><button id="sqzGal" aria-label="Gallery se QR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><input type="file" accept="image/*" id="sqzGalI"><small>Gallery</small></button><button id="sqzTorch" aria-label="Torch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 6H9z"/><path d="M9 8v4l-1 2v8h8v-8l-1-2V8"/><path d="M12 14v3"/></svg><small>Torch</small></button></div>`);
+  document.getElementById('sqzTorch').onclick=sqzTorch; document.getElementById('sqzGalI').onchange=function(){ sqzGal(this); }; })();
+let torchOn=false;
+function track(){ try{ return scStream&&scStream.getVideoTracks()[0]; }catch(e){ return null; } }
+window.sqzTorch=async function(){ const tr=track(), b=document.getElementById('sqzTorch'); if(!tr){ toast('Pehle camera chalu hone dein'); return; }
+  const cap=tr.getCapabilities?tr.getCapabilities():{}; if(!cap.torch){ toast('🔦 Is phone ke camera mein torch control nahi mila'); b.classList.add('off'); return; }
+  try{ torchOn=!torchOn; await tr.applyConstraints({advanced:[{torch:torchOn}]}); b.classList.toggle('on',torchOn); toast(torchOn?'🔦 Torch ON':'Torch OFF'); }catch(e){ torchOn=false; b.classList.remove('on'); toast('Torch chalu nahi ho payi'); } };
+const _stop=scStop; scStop=function(){ torchOn=false; const b=document.getElementById('sqzTorch'); if(b) b.classList.remove('on'); return _stop.apply(this,arguments); };
+let jsqrP=null; function jsQRload(){ if(window.jsQR) return Promise.resolve(window.jsQR); if(jsqrP) return jsqrP; jsqrP=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js'; s.onload=()=>res(window.jsQR); s.onerror=rej; document.head.appendChild(s); }); return jsqrP; }
+window.sqzGal=async function(inp){ const f=inp.files&&inp.files[0]; inp.value=''; if(!f) return; toast('🔍 Photo mein QR dhoondh rahe hain…');
+  try{ const bmp=await createImageBitmap(f); let val='';
+    if('BarcodeDetector' in window){ try{ const r=await new BarcodeDetector({formats:['qr_code']}).detect(bmp); if(r&&r[0]) val=r[0].rawValue; }catch(e){} }
+    if(!val){ try{ const J=await jsQRload(); const sc=Math.min(1,1400/Math.max(bmp.width,bmp.height)); const c=document.createElement('canvas'); c.width=Math.round(bmp.width*sc); c.height=Math.round(bmp.height*sc); const x=c.getContext('2d'); x.drawImage(bmp,0,0,c.width,c.height); const d=x.getImageData(0,0,c.width,c.height); const r=J(d.data,c.width,c.height); if(r) val=r.data; }catch(e){} }
+    if(val){ lastRaw=''; scLock=false; scDone(val); } else toast('Is photo mein QR code nahi mila'); }catch(e){ toast('Photo khul nahi payi'); } };
+})();
+
+/* ===== V321: shop cover inline play, stats glass strip, video shop cleanup, sticky search, slim bottom bar ===== */
+(function(){
+const ICON={
+ cm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.6A8 8 0 1121 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01" stroke-width="2.6"/></svg>',
+ lk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.7 8.1 3.6 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.6 0 5.5 3.6 4.4 6.7C19.5 15.9 12 20.5 12 20.5z"/></svg>',
+ sh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l7 7-7 7"/><path d="M21 11h-9a8 8 0 00-8 8v1"/></svg>',
+ mo:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5.5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="18.5" r="1.8"/></svg>',
+ eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+ ppl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14a6 6 0 013.5 6"/></svg>',
+ snd:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 010 7"/></svg>',
+ mut:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>'};
+window.ZIC=ICON;
+const css=`
+/* --- shop cover --- */
+#shopOv .sl-cover{cursor:pointer}
+.scz-st{position:absolute;left:112px;right:66px;bottom:10px;z-index:4;display:flex;align-items:center;gap:10px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);color:#fff;font-size:11.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.18);width:max-content;max-width:calc(100% - 178px);white-space:nowrap;pointer-events:none}
+.scz-st span{display:inline-flex;align-items:center;gap:4px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.scz-st svg{width:14px;height:14px}
+.scz-st i{width:1px;height:12px;background:rgba(255,255,255,.45)}
+.scz-pp{position:absolute;left:50%;top:44%;z-index:4;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(0,0,0,.38);border:1.5px solid rgba(255,255,255,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff;opacity:0;transform:scale(.8);transition:all .25s;pointer-events:none}
+.scz-pp svg{width:26px;height:26px}
+#shopOv .sl-cover.scz-ps .scz-pp{opacity:1;transform:none}
+.scz-snd{position:absolute;right:14px;top:14px;z-index:5;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.scz-snd svg{width:18px;height:18px}
+/* --- video shop --- */
+#vcOv .vc9-tp .v11id,#vcOv .vc9-tp .v11bt{display:none!important}
+#vcOv .vc9-tp{background:none!important;box-shadow:none!important;pointer-events:none}
+#vcOv .vc9-tp .bk{pointer-events:auto;width:40px!important;height:40px!important;border-radius:50%!important;background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.4)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff!important;font-size:24px!important}
+.vcz-cart{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top,0px));z-index:30;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;padding:0}
+.vcz-cart i{position:absolute;right:-3px;top:-3px;min-width:17px;height:17px;border-radius:9px;background:#EE6A0D;color:#fff;font-size:10px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
+#vcOv .vc9-r .md video.vcz-v{width:100%;height:100%;object-fit:cover}
+#vcOv .ac .sn{display:none!important}
+.vcz-pf{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);cursor:pointer;color:#fff;text-align:left;font:inherit}
+.vcz-pf .av{flex:none;width:42px;height:42px;border-radius:50%;background:#fff center/cover no-repeat;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.vcz-pf b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcz-pf small{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;opacity:.92}
+.vcz-pf small em{font-style:normal;color:#FFD36B}
+#vcOv .ac .fl{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.35)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff!important}
+#vcOv .ac .fl.on{background:rgba(255,255,255,.9)!important;color:#17130f!important}
+#vcOv .vc9-rt{background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.3)!important;-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border-radius:999px!important;padding:8px 4px!important;gap:10px!important}
+#vcOv .vc9-rt button{background:none!important;color:#fff!important}
+#vcOv .vc9-rt button em{display:flex!important;align-items:center;justify-content:center;width:30px;height:30px}
+#vcOv .vc9-rt button em svg{width:24px;height:24px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+#vcOv .vc9-rt button.lk em{color:#FF3B5C;animation:vczPop .35s ease}
+#vcOv .vc9-rt button.lk em svg{fill:#FF3B5C}
+#vcOv .vc9-rt small{font-size:10.5px!important;font-weight:700}
+@keyframes vczPop{50%{transform:scale(1.35)}}
+/* --- home sticky search: poora dikhe --- */
+:root{--hsPeek:calc(30px + env(safe-area-inset-top,0px))!important}
+#hsPeek{height:calc(var(--hsPeek) + 2px)!important}
+#homeSheet .hs-bar.stuck{border-radius:18px 18px 0 0!important;padding-top:12px!important;padding-bottom:10px!important;z-index:7!important}
+/* --- neeche ki orange patti patli --- */
+.phone .bottom-nav{padding:3px 18px calc(4px + env(safe-area-inset-bottom,0px))!important;min-height:0!important}
+.phone .bottom-nav .nav-item{font-size:11px!important;gap:2px!important;padding:2px 0!important}
+.phone .bottom-nav .nav-item svg{width:20px!important;height:20px!important}
+.phone .bottom-nav .nb-wrap{margin:-30px 0 -2px!important}
+.phone .bottom-nav .nav-prof{transform:scale(.84);margin:-6px 0!important}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const fmt=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1).replace('.0','')+'K':String(n);
+
+/* ---------- 1. Shop cover: tap = play/pause (awaaz ke saath), koi popup nahi ---------- */
+window.shExpand=function(i,cv){ cv=cv||document.querySelector('#shopOv .sl-cover'); sczToggle(cv,true); };
+function sczToggle(cv,withSound){ if(!cv) return; const v=cv.querySelector('video.shv'); if(!v) return;
+  if(v.paused){ if(withSound) v.muted=false; v.play().catch(()=>{ v.muted=true; v.play().catch(()=>{}); }); cv.classList.remove('scz-ps'); }
+  else if(withSound&&v.muted){ v.muted=false; }
+  else { v.pause(); cv.classList.add('scz-ps'); }
+  sczSnd(cv); }
+function sczSnd(cv){ const b=cv.querySelector('.scz-snd'), v=cv.querySelector('video.shv'); if(b&&v) b.innerHTML=v.muted?ICON.mut:ICON.snd; }
+function sczDeco(i){ const cv=document.querySelector('#shopOv .sl-cover'); if(!cv) return; const s=SHOPS[i]||[];
+  const seed=(String(s[0]||'').length*37+(+s[5]||50)*13); const visits=1200+seed*7, fol=300+seed*3;
+  let el=cv.querySelector('.scz-st'); if(!el){ el=document.createElement('div'); el.className='scz-st'; cv.appendChild(el); }
+  el.innerHTML=`<span>${ICON.eye}${fmt(visits)} visits</span><i></i><span>${ICON.ppl}${fmt(fol)} followers</span>`;
+  if(!cv.querySelector('.scz-pp')){ cv.insertAdjacentHTML('beforeend',`<div class="scz-pp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><button class="scz-snd" aria-label="Awaaz"></button>`);
+    cv.querySelector('.scz-snd').addEventListener('click',e=>{ e.stopPropagation(); const v=cv.querySelector('video.shv'); if(!v) return; v.muted=!v.muted; if(v.paused) v.play().catch(()=>{}); sczSnd(cv); }); }
+  sczSnd(cv); }
+document.addEventListener('click',e=>{ const cv=e.target.closest&&e.target.closest('#shopOv .sl-cover'); if(!cv) return; const b=document.getElementById('shopBody'); if(b&&b.classList.contains('se-on')) return;
+  if(e.target.closest('.sl-back,.scz-snd,.sl-av,.vb9,button:not(.sl-play):not(.shp)')) return;
+  if(e.target.closest('.sl-play,.shp')){ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); try{ vcOpen(shCur); }catch(_){} return; }
+  e.preventDefault(); e.stopPropagation(); sczToggle(cv,true); },true);
+const _os=openShop; openShop=function(i){ const r=_os.apply(this,arguments); setTimeout(()=>{ try{ sczDeco(i); const top=document.querySelector('#shopOv button.vd'); if(top) top.setAttribute('onclick',`vcOpen(${i})`); }catch(e){} },700); return r; };
+
+/* ---------- 2. Video shop ---------- */
+let VSI=0;
+const _vo=window.vcOpen; window.vcOpen=vcOpen=function(i){ VSI=(typeof i==='number')?i:(typeof shCur==='number'?shCur:MY_SHOP); try{ const cv=document.querySelector('#shopOv .sl-cover video.shv'); if(cv) cv.pause(); }catch(e){} const r=_vo.apply(this,arguments); setTimeout(vczDeco,30); return r; };
+function vczDeco(){ const o=document.getElementById('vcOv'); if(!o||!o.classList.contains('on')) return; const i=VSI, s=SHOPS[i]||SHOPS[MY_SHOP];
+  /* pehli reel par dukaan ka video */
+  const r0=o.querySelector('.vc9-r[data-k="0"] .md'); if(r0&&!r0.querySelector('video.vcz-v')){ try{ const V=shVidOf(i); r0.innerHTML=`<video class="vcz-v" muted loop playsinline autoplay preload="auto" poster="${V.p}"><source src="${V.m}" type="video/mp4"><source src="${V.w}" type="video/webm"></video>`; const v=r0.querySelector('video'); v.play().catch(()=>{}); }catch(e){} }
+  /* Shop now ki jagah profile */
+  const av=(i===MY_SHOP&&typeof SE!=='undefined'&&SE.av)?SE.av:''; let kind=''; try{ kind=SHOP_KIND(i); }catch(e){}
+  o.querySelectorAll('.vc9-r .ac').forEach(ac=>{ if(ac.querySelector('.vcz-pf')) return; ac.insertAdjacentHTML('afterbegin',`<button class="vcz-pf" onclick="event.stopPropagation();vcClose();setTimeout(()=>openShop(${i}),200)"><span class="av" style="${av?`background-image:url('${av}')`:`background:${s[6]}`}">${av?'':s[1]}</span><span style="min-width:0"><b>${esc(s[0])}</b><small><em>★ ${s[4]}</em>(${s[5]}) · ${esc(kind)}</small></span></button>`); });
+  /* side rail icons */
+  o.querySelectorAll('.vc9-rt').forEach(rt=>{ const bs=rt.querySelectorAll('button'); [ICON.cm,ICON.lk,ICON.sh,ICON.mo].forEach((ic,k)=>{ const em=bs[k]&&bs[k].querySelector('em'); if(em&&!em.querySelector('svg')) em.innerHTML=ic; }); });
+  /* card / add to cart → popup (variations) */
+  o.querySelectorAll('.vc9-c').forEach(c=>{ if(c.dataset.z) return; c.dataset.z=1; const m=(c.getAttribute('onclick')||'').match(/vcSel\(this,(\d+)\)/); if(m) c.setAttribute('onclick',`vcQv(${m[1]})`); });
+  /* cart button */
+  if(!o.querySelector('.vcz-cart')){ const b=document.createElement('button'); b.className='vcz-cart'; b.setAttribute('aria-label','Cart'); b.onclick=()=>{ try{ vcCart(); }catch(e){} }; o.appendChild(b); }
+  let n=0; try{ n=cartCount(); }catch(e){} o.querySelector('.vcz-cart').innerHTML='🛒'+(n?`<i>${n}</i>`:''); }
+let tk=0; new MutationObserver(()=>{ if(tk) return; tk=requestAnimationFrame(()=>{ tk=0; try{ vczDeco(); }catch(e){} }); }).observe(document.body,{childList:true,subtree:true});
+const _lk=window.vcLike; if(_lk) window.vcLike=function(k){ const r=_lk.apply(this,arguments); try{ const em=document.querySelector(`.vc9-r[data-k="${k}"] .vc9-rt button:nth-child(2) em`); if(em) em.innerHTML=ICON.lk; }catch(e){} return r; };
+})();
+
+/* ===== V322: shop header ek line meta + stats kinare par, tabs order, nav, video shop follow/rail ===== */
+(function(){
+const css=`
+/* bottom nav: beech ka button poora dikhe */
+.phone .bottom-nav .nb-wrap{margin:-6px 0 -4px!important}
+.phone .bottom-nav{padding:2px 18px calc(3px + env(safe-area-inset-bottom,0px))!important}
+/* shop header */
+#shopBody .sl-info{position:relative}
+#shopBody .sl-head{flex-wrap:wrap;align-items:flex-start;column-gap:14px;row-gap:4px}
+#shopBody .sl-hd-tx{display:contents}
+#shopBody .sl-hd-tx h2{flex:1 1 0;min-width:0;margin:28px 0 0!important;font-size:24px!important;line-height:1.12!important}
+#shopBody .sl-hd-tx .sl-meta{flex:1 1 100%;flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;white-space:nowrap;gap:6px!important;margin:6px 0 0!important;padding:2px 0 4px}
+#shopBody .sl-hd-tx .sl-meta::-webkit-scrollbar{display:none}
+#shopBody .sl-hd-tx .sl-meta + .sl-meta{display:none!important}
+#shopBody .sl-hd-tx .sl-meta > span{flex:none;display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #EFE4CC;border-radius:999px;padding:4px 10px;font-size:12.5px!important;font-weight:700;color:#4a4232}
+#shopBody .sl-hd-tx .sl-meta > span .zi{width:13px;height:13px}
+#shopBody .scz-st{position:absolute!important;left:112px!important;right:auto!important;top:-15px!important;bottom:auto!important;max-width:calc(100% - 128px)!important;background:rgba(255,255,255,.9)!important;border:1px solid #EADCBF!important;color:#3a3226!important;box-shadow:0 6px 16px rgba(60,40,10,.14)!important;padding:5px 12px!important;font-size:11.5px!important;z-index:6}
+#shopBody .scz-st span{text-shadow:none!important}
+#shopBody .scz-st svg{color:#EE6A0D}
+#shopBody .scz-st i{background:#E3D5B8!important}
+#shopBody .scz-st b{font-weight:800;color:#17130f}
+/* tabs: Banners, Contact, About… */
+#bpTabs button:nth-child(1){order:-3}#bpTabs button:nth-child(3){order:-2}#bpTabs button:nth-child(2){order:-1}
+/* video shop: Follow chatkila laal, rail side se nikalta hua */
+#vcOv .ac{display:flex!important;gap:8px!important;padding:0 12px!important;box-sizing:border-box;width:100%}
+#vcOv .ac .vcz-pf{flex:1 1 auto!important;min-width:0!important}
+#vcOv .ac .fl{flex:none!important;width:auto!important;padding:8px 14px!important;margin:0!important}
+#vcOv .ac .fl{background:linear-gradient(180deg,#FF2D3D,#E0101F)!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#fff!important;box-shadow:0 6px 16px rgba(224,16,31,.4)!important;transition:all .25s}
+#vcOv .ac .fl.on{background:#fff!important;color:#E0101F!important;box-shadow:0 4px 12px rgba(0,0,0,.2)!important}
+#vcOv .ac .fl.on small{color:#9a8f7a!important}
+#vcOv .vc9-rt{top:6px!important;bottom:auto!important;right:0!important;height:auto!important;max-height:calc(100% - 12px);border-radius:24px 0 0 24px!important;border-right:0!important;padding:8px 6px 8px 8px!important;gap:6px!important;box-shadow:-6px 6px 18px rgba(0,0,0,.25)!important;animation:vczIn .45s cubic-bezier(.22,1,.36,1) both}
+#vcOv .vc9-rt::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.55),transparent)}
+#vcOv .vc9-rt button{padding:2px 0!important}
+#vcOv .vc9-r .tg{padding-right:58px!important}
+@keyframes vczIn{from{transform:translateX(100%);opacity:.3}}
+`;
+const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function headFix(){ const b=document.getElementById('shopBody'); if(!b) return; const tx=b.querySelector('.sl-hd-tx'); if(!tx) return;
+  const ms=tx.querySelectorAll('.sl-meta'); if(ms.length<2) return; let a=ms[0].querySelector('.scz-addr'); if(!a){ a=document.createElement('span'); a.className='scz-addr'; ms[0].appendChild(a); }
+  a.textContent='📍 '+ms[1].textContent.trim();
+  /* stats: cover se hata kar kinare par */
+  const st=document.querySelector('#shopOv .sl-cover .scz-st'), info=b.querySelector('.sl-info'); if(st&&info) info.appendChild(st);
+  const s2=info&&info.querySelector('.scz-st'); if(s2&&!s2.dataset.b){ s2.dataset.b=1; s2.innerHTML=s2.innerHTML.replace(/>([\d.]+K?) visits/,'><b>$1</b> visits').replace(/>([\d.]+K?) followers/,'><b>$1</b> followers'); } }
+const _os=openShop; openShop=function(i){ const r=_os.apply(this,arguments); [760,1200].forEach(t=>setTimeout(()=>{ try{ headFix(); }catch(e){} },t)); return r; };
+new MutationObserver(()=>{ try{ const tx=document.querySelector('#shopBody .sl-hd-tx .sl-meta'); if(tx&&!tx.querySelector('.scz-addr')) headFix(); }catch(e){} }).observe(document.getElementById('shopOv')||document.body,{childList:true,subtree:true});
+})();
+
 </script>
 </body>
 </html>
