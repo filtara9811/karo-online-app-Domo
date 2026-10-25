@@ -24,6 +24,9 @@ on:
     branches: [main, master]
     paths: ['app/version.txt']
 
+permissions:
+  contents: write   # ऐप-के-अंदर update ke liye APK ko GitHub Release me daalna
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -81,6 +84,7 @@ jobs:
               <uses-permission android:name="android.permission.CAMERA"/>
               <uses-permission android:name="android.permission.RECORD_AUDIO"/>
               <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+              <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
           '''
           if 'android.permission.INTERNET' not in s:
               s=s.replace('<application','%s<application'%perms,1)
@@ -97,7 +101,17 @@ jobs:
               s=s.replace('<queries>',q.strip()[:-len('</queries>')].replace('<queries>','<queries>',1),1)
           else:
               s=s.replace('</manifest>',q+'</manifest>')
+          prov='''        <provider android:name="sk.fourq.otaupdate.OtaUpdateFileProvider"
+                      android:authorities="${applicationId}.ota_update_provider"
+                      android:exported="false" android:grantUriPermissions="true">
+                  <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths"/>
+              </provider>
+          '''
+          if 'OtaUpdateFileProvider' not in s:
+              s=s.replace('</application>',prov+'    </application>',1)
           open(m,'w').write(s)
+          os.makedirs('android/app/src/main/res/xml',exist_ok=True)
+          open('android/app/src/main/res/xml/filepaths.xml','w').write('<?xml version="1.0" encoding="utf-8"?>\n<paths><files-path name="internal_apk_storage" path="ota_update/"/></paths>\n')
           print(open(m).read())
           PY
 
@@ -134,3 +148,19 @@ jobs:
             app/build/app/outputs/flutter-apk/app-release.apk
             app/build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: warn
+
+      # ऐप ke andar "Update" button isi Release se nayi APK uthata hai
+      - name: version.json banao
+        run: |
+          MSG=$(git log -1 --pretty=%s | head -c 140 | sed 's/"/\\"/g')
+          printf '{"build":%s,"name":"1.0.%s","notes":"%s"}\n' "$VERSION_CODE" "$VERSION_CODE" "$MSG" > version.json
+          cp app/build/app/outputs/flutter-apk/app-release.apk karo-online.apk
+          cat version.json
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Karo Online 1.0.${{ github.run_number }}
+          make_latest: true
+          files: |
+            karo-online.apk
+            version.json

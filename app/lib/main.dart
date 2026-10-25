@@ -1,6 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:ota_update/ota_update.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -11,6 +17,9 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 /// docs/ me badlav push hote hi ऐप me dikh jaata hai (APK dobara install nahi karni).
 /// Net na ho to ऐप ke andar rakha offline copy (assets/web/index.html) chalta hai.
 const kLiveUrl = 'https://filtara9811.github.io/karo-online-app-Domo/';
+
+/// ऐप-के-अंदर update: GitHub Release (latest) me rakhi version.json + APK
+const kRel = 'https://github.com/filtara9811/karo-online-app-Domo/releases/latest/download';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -42,11 +51,20 @@ class WebHome extends StatefulWidget {
   State<WebHome> createState() => _WebHomeState();
 }
 
-class _WebHomeState extends State<WebHome> {
+class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
   late final WebViewController _c;
   bool _loading = true;
   bool _offline = false;
   DateTime? _lastBack;
+  DateTime _pausedAt = DateTime.now();
+
+  // update
+  int? _newBuild;
+  String _newName = '';
+  String _newNotes = '';
+  bool _updHidden = false;
+  int? _prog; // null = download shuru nahi hua
+  String _updMsg = '';
 
   // Prototype ke andar ye script daalte hain: window.open, WhatsApp, call, mail
   // jaise links ko phone ke apps me kholne ke liye.
@@ -66,6 +84,8 @@ class _WebHomeState extends State<WebHome> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    Future.delayed(const Duration(seconds: 3), _checkUpdate);
     final c = WebViewController(onPermissionRequest: _onPermission)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF3ECDD))
@@ -118,6 +138,144 @@ class _WebHomeState extends State<WebHome> {
   }
 
   // QR scanner (camera) aur voice search (mic) ke liye phone se permission maang kar WebView ko dena
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState st) {
+    if (st == AppLifecycleState.paused) _pausedAt = DateTime.now();
+    if (st == AppLifecycleState.resumed) {
+      _checkUpdate();
+      // 10 minute se zyada band rahi to screens ka taaza version
+      if (DateTime.now().difference(_pausedAt).inMinutes >= 10 && !_offline) {
+        _c.loadRequest(Uri.parse('$kLiveUrl?v=${DateTime.now().millisecondsSinceEpoch}'),
+            headers: const {'Cache-Control': 'no-cache'});
+      }
+    }
+  }
+
+  Future<void> _checkUpdate() async {
+    if (_prog != null) return;
+    try {
+      final info = await PackageInfo.fromPlatform();
+      final cur = int.tryParse(info.buildNumber) ?? 0;
+      final r = await http
+          .get(Uri.parse('$kRel/version.json?t=${DateTime.now().millisecondsSinceEpoch}'))
+          .timeout(const Duration(seconds: 10));
+      if (r.statusCode != 200) return;
+      final j = jsonDecode(r.body) as Map<String, dynamic>;
+      final nb = (j['build'] as num?)?.toInt() ?? 0;
+      if (nb > cur && mounted) {
+        setState(() {
+          _newBuild = nb;
+          _newName = '${j['name'] ?? ''}';
+          _newNotes = '${j['notes'] ?? ''}';
+        });
+      }
+    } catch (_) {}
+  }
+
+  void _startUpdate() {
+    setState(() {
+      _prog = 0;
+      _updMsg = 'Download ho raha hai…';
+    });
+    try {
+      OtaUpdate()
+          .execute('$kRel/karo-online.apk?t=${DateTime.now().millisecondsSinceEpoch}',
+              destinationFilename: 'karo-online-$_newBuild.apk')
+          .listen((OtaEvent e) {
+        if (!mounted) return;
+        setState(() {
+          switch (e.status) {
+            case OtaStatus.DOWNLOADING:
+              _prog = int.tryParse(e.value ?? '') ?? _prog;
+              _updMsg = 'Download ho raha hai…';
+              break;
+            case OtaStatus.INSTALLING:
+              _prog = 100;
+              _updMsg = 'Install screen par "Update" dabayein';
+              break;
+            case OtaStatus.PERMISSION_NOT_GRANTED_ERROR:
+              _prog = null;
+              _updMsg = 'Settings me "Install unknown apps" ki anumati dein, phir dobara Update dabayein';
+              break;
+            default:
+              _prog = null;
+              _updMsg = 'Update nahi ho paya — net check karke dobara try karein';
+          }
+        });
+      }, onError: (_) {
+        if (mounted) setState(() { _prog = null; _updMsg = 'Update nahi ho paya — dobara try karein'; });
+      });
+    } catch (_) {
+      setState(() { _prog = null; _updMsg = 'Update nahi ho paya — dobara try karein'; });
+    }
+  }
+
+  Widget _updateCard() {
+    final busy = _prog != null;
+    return Positioned(
+      left: 12,
+      right: 12,
+      bottom: 12 + MediaQuery.of(context).padding.bottom,
+      child: Material(
+        elevation: 12,
+        borderRadius: BorderRadius.circular(22),
+        color: const Color(0xFF17130F),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
+          child: Row(children: [
+            busy
+                ? SizedBox(
+                    width: 38,
+                    height: 38,
+                    child: Stack(alignment: Alignment.center, children: [
+                      CircularProgressIndicator(
+                          value: (_prog ?? 0) > 0 ? (_prog! / 100) : null,
+                          strokeWidth: 3.5,
+                          color: const Color(0xFFF47B20),
+                          backgroundColor: Colors.white12),
+                      Text('${_prog ?? 0}%',
+                          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800)),
+                    ]))
+                : Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(color: const Color(0xFFF47B20), borderRadius: BorderRadius.circular(12)),
+                    child: const Icon(Icons.system_update_rounded, color: Colors.white, size: 22)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text(busy ? 'Update ho raha hai' : 'Naya update aaya hai · $_newName',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14)),
+                const SizedBox(height: 2),
+                Text(_updMsg.isNotEmpty ? _updMsg : (_newNotes.isNotEmpty ? _newNotes : 'Naye features aur sudhaar'),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Color(0xFFE9D8AE), fontSize: 11.5)),
+              ]),
+            ),
+            if (!busy) ...[
+              TextButton(
+                  onPressed: () => setState(() => _updHidden = true),
+                  child: const Text('Baad me', style: TextStyle(color: Colors.white54))),
+              FilledButton(
+                  style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFF47B20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                  onPressed: _startUpdate,
+                  child: const Text('Update', style: TextStyle(fontWeight: FontWeight.w800))),
+            ],
+          ]),
+        ),
+      ),
+    );
+  }
+
   Future<void> _onPermission(WebViewPermissionRequest req) async {
     var ok = true;
     if (req.types.contains(WebViewPermissionResourceType.camera)) {
@@ -185,6 +343,7 @@ class _WebHomeState extends State<WebHome> {
           bottom: false,
           child: Stack(children: [
             WebViewWidget(controller: _c),
+            if (_newBuild != null && !_updHidden && !_loading) _updateCard(),
             if (_loading)
               Container(
                 color: const Color(0xFFF47B20),
