@@ -141,7 +141,9 @@ jobs:
           rm -f upload.jks
 
       - uses: actions/upload-artifact@v4
+        continue-on-error: true   # storage bhar jaye to bhi Release (ऐप update) bane
         with:
+          retention-days: 3
           name: karo-online-apk
           path: |
             app/build/app/outputs/flutter-apk/app-release.apk
