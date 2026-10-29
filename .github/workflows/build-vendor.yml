@@ -1,0 +1,180 @@
+# Karo Online BUSINESS (Vendor app) — asli Flutter native ऐप
+# vendor/ me badlav push hote hi nayi APK banti hai (10-15 min).
+# APK kahan milegi: repo ke "Releases" me "Karo Online Business 1.0.N" → karo-business.apk
+# (Customer ऐप ki "latest" release par asar nahi padta — ye release latest nahi banti.)
+
+name: Build Vendor APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths: ['vendor/**', '.github/workflows/build-vendor.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      APP_ID: com.filipra.karoonline.business
+      VERSION_CODE: ${{ github.run_number }}
+      KARO_KS: ${{ github.workspace }}/signing/test-debug.keystore
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Android project banao
+        working-directory: vendor
+        run: |
+          flutter create --platforms=android --org com.filipra.karoonline --project-name karo_business .
+          rm -rf test
+          mkdir -p android/app/src/main/res/raw
+          cp android_res/raw/ring.wav android/app/src/main/res/raw/ring.wav
+
+      - name: Package, desugaring, signing, permissions, ghanti service
+        working-directory: vendor
+        run: |
+          python3 - <<'PY'
+          import os,re
+          appid=os.environ['APP_ID']
+          g='android/app/build.gradle.kts'
+          kts=os.path.exists(g)
+          if not kts: g='android/app/build.gradle'
+          s=open(g).read()
+          s=re.sub(r'applicationId\s*=?\s*"[^"]+"','applicationId = "%s"'%appid,s)
+          s=re.sub(r'minSdk\s*=\s*flutter\.minSdkVersion','minSdk = 23',s)
+          s=re.sub(r'minSdkVersion\s+flutter\.minSdkVersion','minSdkVersion 23',s)
+          if kts:
+              s=s.replace('compileOptions {','compileOptions {\n        isCoreLibraryDesugaringEnabled = true',1)
+              s+='\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+              sc='''    signingConfigs {
+                  create("fixed") {
+                      storeFile = file(System.getenv("KARO_KS"))
+                      storePassword = "android"
+                      keyAlias = "androiddebugkey"
+                      keyPassword = "android"
+                  }
+              }
+          '''
+              s=s.replace('android {','android {\n'+sc,1)
+              s=s.replace('signingConfig = signingConfigs.getByName("debug")','signingConfig = signingConfigs.getByName("fixed")')
+          else:
+              s=s.replace('compileOptions {','compileOptions {\n        coreLibraryDesugaringEnabled true',1)
+              s+='\ndependencies {\n    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.4"\n}\n'
+              sc='''    signingConfigs {
+                  fixed {
+                      storeFile file(System.getenv("KARO_KS"))
+                      storePassword "android"
+                      keyAlias "androiddebugkey"
+                      keyPassword "android"
+                  }
+              }
+          '''
+              s=s.replace('android {','android {\n'+sc,1)
+              s=s.replace('signingConfig signingConfigs.debug','signingConfig signingConfigs.fixed')
+          assert 'Desugaring' in s, 'desugar patch fail'
+          assert 'getByName("fixed")' in s or 'signingConfigs.fixed' in s, 'signing patch fail'
+          open(g,'w').write(s)
+
+          m='android/app/src/main/AndroidManifest.xml'
+          s=open(m).read()
+          s=re.sub(r'android:label="[^"]*"','android:label="Karo Business"',s)
+          perms=''.join('    <uses-permission android:name="android.permission.%s"/>\n'%p for p in [
+            'INTERNET','POST_NOTIFICATIONS','USE_FULL_SCREEN_INTENT','VIBRATE','WAKE_LOCK',
+            'SCHEDULE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED','FOREGROUND_SERVICE',
+            'FOREGROUND_SERVICE_SPECIAL_USE','REQUEST_IGNORE_BATTERY_OPTIMIZATIONS','CALL_PHONE'])
+          s=s.replace('<application','%s    <application'%perms,1)
+          # lock screen par bhi request screen khule
+          s=s.replace('<activity','<activity\n            android:showWhenLocked="true"\n            android:turnScreenOn="true"',1)
+          comp='''
+                  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+                  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+                  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+                      <intent-filter>
+                          <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                          <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                          <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                          <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                      </intent-filter>
+                  </receiver>
+                  <service android:name="com.dexterous.flutterlocalnotifications.ForegroundService"
+                      android:exported="false" android:stopWithTask="false"
+                      android:foregroundServiceType="specialUse">
+                      <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                          android:value="Customer ki nayi service request turant dikhana aur ghanti bajana"/>
+                  </service>
+          '''
+          s=s.replace('</application>',comp+'    </application>',1)
+          q='''    <queries>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="https"/></intent>
+                  <intent><action android:name="android.intent.action.DIAL"/></intent>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="tel"/></intent>
+                  <package android:name="com.whatsapp"/>
+                  <package android:name="com.whatsapp.w4b"/>
+              </queries>
+          '''
+          if '<queries>' in s:
+              s=s.replace('<queries>',q.strip()[:-len('</queries>')],1)
+          else:
+              s=s.replace('</manifest>',q+'</manifest>')
+          open(m,'w').write(s)
+          print(open(m).read())
+          PY
+
+      - run: flutter pub get
+        working-directory: vendor
+      - run: dart run flutter_launcher_icons
+        working-directory: vendor
+
+      - name: Code jaancho (analyze)
+        working-directory: vendor
+        shell: bash
+        run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee /tmp/analyze.log || true
+          grep -E "error •" /tmp/analyze.log | head -40 | while IFS= read -r l; do echo "::error::${l:0:900}"; done
+          if grep -q "error •" /tmp/analyze.log; then exit 1; fi
+
+      - name: APK banao
+        working-directory: vendor
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE 2>&1 | tee /tmp/build.log
+
+      - name: Error dikhao (agar build fail ho)
+        if: failure()
+        shell: bash
+        run: |
+          [ -f /tmp/build.log ] || exit 0
+          grep -nE "error|Error|ERROR|What went wrong|FAILURE|Exception|requires|namespace|desugar" /tmp/build.log | grep -v "^\s*$" | tail -40 | while IFS= read -r l; do echo "::error::${l:0:900}"; done
+          tail -25 /tmp/build.log | while IFS= read -r l; do echo "::warning::${l:0:900}"; done
+
+      - name: APK taiyaar
+        run: cp vendor/build/app/outputs/flutter-apk/app-release.apk karo-business.apk
+
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          retention-days: 3
+          name: karo-business-apk
+          path: karo-business.apk
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: vendor-v1.0.${{ github.run_number }}
+          name: Karo Online Business 1.0.${{ github.run_number }}
+          make_latest: false
+          body: "Vendor app (Flutter native) — karo-business.apk download karke install karein."
+          files: karo-business.apk
