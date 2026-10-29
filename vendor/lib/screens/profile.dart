@@ -35,10 +35,12 @@ class _ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserv
   Future<void> _check() async {
     final n = await Ring.i.notifOk();
     final b = await Ring.i.batteryOk();
-    if (mounted) setState(() {
-      notif = n;
-      battery = b;
-    });
+    if (mounted) {
+      setState(() {
+        notif = n;
+        battery = b;
+      });
+    }
   }
 
   Future<void> _test() async {
@@ -99,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserv
                 child: Column(children: [
                   SwitchListTile(
                     value: s.online,
-                    activeColor: K.green,
+                    activeThumbColor: K.green,
                     onChanged: (v) async {
                       s.setOnline(v);
                       await Ring.i.setOnline(v);
