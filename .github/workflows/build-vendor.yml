@@ -142,9 +142,22 @@ jobs:
         working-directory: vendor
         shell: bash
         run: |
-          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee /tmp/analyze.log || true
-          grep -E "error •" /tmp/analyze.log | head -40 | while IFS= read -r l; do echo "::error::${l:0:900}"; done
-          if grep -q "error •" /tmp/analyze.log; then exit 1; fi
+          flutter analyze --no-fatal-infos --no-fatal-warnings > /tmp/analyze.log 2>&1 || true
+          cat /tmp/analyze.log
+          grep -iE "^\s*error" /tmp/analyze.log | head -40 | tr -cd '[:print:]\n' | while IFS= read -r l; do echo "::error::${l:0:900}"; done
+          if grep -iqE "^\s*error" /tmp/analyze.log; then exit 1; fi
+
+      - name: Log GitHub par rakho (Claude padh sake)
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/cilog && cd /tmp/cilog
+          cp /tmp/analyze.log . 2>/dev/null || true
+          cp /tmp/build.log . 2>/dev/null || true
+          git init -q && git checkout -q -b vendor-ci-log
+          git config user.name ci && git config user.email ci@local
+          git add -A && git commit -q -m "ci log ${{ github.run_number }}" || exit 0
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" vendor-ci-log || true
 
       - name: APK banao
         working-directory: vendor
@@ -160,6 +173,15 @@ jobs:
           [ -f /tmp/build.log ] || exit 0
           grep -nE "error|Error|ERROR|What went wrong|FAILURE|Exception|requires|namespace|desugar" /tmp/build.log | grep -v "^\s*$" | tail -40 | while IFS= read -r l; do echo "::error::${l:0:900}"; done
           tail -25 /tmp/build.log | while IFS= read -r l; do echo "::warning::${l:0:900}"; done
+
+      - name: Build log GitHub par rakho
+        if: failure()
+        shell: bash
+        run: |
+          cd /tmp/cilog 2>/dev/null || exit 0
+          cp /tmp/build.log . 2>/dev/null || true
+          git add -A && git commit -q -m "build log" || exit 0
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" vendor-ci-log || true
 
       - name: APK taiyaar
         run: cp vendor/build/app/outputs/flutter-apk/app-release.apk karo-business.apk
