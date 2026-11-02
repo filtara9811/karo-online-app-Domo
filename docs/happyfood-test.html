@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Karo Online × Happy Food टेस्ट</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Hind:wght@400;500;600;700&display=swap">
+<style>
+/* Karo Online seller-admin look: antique gold on deep ink; one column, phone first */
+:root{--bg:#f7f3ea;--card:#fffdf8;--ink:#1d1a14;--mut:#6f6656;--line:#e6dcc6;--gold:#b8912a;--gold2:#d4af37;--ok:#178a45;--bad:#c2372b;--warn:#b26b00;
+  --disp:'Cormorant Garamond',Georgia,serif;--body:'Hind',system-ui,sans-serif;--mono:ui-monospace,Menlo,monospace;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#14120d;--card:#1e1b14;--ink:#f3ead6;--mut:#a89c83;--line:#3a3325;--gold:#d4af37;--gold2:#e8c862;--ok:#3ccf74;--bad:#ff6b5e;--warn:#f0a43a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:560px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#f4dd8a,#d4af37 55%,#9c7a1f);display:grid;place-items:center;font:700 22px var(--disp);color:#1d1a14;flex-shrink:0}
+h1{font:700 26px/1.05 var(--disp);margin:0;text-wrap:balance}
+.sub{color:var(--mut);font-size:13px;margin:2px 0 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.step{display:flex;align-items:center;gap:10px}
+.step b.n{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:13px;flex-shrink:0}
+.step h2{font:700 21px/1.1 var(--disp);margin:0}
+label{font-size:12px;font-weight:600;color:var(--mut)}
+input{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:14px var(--mono)}
+input:focus{outline:none;border-color:var(--gold)}
+button{font:600 14px var(--body);cursor:pointer;border:0;border-radius:12px;padding:12px 14px;color:var(--ink);background:var(--bg);border:1px solid var(--line)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button.gold{background:linear-gradient(180deg,#f4dd8a,#d4af37 55%,#a8841f);color:#1d1a14;border:0;font-weight:700}
+button:disabled{opacity:.4;cursor:not-allowed}
+.msg{padding:10px 12px;border-radius:12px;font-size:13px;font-weight:600}
+.msg.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.msg.bad{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.msg.info{background:color-mix(in srgb,var(--gold) 14%,transparent);color:var(--ink)}
+.ord{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tag{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;background:color-mix(in srgb,var(--gold) 16%,transparent);white-space:nowrap}
+.tag.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.tag.bad{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.tag.warn{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+.mut{color:var(--mut);font-size:12.5px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{padding:9px 12px;font-size:13px}
+.chips button.on{border:1.5px solid var(--gold);background:color-mix(in srgb,var(--gold) 16%,var(--card))}
+.money{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.money b{text-align:right}
+.codes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.codes div{text-align:center;padding:8px 4px;border-radius:12px;background:var(--bg)}
+.codes b{display:block;font:700 20px var(--mono);letter-spacing:2px;color:var(--gold)}
+.codes span{font-size:10.5px;color:var(--mut)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.wallet{display:flex;gap:8px}
+.wallet div{flex:1;text-align:center;padding:8px;border-radius:12px;background:var(--bg)}
+.wallet b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.wallet span{font-size:11px;color:var(--mut)}
+.neg{color:var(--bad)}.pos{color:var(--ok)}
+.hide{display:none!important}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .35s ease both}@keyframes in{from{transform:translateY(6px);opacity:.6}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="logo">K</div><div><h1>Karo Online × Happy Food</h1><p class="sub">दुकानदार की तरफ़ से डिलीवरी टेस्ट — असली Happy Food सर्वर पर</p></div></header>
+
+  <section class="card" id="c1">
+    <div class="step"><b class="n">1</b><h2>Happy Food जोड़ें</h2></div>
+    <p class="mut" style="margin:0">Happy Food एडमिन → <b>API पार्टनर</b> → कनेक्शन से User ID और API Key कॉपी करके यहाँ डालें। (यही Karo Online एडमिन के “Delivery Gateways” में डाला जाएगा)</p>
+    <label for="uid">User ID</label><input id="uid" placeholder="HF632978" autocomplete="off" autocapitalize="characters">
+    <label for="key">API Key</label><input id="key" placeholder="hfk_test_…" autocomplete="off">
+    <button class="gold" id="save">✅ सेव करें और जाँचें</button>
+    <div id="ping" class="msg info hide"></div>
+    <div id="wallet" class="wallet hide"></div>
+  </section>
+
+  <section class="card" id="c2">
+    <div class="step"><b class="n">2</b><h2>दुकानों के नए ऑर्डर</h2></div>
+    <p class="mut" style="margin:0">Karo Online पर अलग-अलग दुकानों से आए ऑर्डर (टेस्ट)। किसी पर “Happy Food से भेजें” दबाएँ।</p>
+    <div id="orders" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
+
+  <section class="card" id="c3">
+    <div class="step"><b class="n">3</b><h2>भेजे गए पार्सल</h2></div>
+    <p class="mut" style="margin:0">हर 5 सेकंड में अपने-आप अपडेट। टेस्ट Key पर राइडर के कदम बटन से चलते हैं।</p>
+    <div id="parcels" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
+</div>
+
+<script>
+const API = 'https://pboelnbjgyllqqlkqaqm.supabase.co/functions/v1/delivery-api';
+const PICKS = {
+  guddu: { name: 'Guddu Garments', phone: '9811000001', address: 'गली 4, सदर बाज़ार, दिल्ली 110006', lat: 28.6576, lng: 77.2103 },
+  sharma: { name: 'Sharma Sarees', phone: '9811000011', address: 'कटरा नील, चाँदनी चौक, दिल्ली 110006', lat: 28.6560, lng: 77.2280 },
+  royal: { name: 'Royal Footwear', phone: '9811000021', address: 'अजमल ख़ाँ रोड, करोल बाग, दिल्ली 110005', lat: 28.6515, lng: 77.1905 },
+  kids: { name: 'Kids Kart', phone: '9811000031', address: 'कमला नगर मार्केट, दिल्ली 110007', lat: 28.6810, lng: 77.2050 }
+};
+const ORDERS = [
+  { code: 'KO-1041', shop: 'guddu', items: '2 × कॉटन कुर्ता', total: 1800, to: { name: 'रितु', phone: '9811000002', address: 'ब्लॉक 12, करोल बाग, दिल्ली 110005', lat: 28.6440, lng: 77.1880 } },
+  { code: 'KO-1042', shop: 'sharma', items: '1 × बनारसी साड़ी', total: 3200, to: { name: 'अमन', phone: '9811000003', address: 'पहाड़गंज, दिल्ली 110055', lat: 28.6448, lng: 77.2167 } },
+  { code: 'KO-1043', shop: 'royal', items: '1 × लेदर शूज़', total: 1450, to: { name: 'सना', phone: '9811000004', address: 'राजेंद्र नगर, दिल्ली 110060', lat: 28.6410, lng: 77.1830 } },
+  { code: 'KO-1044', shop: 'kids', items: '3 × किड्स टी-शर्ट', total: 900, to: { name: 'विक्की', phone: '9811000005', address: 'शक्ति नगर, दिल्ली 110007', lat: 28.6830, lng: 77.1960 } }
+];
+const ST = { searching: ['🔎 राइडर ढूँढ रहे', ''], assigned: ['🛵 राइडर तय', ''], picked: ['📦 रास्ते में', ''], delivered: ['✅ डिलीवर', 'ok'], rto_started: ['↩️ वापस आ रहा', 'warn'], rto_done: ['🏬 वापस दुकान पर (RTO)', 'warn'], cancelled: ['✖ रद्द', 'bad'], no_rider: ['😔 राइडर नहीं मिला', 'bad'] };
+const STEPS = { searching: [['assign', '🛵 राइडर मिला'], ['no_rider', '😔 राइडर नहीं मिला'], ['cancel', '✖ रद्द करें']], assigned: [['pick', '📦 पार्सल उठाया'], ['cancel', '✖ रद्द करें']], picked: [['deliver', '✅ डिलीवर'], ['refuse', '🙅 ग्राहक ने मना किया'], ['not_home', '🚪 ग्राहक घर पर नहीं']], rto_started: [['return', '🏬 दुकान को वापस दिया']] };
+const S = { uid: '', key: '', info: null, pick: null, sent: {} };
+const $ = id => document.getElementById(id);
+const rs = n => (n < 0 ? '−' : '') + '₹' + Math.abs(Math.round(+n || 0)).toLocaleString('en-IN');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+try { S.uid = localStorage.getItem('hf_uid') || ''; S.key = localStorage.getItem('hf_key') || ''; } catch (e) {}
+$('uid').value = S.uid; $('key').value = S.key;
+
+async function call(action, body) {
+  const r = await fetch(API + '/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-id': S.uid, 'x-api-key': S.key }, body: JSON.stringify(body || {}) });
+  return r.json();
+}
+function note(el, cls, html) { el.className = 'msg ' + cls; el.innerHTML = html; el.classList.remove('hide'); }
+
+$('save').onclick = async () => {
+  S.uid = $('uid').value.trim().toUpperCase(); S.key = $('key').value.trim();
+  try { localStorage.setItem('hf_uid', S.uid); localStorage.setItem('hf_key', S.key); } catch (e) {}
+  note($('ping'), 'info', 'जाँच रहे…');
+  try {
+    const r = await call('ping');
+    if (!r.ok) { S.info = null; note($('ping'), 'bad', '❌ ' + esc(r.message || r.code) + ' — User ID और Key दोबारा कॉपी करें'); renderOrders(); return; }
+    S.info = r;
+    note($('ping'), 'ok', `✅ जुड़ गया: <b>${esc(r.partner)}</b> · ${r.mode === 'test' ? '🧪 टेस्ट मोड (असली राइडर नहीं)' : '🟢 लाइव'}<br>ऑर्डर: ${{ prepaid: 'सिर्फ़ प्रीपेड', cod: 'सिर्फ़ COD', both: 'प्रीपेड और COD' }[r.pay_modes]} · किराया: ${{ shop: 'दुकानदार', customer: 'ग्राहक', both: 'दुकानदार या ग्राहक' }[r.fee_payers]}`);
+    refresh();
+  } catch (e) { note($('ping'), 'bad', '❌ इंटरनेट/सर्वर से जवाब नहीं आया'); }
+  renderOrders();
+};
+
+function renderOrders() {
+  $('orders').innerHTML = ORDERS.map((o, i) => {
+    const p = PICKS[o.shop], sent = S.sent[o.code];
+    return `<div class="ord"><div class="row"><b>${o.code} · ${esc(p.name)}</b><span class="tag">${rs(o.total)}</span></div>
+      <div class="mut">${esc(o.items)} → ${esc(o.to.name)}, ${esc(o.to.address)}</div>
+      ${S.pick === i ? bookForm(i) : `<button class="gold" ${S.info ? '' : 'disabled'} onclick="openBook(${i})">🛵 Happy Food से भेजें</button>${S.info ? '' : '<span class="mut">पहले कदम 1 में Happy Food जोड़ें</span>'}`}
+      ${sent ? `<span class="mut">आख़िरी बार भेजा: ${esc(sent)}</span>` : ''}</div>`;
+  }).join('');
+}
+function openBook(i) { S.pick = i; S.pay = S.info.pay_modes === 'prepaid' ? 'prepaid' : 'cod'; S.payer = S.info.default_fee_paid_by || 'shop'; if (S.info.fee_payers !== 'both') S.payer = S.info.fee_payers; S.quote = null; renderOrders(); quote(); }
+function bookForm(i) {
+  const pm = S.info.pay_modes, fp = S.info.fee_payers, q = S.quote;
+  const chip = (k, v, t, dis) => `<button class="${S[k] === v ? 'on' : ''}" ${dis ? 'disabled' : ''} onclick="S.${k}='${v}';S.quote=null;renderOrders();quote()">${t}</button>`;
+  return `<div style="display:flex;flex-direction:column;gap:8px">
+    <label>ग्राहक ने पैसे कैसे दिए?</label><div class="chips">${chip('pay', 'prepaid', '💳 प्रीपेड (पहले दे दिया)', pm === 'cod')}${chip('pay', 'cod', '💵 COD (दरवाज़े पर देगा)', pm === 'prepaid')}</div>
+    <label>डिलीवरी किराया कौन देगा?</label><div class="chips">${chip('payer', 'shop', '🏬 दुकानदार', fp === 'customer')}${chip('payer', 'customer', '🙋 ग्राहक', fp === 'shop')}</div>
+    <div id="qbox" class="msg info">${q ? quoteHtml(q) : 'किराया निकाल रहे…'}</div>
+    <div class="grid2"><button onclick="S.pick=null;renderOrders()">वापस</button><button class="gold" ${q && q.ok ? '' : 'disabled'} onclick="book(${i})">बुक करें</button></div></div>`;
+}
+function body(i) {
+  const o = ORDERS[i];
+  return { order_ref: o.code + '-' + Date.now().toString().slice(-5), seller: { ref: o.shop, name: PICKS[o.shop].name }, pickup: PICKS[o.shop], deliver_to: o.to, pay_mode: S.pay, goods_value: S.pay === 'cod' ? o.total : 0, fee_paid_by: S.payer };
+}
+async function quote() {
+  const i = S.pick; if (i == null) return;
+  try { S.quote = await call('quote', body(i)); } catch (e) { S.quote = { ok: false, message: 'सर्वर से जवाब नहीं आया' }; }
+  if (S.pick === i) renderOrders();
+}
+function quoteHtml(q) {
+  if (!q.ok) return '❌ ' + esc(q.message || q.code);
+  const c = q.quote, d = c.delivered, r = c.rto;
+  return `<div class="money"><span>दूरी</span><b>${c.km} km</b><span>डिलीवरी किराया</span><b>${rs(c.fee)}</b>
+    <span>🙋 ग्राहक दरवाज़े पर देगा</span><b>${rs(c.collect_at_door)}</b>
+    <span>🏬 डिलीवर होने पर दुकान के खाते में</span><b class="${d.shop_net < 0 ? 'neg' : 'pos'}">${d.shop_net > 0 ? '+' : ''}${rs(d.shop_net)}</b>
+    <span>↩️ ग्राहक ने मना किया (RTO) तो दुकान</span><b class="neg">${rs(r.shop_net)}</b>
+    <span>🔒 अभी वॉलेट में रुकेगा</span><b>${rs(c.hold)}</b></div>${q.enough_balance ? '' : '<p class="neg" style="margin:6px 0 0">वॉलेट में बैलेंस कम है</p>'}`;
+}
+async function book(i) {
+  const b = body(i);
+  try {
+    const r = await call('book', b);
+    if (!r.ok) { alertBox('❌ ' + (r.message || r.code)); return; }
+    S.sent[ORDERS[i].code] = r.parcel.order_ref; S.pick = null; renderOrders(); refresh();
+    document.getElementById('c3').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) { alertBox('❌ सर्वर से जवाब नहीं आया'); }
+}
+function alertBox(t) { const q = $('qbox'); if (q) note(q, 'bad', esc(t)); }
+
+async function refresh() {
+  if (!S.info) return;
+  try {
+    const [l, b] = await Promise.all([call('list'), call('balance')]);
+    if (b.ok) $('wallet').innerHTML = `<div><b>${rs(b.balance)}</b><span>वॉलेट</span></div><div><b>${rs(b.on_hold)}</b><span>रुका हुआ</span></div><div><b class="pos">${rs(b.available)}</b><span>इस्तेमाल लायक</span></div>`, $('wallet').classList.remove('hide');
+    if (l.ok) renderParcels(l.parcels);
+  } catch (e) {}
+}
+function renderParcels(L) {
+  $('parcels').innerHTML = L.length ? L.slice(0, 15).map(p => {
+    const s = ST[p.status] || [p.status, ''], steps = S.info.mode === 'test' && !p.result ? (STEPS[p.status] || []) : [];
+    const res = p.result;
+    return `<div class="ord"><div class="row"><b>${esc(p.order_ref)} · ${esc(p.seller && p.seller.name)}</b><span class="tag ${s[1]}">${s[0]}</span></div>
+      <div class="mut">→ ${esc(p.deliver_to && p.deliver_to.name)} · ${p.km} km · ${p.pay_mode === 'cod' ? '💵 COD ' + rs(p.goods_value) : '💳 प्रीपेड'} · किराया ${rs(p.fee)} (${p.fee_paid_by === 'shop' ? 'दुकानदार' : 'ग्राहक'})</div>
+      ${p.rider ? `<div class="mut">🛵 ${esc(p.rider.name)} · ${esc(p.rider.phone)}</div>` : ''}
+      ${p.rto_reason ? `<div class="mut" style="color:var(--warn)">↩️ ${esc(p.rto_reason)}</div>` : ''}
+      <div class="codes"><div><b>${p.pickup_code}</b><span>पिकअप कोड (दुकान देगी)</span></div><div><b>${p.delivery_otp}</b><span>OTP (ग्राहक देगा)</span></div><div><b>${p.return_code}</b><span>वापसी कोड</span></div></div>
+      ${res ? `<div class="msg ${res.shop_net >= 0 ? 'ok' : 'bad'}">${esc(res.label)} — दुकान के खाते में <b>${res.shop_net > 0 ? '+' : ''}${rs(res.shop_net)}</b> · ग्राहक ने दिया ${rs(res.customer_paid)} · राइडर ${rs(res.rider)}</div>` : `<div class="mut">🙋 दरवाज़े पर लेना: <b>${rs(p.collect_at_door)}</b></div>`}
+      ${steps.length ? `<div class="grid2">${steps.map(x => `<button onclick="sim('${p.parcel_id}','${x[0]}')">${x[1]}</button>`).join('')}</div>` : ''}</div>`;
+  }).join('') : '<p class="mut">अभी कोई पार्सल नहीं भेजा।</p>';
+}
+async function sim(id, step) {
+  try { const r = step === 'cancel' ? await call('cancel', { parcel_id: id }) : await call('simulate', { parcel_id: id, step }); if (!r.ok) alert(r.message || r.code); } catch (e) {}
+  refresh();
+}
+renderOrders();
+if (S.uid && S.key) $('save').click();
+setInterval(() => { if (!document.hidden) refresh(); }, 5000);
+</script>
+</body>
+</html>
