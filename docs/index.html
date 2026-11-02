@@ -23203,7 +23203,7 @@ function provH(s,p,j){ const k=s.k, idx=s.p.indexOf(p), rd=ready(p);
    <div class="env"><button class="${p.env==='test'?'on':''}" onclick="ahEnv('${k}',${idx},'test')">🧪 Test</button><button class="${p.env==='live'?'on':''}" onclick="ahEnv('${k}',${idx},'live')">🟢 Live</button></div>
    ${p.fields.map(f=>`<label class="fl"><span>${E(f[1])}</span><div><input type="${f[2]&&!SHOW[p.id+f[0]]?'password':'text'}" value="${E(p.vals[f[0]]||'')}" placeholder="${f[2]?'••••••••':'daalein'}" onchange="ahVal('${k}',${idx},'${f[0]}',this.value)" autocomplete="off">${f[2]?`<button onclick="ahEye('${p.id+f[0]}')" aria-label="Dikhayein">${SHOW[p.id+f[0]]?'🙈':'👁'}</button>`:''}</div></label>`).join('')}
    <label class="fl rt"><span>Rate (${E(p.unit)})</span><div><input type="number" step="0.01" inputmode="decimal" value="${p.rate}" onchange="ahRate('${k}',${idx},this.value)"></div></label>
-   <div class="bt"><button onclick="ahTest('${k}',${idx})">🔌 Test connection</button>${j>0?`<button class="pr" onclick="ahPri('${k}',${idx})">⭐ Primary banayein</button>`:''}<a href="https://${p.site}" target="_blank" rel="noopener">↗ Site</a></div></div>`; }
+   <div class="bt"><button onclick="ahTest('${k}',${idx})">🔌 Test connection</button>${p.id==='happyfood'&&p.ok?`<button onclick="ahHfParcel()">📦 Test parcel</button>`:''}${j>0?`<button class="pr" onclick="ahPri('${k}',${idx})">⭐ Primary banayein</button>`:''}<a href="https://${p.site}" target="_blank" rel="noopener">↗ Site</a></div></div>`; }
 window.ahMode=(k,m)=>{ ST.mode[k]=m; save(); lg(k,'⚙️ Mode badla: '+{failover:'Auto failover',split:'50/50',single:'Sirf primary'}[m]); ahOpen(k,1); };
 window.ahFo=(k,f,v)=>{ ST.fo[k][f]=+v; save(); toast('✓ Niyam save'); };
 window.ahOn=(k,i,v)=>{ const p=SV.find(x=>x.k===k).p[i]; p.on=v; save(); lg(k,(v?'🟢 Chalu: ':'⚪ Band: ')+p.n); ahOpen(k,1); };
@@ -23217,6 +23217,28 @@ window.ahTest=(k,i)=>{ const s=SV.find(x=>x.k===k), p=s.p[i]; if(!p.fields.every
 window.ahDrill=k=>{ const s=SV.find(x=>x.k===k), o=order(s); if(!ready(o[1])){ toast('⚠️ Backup ('+o[1].n+') ki keys nahi — failover nahi ho payega'); lg(k,'✕ Drill fail: backup taiyaar nahi','bad'); ahOpen(k,1); return; }
   toast('🧪 '+o[0].n+' ko band maan rahe hain…'); setTimeout(()=>{ lg(k,`⚠️ ${o[0].n} fail (${ST.fo[k].retry} retry, ${ST.fo[k].timeout/1000}s) → ✓ ${o[1].n} ne sambhala · ${Math.round(300+Math.random()*500)} ms`,'fo'); toast('✓ Backup ne sambhal liya — '+o[1].n); ahOpen(k,1); },1400); };
 window.ahLogs=()=>{ sheet(`<div class="ah-dh"><i>📜</i><span><b>Saare API events</b><small>Aakhri ${ST.logs.length}</small></span><button onclick="ahX()">✕</button></div><div class="ah-lg big">${ST.logs.map(l=>`<div class="${l.t}"><span>${l.at} · ${E((SV.find(s=>s.k===l.k)||{}).n||l.k)}</span>${E(l.m)}</div>`).join('')}</div>`); };
+/* ---------- V300: Happy Food rider — shehar ke andar delivery (asli API: User ID + API Key) ---------- */
+const HF_API='https://pboelnbjgyllqqlkqaqm.supabase.co/functions/v1/delivery-api';
+(function(){ const s=SV.find(x=>x.k==='ship'); if(!s||s.p.some(p=>p.id==='happyfood')) return;
+  const hp=pv('happyfood','Happy Food rider','🛵','filtara9811.github.io/karo-online-app-Domo/happyfood-test.html',[['uid','User ID'],['key','API Key',1]],'parcel',50,'Shehar ke andar 30–45 min · apne rider · COD + prepaid');
+  hp.ok=null; hp.env='test'; s.p.unshift(hp); s.sr.unshift(99.0);
+  try{ const sv=JSON.parse(localStorage.getItem('ahState')||'null'); const x=sv&&(sv.p||[]).find(y=>y.k==='ship'&&y.id==='happyfood'); if(x) Object.assign(hp,{on:x.on,env:x.env,vals:x.vals||{},rate:x.rate!=null?x.rate:hp.rate,ok:x.ok,lat:x.lat}); }catch(e){}
+})();
+const hfCall=(p,a,b)=>fetch(HF_API+'/'+a,{method:'POST',headers:{'Content-Type':'application/json','x-user-id':String(p.vals.uid||'').trim().toUpperCase(),'x-api-key':String(p.vals.key||'').trim()},body:JSON.stringify(b||{})}).then(r=>r.json());
+const hfP=()=>SV.find(x=>x.k==='ship').p.find(p=>p.id==='happyfood');
+{ const T=window.ahTest; window.ahTest=(k,i)=>{ const p=SV.find(x=>x.k===k).p[i]; if(p.id!=='happyfood') return T(k,i);
+  if(!p.vals.uid||!p.vals.key){ toast('⚠️ Pehle Happy Food ki User ID aur API Key daalein'); return; }
+  toast('🔌 Happy Food se jud rahe hain…'); const t0=performance.now();
+  hfCall(p,'ping').then(j=>{ p.lat=Math.round(performance.now()-t0); p.ok=!!j.ok; if(j.ok) p.env=j.mode; save();
+    lg(k,(j.ok?'✓ Happy Food juda hua — '+j.partner+' · '+(j.mode==='test'?'Test':'Live'):'✕ Happy Food — '+(j.message||j.code))+' · '+p.lat+' ms',j.ok?'ok':'bad');
+    toast(j.ok?'✓ Happy Food juda hua · '+(j.mode==='test'?'🧪 Test':'🟢 Live')+' · '+p.lat+' ms':'✕ '+(j.message||'User ID / Key galat')); if(CUR===k) ahOpen(k,1); })
+  .catch(()=>{ p.ok=false; save(); toast('✕ Internet ya server se jawab nahi aaya'); if(CUR===k) ahOpen(k,1); }); }; }
+window.ahHfParcel=()=>{ const p=hfP(); if(!p) return; toast('📦 Test parcel bhej rahe hain…');
+  hfCall(p,'book',{order_ref:'KO-TEST-'+Date.now().toString().slice(-6),seller:{ref:'demo',name:'Guddu Garments'},pickup:{name:'Guddu Garments',phone:'9811000001',address:'Gali 4, Sadar Bazar, Delhi 110006',lat:28.6576,lng:77.2103},deliver_to:{name:'Ritu',phone:'9811000002',address:'Block 12, Karol Bagh, Delhi 110005',lat:28.644,lng:77.188},pay_mode:'cod',goods_value:1800,fee_paid_by:'shop'})
+  .then(j=>{ if(!j.ok){ toast('✕ '+(j.message||j.code)); lg('ship','✕ Happy Food parcel: '+(j.message||j.code),'bad'); return; } const x=j.parcel;
+    lg('ship','✓ Happy Food parcel '+x.order_ref+' · '+x.km+' km · kiraya ₹'+x.fee+' · pickup code '+x.pickup_code);
+    toast('✓ Parcel bheja — '+x.order_ref+' · kiraya ₹'+x.fee+' · pickup code '+x.pickup_code); ahOpen('ship',1); })
+  .catch(()=>toast('✕ Internet ya server se jawab nahi aaya')); };
 try{ const g=AD_NAV.find(x=>x[0]==='PLATFORM'); if(g) g[1].push(['api','🔌','API Hub']); }catch(e){}
 /* ---------- V246: aur zaroori APIs + Alerts + Webhooks + Balance/recharge + Budget ---------- */
 SV.push(
