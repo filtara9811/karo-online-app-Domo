@@ -1,0 +1,6 @@
+-- Karo Online v2 (Committee Manager project par lag chuka hai)
+-- ko_vendors.settings jsonb: map (category -> services), area, h24/from/to/days, accept (manual|auto), minCoins, limit, sound, store profile
+-- ko_vendor_open(v): timing + din + roz ki limit check — ko_inbox isi se filter karta hai
+-- ko_vendor_add_lead(p_vendor, p): "+ New lead" (vendor ki apni lead, coin nahi)
+-- ko_lead_step: 'skip' bhi
+-- Poora SQL Supabase migrations me "karo_v2_settings_manual_leads" naam se hai.

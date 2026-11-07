@@ -23,7 +23,9 @@ Har nayi chat me Claude pehle ye file padhe.
 - ✅ Asli leads: customer page (docs/index.html radar) → Supabase ko_lead_create → vendor inbox (ko_inbox)
 - ✅ Background service (online) har 7 sec → ghanti + full-screen, app band ho tab bhi
 - ✅ Lead Bazar strip (timer, x/5 vendor, budget, Accept · coin), lead card 6 kadam (Accept→Action→Working→Pahunch gaye→Done→Review)
-- ⬜ Lead settings screen, coins recharge (Razorpay), chat
+- ✅ v1.2: Chrome jaisi Leads | My Shop tab patti (swipe), Lead settings sheet — Categories mapping (toggle, chips, services/rate badlein, nayi category), Store profile, Service area, Timing, Accept (manual/auto), Lead limit — sab server par, ko_inbox inhi se filter
+- ✅ Din patti (₹ + lead + progress) + MONTH calendar, search + All time, filter chips, naye lead card (5 kadam: Accept→Action→Working→Done→Review, status pill), lambi press = pin, + New lead
+- ⬜ Coins recharge (Razorpay), chat
 
 ## Chaaran 3 — My Shop ✅ (v1.1, data abhi phone me)
 - ✅ Shop card 5 slide (shop, QR, stock, invoices, khata), aaj ke orders patti, POS grid (join ke items se), Add product
