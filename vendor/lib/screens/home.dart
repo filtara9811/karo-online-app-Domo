@@ -385,114 +385,153 @@ class _LeadsTabState extends State<LeadsTab> {
       );
 }
 
-class LeadCard extends StatelessWidget {
+class LeadCard extends StatefulWidget {
   final Req lead;
   const LeadCard({super.key, required this.lead});
+  @override
+  State<LeadCard> createState() => _LeadCardState();
+}
+
+class _LeadCardState extends State<LeadCard> {
+  bool open = false;
 
   static const _st = {
+    'pending': ['Pending', Color(0xFFD97706), Color(0xFFFFF4DC)],
     'chal': ['Chal rahi', Color(0xFF2563EB), Color(0xFFEAF1FF)],
     'done': ['Done', Color(0xFF2F9E5F), Color(0xFFE7F7EE)],
-    'pending': ['Pending', Color(0xFFD97706), Color(0xFFFFF4DC)],
   };
+
+  String _when(DateTime t) {
+    final n = DateTime.now();
+    final h = t.hour % 12 == 0 ? 12 : t.hour % 12;
+    final tm = '$h:${t.minute.toString().padLeft(2, '0')} ${t.hour < 12 ? 'am' : 'pm'}';
+    if (t.year == n.year && t.month == n.month && t.day == n.day) return 'Today, $tm';
+    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${t.day} ${m[t.month - 1]}, $tm';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final st = _st[lead.status] ?? _st['chal']!;
+    final l = widget.lead;
+    final st = _st[l.status] ?? _st['chal']!;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Box(
-        padding: const EdgeInsets.all(12),
-        onTap: () => _sheet(context),
-        child: Row(children: [
-          CircleAvatar(radius: 22, backgroundColor: const Color(0xFFFFF1DE), child: Icon(lead.icon, color: K.acc, size: 22)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Flexible(child: Text(lead.name, style: tx(15, w: FontWeight.w800), overflow: TextOverflow.ellipsis)),
-                const SizedBox(width: 6),
-                Text('· ${lead.service}', style: tx(12, c: K.muted)),
-              ]),
-              const SizedBox(height: 2),
-              Text('${lead.area} · ${lead.km.toStringAsFixed(1)} km', style: tx(11.5, c: K.muted, w: FontWeight.w500), overflow: TextOverflow.ellipsis),
-            ]),
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GestureDetector(
+        onTap: () => setState(() => open = !open),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: open ? K.goldL : K.line, width: open ? 1.5 : 1),
+            boxShadow: K.shadow(open ? .09 : .05),
           ),
-          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(ago(lead.at), style: tx(11, c: K.muted)),
-            const SizedBox(height: 5),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(color: st[2] as Color, borderRadius: BorderRadius.circular(10)),
-              child: Text(st[0] as String, style: tx(10.5, w: FontWeight.w800, c: st[1] as Color)),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Row(children: [
+              Container(
+                width: 62,
+                height: 62,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFFFF4E4), Color(0xFFFBE3C4)]),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: const Color(0xFFF3DDBC)),
+                ),
+                child: Icon(l.icon, color: K.acc, size: 30),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(l.name, style: tx(17, w: FontWeight.w800), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 2),
+                  Text('${l.service} · ${l.area.split(',').first}', style: tx(13.5, w: FontWeight.w600, c: K.ink2), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 3),
+                  Text.rich(
+                    TextSpan(children: [
+                      TextSpan(text: '${_when(l.at)} • ', style: tx(12, c: K.muted, w: FontWeight.w500)),
+                      TextSpan(text: st[0] as String, style: tx(12, w: FontWeight.w800, c: st[1] as Color)),
+                    ]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ]),
+              ),
+              const SizedBox(width: 8),
+              AnimatedRotation(
+                turns: open ? .5 : 0,
+                duration: const Duration(milliseconds: 220),
+                child: Container(
+                  width: 42,
+                  height: 42,
+                  decoration: const BoxDecoration(color: Color(0xFFEFEBE3), shape: BoxShape.circle),
+                  child: const Icon(Icons.keyboard_arrow_down_rounded, color: K.gold, size: 26),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 16),
+            _Progress(status: l.status, icon: l.icon),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 240),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: open ? _details(context, l) : const SizedBox(width: double.infinity),
             ),
           ]),
-        ]),
+        ),
       ),
     );
   }
 
-  void _sheet(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (c) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+  Widget _details(BuildContext context, Req l) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: K.iv, borderRadius: BorderRadius.circular(14)),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(l.need, style: tx(14, w: FontWeight.w700)),
+            const SizedBox(height: 4),
             Row(children: [
-              CircleAvatar(radius: 24, backgroundColor: const Color(0xFFFFF1DE), child: Icon(lead.icon, color: K.acc)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(lead.name, style: tx(17, w: FontWeight.w800)),
-                  Text(lead.service, style: tx(12.5, c: K.muted)),
-                ]),
-              ),
-              IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close_rounded)),
-            ]),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: K.iv, borderRadius: BorderRadius.circular(14)),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(lead.need, style: tx(14, w: FontWeight.w700)),
-                const SizedBox(height: 4),
-                Text('${lead.area} · ${lead.km.toStringAsFixed(1)} km · ${ago(lead.at)}', style: tx(12, c: K.muted)),
-              ]),
-            ),
-            const SizedBox(height: 14),
-            Row(children: [
-              Expanded(child: _act(Icons.call_rounded, 'Call', K.green, () => launchUrl(Uri.parse('tel:9999999999')))),
-              const SizedBox(width: 8),
-              Expanded(child: _act(Icons.chat_rounded, 'WhatsApp', const Color(0xFF25D366), () => launchUrl(Uri.parse('https://wa.me/919999999999'), mode: LaunchMode.externalApplication))),
-            ]),
-            const SizedBox(height: 12),
-            Text('Status badlein', style: tx(12, c: K.muted, w: FontWeight.w800)),
-            const SizedBox(height: 6),
-            Row(children: [
-              for (final e in _st.entries)
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: lead.status == e.key ? e.value[2] as Color : null,
-                        side: BorderSide(color: e.value[1] as Color),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      onPressed: () {
-                        Store.i.setStatus(lead, e.key);
-                        Navigator.pop(c);
-                      },
-                      child: Text(e.value[0] as String, style: tx(11.5, w: FontWeight.w800, c: e.value[1] as Color)),
-                    ),
-                  ),
-                ),
+              const Icon(Icons.location_on_rounded, size: 14, color: K.red),
+              const SizedBox(width: 3),
+              Expanded(child: Text('${l.area} · ${l.km.toStringAsFixed(1)} km · ${ago(l.at)}', style: tx(12, c: K.muted), overflow: TextOverflow.ellipsis)),
             ]),
           ]),
         ),
-      ),
+        const SizedBox(height: 10),
+        Row(children: [
+          Expanded(child: _act(Icons.call_rounded, 'Call', K.green, () => launchUrl(Uri.parse('tel:9999999999')))),
+          const SizedBox(width: 8),
+          Expanded(child: _act(Icons.chat_rounded, 'WhatsApp', const Color(0xFF25D366), () => launchUrl(Uri.parse('https://wa.me/919999999999'), mode: LaunchMode.externalApplication))),
+        ]),
+        const SizedBox(height: 10),
+        Row(children: [
+          for (final e in _st.entries)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: GestureDetector(
+                  onTap: () {
+                    Store.i.setStatus(l, e.key);
+                    toast(context, '${l.name}: ${e.value[0]}');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: l.status == e.key ? e.value[2] as Color : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: (e.value[1] as Color).withValues(alpha: l.status == e.key ? 1 : .35), width: 1.4),
+                    ),
+                    child: Text(e.value[0] as String, style: tx(12, w: FontWeight.w800, c: e.value[1] as Color)),
+                  ),
+                ),
+              ),
+            ),
+        ]),
+      ]),
     );
   }
 
@@ -500,7 +539,50 @@ class LeadCard extends StatelessWidget {
         onPressed: f,
         icon: Icon(i, size: 18, color: Colors.white),
         label: Text(t, style: tx(13.5, w: FontWeight.w800, c: Colors.white)),
-        style: ElevatedButton.styleFrom(backgroundColor: c, padding: const EdgeInsets.symmetric(vertical: 13), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+        style: ElevatedButton.styleFrom(backgroundColor: c, elevation: 0, padding: const EdgeInsets.symmetric(vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+      );
+}
+
+/// Neeche wali progress patti: Customer → Kaam → Pura
+class _Progress extends StatelessWidget {
+  final String status;
+  final IconData icon;
+  const _Progress({required this.status, required this.icon});
+
+  static const g = Color(0xFF2F9E5F), b = Color(0xFF2563EB), o = Color(0xFFD97706), grey = Color(0xFFD9D4C8);
+
+  @override
+  Widget build(BuildContext context) {
+    final step = status == 'done' ? 2 : (status == 'chal' ? 1 : 0);
+    final midC = step == 2 ? g : (step == 1 ? b : grey);
+    final endC = step == 2 ? g : grey;
+    return SizedBox(
+      height: 34,
+      child: Row(children: [
+        _dot(Icons.person_rounded, step == 0 ? o : g, filled: true),
+        Expanded(child: _line(step == 0 ? o : g, step >= 1 ? midC : grey)),
+        _dot(icon, midC, filled: step >= 1, pulse: step == 1),
+        Expanded(child: _line(step >= 1 ? midC : grey, step == 2 ? g : grey)),
+        _dot(step == 2 ? Icons.check_rounded : Icons.flag_rounded, endC, filled: step == 2),
+      ]),
+    );
+  }
+
+  Widget _line(Color a, Color b) => Container(
+        height: 3,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), gradient: LinearGradient(colors: [a.withValues(alpha: .75), b.withValues(alpha: .75)])),
+      );
+
+  Widget _dot(IconData i, Color c, {bool filled = false, bool pulse = false}) => Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: filled ? c : Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: filled ? Colors.white : c, width: filled ? 2.5 : 1.6),
+          boxShadow: [BoxShadow(color: (filled ? c : Colors.black).withValues(alpha: pulse ? .45 : .14), blurRadius: pulse ? 12 : 6, spreadRadius: pulse ? 2 : 0)],
+        ),
+        child: Icon(i, size: 18, color: filled ? Colors.white : c),
       );
 }
 

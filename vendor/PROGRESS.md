@@ -17,7 +17,8 @@ Har nayi chat me Claude pehle ye file padhe.
 - ⬜ Phone par test: app band → ghanti (Xiaomi/Oppo/Vivo/Samsung)
 
 ## Chaaran 2 — My Leads ⬜
-- ⬜ Aaj ki leads date strip, lead detail poori, chat
+- ✅ Lead card naya: bada icon, khulne wala detail (Call/WhatsApp/status), neeche progress patti (Customer → Kaam → Pura) — Happy Food My Orders jaisa
+- ⬜ Aaj ki leads date strip, chat
 - ⬜ Lead settings (category, doori, samay)
 - ⬜ Coins recharge + history
 
