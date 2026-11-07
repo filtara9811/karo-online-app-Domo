@@ -120,11 +120,11 @@ class _JoinScreenState extends State<JoinScreen> {
 
   Future<void> _openCat(Cat c) async {
     final key = '$ty|${c.n}';
-    final res = await showModalBottomSheet<_PickResult>(
+    final res = await showModalBottomSheet<PickResult>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _SubPicker(cat: c, typeLabel: T.l, active: List.of(sel[key] ?? const []), items: {for (final e in items.entries) e.key: List.of(e.value)}),
+      builder: (_) => SubPicker(cat: c, typeLabel: T.l, active: List.of(sel[key] ?? const []), items: {for (final e in items.entries) e.key: List.of(e.value)}),
     );
     if (res == null) return;
     setState(() {
@@ -945,23 +945,23 @@ class _OptDialog extends StatelessWidget {
 }
 
 // ======================= Sub-service picker (category mapping) =======================
-class _PickResult {
+class PickResult {
   final List<String> active;
   final Map<String, List<String>> items;
-  _PickResult(this.active, this.items);
+  PickResult(this.active, this.items);
 }
 
-class _SubPicker extends StatefulWidget {
+class SubPicker extends StatefulWidget {
   final Cat cat;
   final String typeLabel;
   final List<String> active;
   final Map<String, List<String>> items;
-  const _SubPicker({required this.cat, required this.typeLabel, required this.active, required this.items});
+  const SubPicker({required this.cat, required this.typeLabel, required this.active, required this.items});
   @override
-  State<_SubPicker> createState() => _SubPickerState();
+  State<SubPicker> createState() => SubPickerState();
 }
 
-class _SubPickerState extends State<_SubPicker> {
+class SubPickerState extends State<SubPicker> {
   late final List<String> active = widget.active;
   late final Map<String, List<String>> items = widget.items;
   late final List<Sub> subs = [
@@ -1101,7 +1101,7 @@ class _SubPickerState extends State<_SubPicker> {
               Expanded(
                 flex: 3,
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context, _PickResult(List.of(active), items)),
+                  onTap: () => Navigator.pop(context, PickResult(List.of(active), items)),
                   child: Container(
                     height: 52,
                     alignment: Alignment.center,

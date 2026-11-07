@@ -58,14 +58,15 @@ class Req {
 }
 
 /// 6 kadam — prototype jaisa
-const kSteps = ['accept', 'action', 'working', 'reached', 'done', 'review'];
+const kSteps = ['accept', 'action', 'working', 'done', 'review'];
 const kStepLabel = {
   'accept': 'Accept',
   'action': 'Action',
   'working': 'Working',
-  'reached': 'Pahunch gaye',
+  'reached': 'Working',
   'done': 'Done',
   'review': 'Review',
+  'skip': 'Skipped',
 };
 
 class Store extends ChangeNotifier {
@@ -90,6 +91,51 @@ class Store extends ChangeNotifier {
   String get ownerName => (vendor?['owner_name'] ?? '').toString();
   int get coins => (vendor?['coins'] as num?)?.toInt() ?? 0;
   List<String> get subs => List<String>.from(vendor?['subs'] ?? const []);
+  List<String> get cats => List<String>.from(vendor?['cats'] ?? const []);
+  Map<String, dynamic> get settings => Map<String, dynamic>.from(vendor?['settings'] ?? const {});
+
+  /// Lead settings / store profile / mapping save — server par, turant leads isi hisaab se aayengi
+  Future<void> updateVendor(Map<String, dynamic> patch) async {
+    final v = Map<String, dynamic>.from(vendor ?? {});
+    v.addAll(patch);
+    final saved = await Api.rpc('ko_vendor_save', {
+      'p': {
+        'phone': v['phone'] ?? phone,
+        'shop_name': v['shop_name'],
+        'owner_name': v['owner_name'],
+        'area': v['area'],
+        'ty': v['ty'],
+        'role': v['role'],
+        'biz': v['biz'],
+        'radius': '${v['radius'] ?? '5'}',
+        'cats': v['cats'] ?? [],
+        'subs': v['subs'] ?? [],
+        'items': v['items'] ?? {},
+        'settings': v['settings'] ?? {},
+      }
+    });
+    vendor = Map<String, dynamic>.from(saved);
+    await _save();
+    notifyListeners();
+    refresh();
+  }
+
+  Future<void> saveSettings(Map<String, dynamic> patch) {
+    final s = settings..addAll(patch);
+    return updateVendor({'settings': s});
+  }
+
+  /// "+ New lead" — vendor ki apni lead (dukaan par aaya / phone aaya)
+  Future<void> addManualLead(Map<String, dynamic> p) async {
+    await Api.rpc('ko_vendor_add_lead', {'p_vendor': vendorId, 'p': p});
+    await refresh();
+  }
+
+  final Set<int> pinned = {};
+  void togglePin(int id) {
+    pinned.contains(id) ? pinned.remove(id) : pinned.add(id);
+    notifyListeners();
+  }
 
   Future<void> load() async {
     final p = await SharedPreferences.getInstance();
@@ -172,10 +218,16 @@ class Store extends ChangeNotifier {
       final a = await Api.rpc('ko_inbox', {'p_vendor': vendorId});
       final b = await Api.rpc('ko_my_leads', {'p_vendor': vendorId});
       final ib = [for (final x in (a as List)) Req.fromJson(Map<String, dynamic>.from(x))].where((r) => !_hidden.contains(r.id)).toList();
+      final auto = settings['accept'] == 'auto';
+      final minC = (settings['minCoins'] as num?)?.toInt() ?? 10;
       for (final r in ib) {
         if (!_seen.contains(r.id)) {
           _seen.add(r.id);
-          if (!_first) newLead.add(r);
+          if (auto && coins >= minC + r.coins) {
+            accept(r); // Auto accept — coin kat-ta hai
+          } else if (!_first) {
+            newLead.add(r);
+          }
         }
       }
       _first = false;
@@ -273,6 +325,10 @@ class Store extends ChangeNotifier {
         return leads.where((l) => ['action', 'working', 'reached'].contains(l.step)).length;
       case 'done':
         return leads.where((l) => ['done', 'review'].contains(l.step)).length;
+      case 'skip':
+        return leads.where((l) => l.step == 'skip').length;
+      case 'new':
+        return leads.where((l) => DateTime.now().difference(l.at).inHours < 24 && l.step == 'accept').length;
     }
     return leads.length;
   }
