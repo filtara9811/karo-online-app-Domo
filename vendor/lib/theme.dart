@@ -16,6 +16,19 @@ class K {
   static const muted = Color(0xFF8A8373);
   static const card = Colors.white;
 
+  // Join / login (prototype ka orange + cream)
+  static const or = Color(0xFFF47B20);
+  static const orD = Color(0xFFEE6A0D);
+  static const orL = Color(0xFFFA8C33);
+  static const cream = Color(0xFFFDFAF3);
+  static const sand = Color(0xFFF3EAD6);
+  static const tile = Color(0xFFF3E2B5);
+  static const txt = Color(0xFF2B2B2B);
+  static const sub = Color(0xFF8A8070);
+  static const mint = Color(0xFFEFFAF3);
+  static const mintB = Color(0xFF7FD3A2);
+  static const orGrad = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFFA8C33), Color(0xFFEE6A0D)]);
+
   static const darkCard = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -48,6 +61,9 @@ ThemeData appTheme() {
     snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating, backgroundColor: K.ink),
   );
 }
+
+/// Prototype ke headings (Cormorant Garamond)
+TextStyle sf(double size, {FontWeight w = FontWeight.w700, Color c = K.txt}) => GoogleFonts.cormorantGaramond(fontSize: size, fontWeight: w, color: c, height: 1.15);
 
 TextStyle tx(double size, {FontWeight w = FontWeight.w600, Color c = K.ink, double? h}) =>
     GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: w, color: c, height: h);

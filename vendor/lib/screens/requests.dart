@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../data.dart';
 import '../ring.dart';
 import '../theme.dart';
-import 'incoming.dart';
 
-/// Requests inbox — prototype jaisa: Leads | Orders, har card par Reject / Accept
+/// Requests inbox — prototype jaisa: Leads | Orders, har card par timer + Reject / Accept
 void openRequests(BuildContext context) {
+  Store.i.refresh();
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -24,6 +24,7 @@ class RequestsSheet extends StatefulWidget {
 class _RequestsSheetState extends State<RequestsSheet> {
   int tab = 0;
   Timer? _t;
+  bool testing = false;
 
   @override
   void initState() {
@@ -39,11 +40,15 @@ class _RequestsSheetState extends State<RequestsSheet> {
     super.dispose();
   }
 
-  Future<void> _demo() async {
-    final r = Store.i.newDemoRequest();
-    await Ring.i.ringNow(r);
-    if (!mounted) return;
-    Navigator.push(context, MaterialPageRoute(builder: (_) => IncomingScreen(req: r), fullscreenDialog: true));
+  Future<void> _test() async {
+    setState(() => testing = true);
+    try {
+      await Store.i.testLead();
+      if (mounted) toast(context, '✓ Test lead server par bani — ghanti bajegi');
+    } catch (e) {
+      if (mounted) toast(context, '⚠️ $e');
+    }
+    if (mounted) setState(() => testing = false);
   }
 
   @override
@@ -52,7 +57,7 @@ class _RequestsSheetState extends State<RequestsSheet> {
       listenable: Store.i,
       builder: (context, _) {
         final s = Store.i;
-        final list = tab == 0 ? s.pendingLeads : s.pendingOrders;
+        final list = tab == 0 ? s.inbox : const <Req>[];
         return Container(
           height: MediaQuery.of(context).size.height * .9,
           decoration: const BoxDecoration(color: K.iv, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
@@ -65,9 +70,9 @@ class _RequestsSheetState extends State<RequestsSheet> {
                 Text('Requests', style: tx(22, w: FontWeight.w800)),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: _demo,
-                  icon: const Icon(Icons.add_alert_rounded, size: 18, color: K.acc),
-                  label: Text('Demo request', style: tx(12.5, w: FontWeight.w800, c: K.acc)),
+                  onPressed: testing ? null : _test,
+                  icon: testing ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.add_alert_rounded, size: 18, color: K.acc),
+                  label: Text('Test lead', style: tx(12.5, w: FontWeight.w800, c: K.acc)),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -82,26 +87,29 @@ class _RequestsSheetState extends State<RequestsSheet> {
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(color: const Color(0xFFEDE6D6), borderRadius: BorderRadius.circular(16)),
                 child: Row(children: [
-                  _seg(0, 'Leads', s.pendingLeads.length, K.red),
-                  _seg(1, 'Orders', s.pendingOrders.length, K.green),
+                  _seg(0, 'Leads', s.inbox.length, K.red),
+                  _seg(1, 'Orders', 0, K.green),
                 ]),
               ),
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: list.isEmpty
-                  ? Center(
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.inbox_rounded, size: 48, color: K.goldL),
+              child: RefreshIndicator(
+                color: K.acc,
+                onRefresh: s.refresh,
+                child: list.isEmpty
+                    ? ListView(children: [
+                        const SizedBox(height: 80),
+                        const Center(child: Icon(Icons.inbox_rounded, size: 48, color: K.goldL)),
                         const SizedBox(height: 8),
-                        Text('Abhi koi nayi request nahi', style: tx(14, w: FontWeight.w700, c: K.muted)),
-                        Text('Nayi request aate hi ghanti bajegi', style: tx(12, c: K.muted)),
-                      ]),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 30),
-                      children: [for (final r in list) ReqCard(req: r)],
-                    ),
+                        Center(child: Text(tab == 0 ? 'Abhi koi nayi request nahi' : 'Online orders chaaran 3 me', style: tx(14, w: FontWeight.w700, c: K.muted))),
+                        Center(child: Text(tab == 0 ? 'Customer request bhejte hi yahan aayegi aur ghanti bajegi' : 'Digital dukaan ke orders yahan aayenge', style: tx(12, c: K.muted))),
+                      ])
+                    : ListView(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 30),
+                        children: [for (final r in list) ReqCard(key: ValueKey(r.id), req: r)],
+                      ),
+              ),
             ),
           ]),
         );
@@ -132,26 +140,33 @@ class _RequestsSheetState extends State<RequestsSheet> {
       );
 }
 
-class ReqCard extends StatelessWidget {
+class ReqCard extends StatefulWidget {
   final Req req;
   const ReqCard({super.key, required this.req});
+  @override
+  State<ReqCard> createState() => _ReqCardState();
+}
+
+class _ReqCardState extends State<ReqCard> {
+  bool busy = false;
+  bool open = false;
 
   String _left() {
-    final d = const Duration(minutes: 20) - DateTime.now().difference(req.at);
+    final d = widget.req.left;
     if (d.isNegative) return 'samay khatam';
     return '${d.inMinutes}m ${(d.inSeconds % 60).toString().padLeft(2, '0')}s';
   }
 
   @override
   Widget build(BuildContext context) {
-    final r = req;
+    final r = widget.req;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22), border: Border.all(color: K.line), boxShadow: K.shadow(.05)),
       child: Column(children: [
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CircleAvatar(radius: 21, backgroundColor: const Color(0xFFEFE9DC), child: Text(r.initial, style: tx(16, w: FontWeight.w800))),
+          CircleAvatar(radius: 21, backgroundColor: K.ink, child: Text(r.initial, style: tx(16, w: FontWeight.w800, c: Colors.white))),
           const SizedBox(width: 10),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -160,53 +175,57 @@ class ReqCard extends StatelessWidget {
                 const SizedBox(width: 5),
                 const Icon(Icons.verified_rounded, size: 18, color: Color(0xFF2563EB)),
               ]),
-              Row(children: [
-                Icon(r.icon, size: 14, color: K.acc),
-                const SizedBox(width: 4),
-                Flexible(child: Text(r.service, style: tx(12.5, w: FontWeight.w700), overflow: TextOverflow.ellipsis)),
-              ]),
-              Row(children: [
-                const Icon(Icons.location_on_rounded, size: 14, color: K.red),
-                const SizedBox(width: 3),
-                Flexible(child: Text('${r.area} · ${r.km.toStringAsFixed(1)} km', style: tx(11.5, c: K.muted, w: FontWeight.w500), overflow: TextOverflow.ellipsis)),
-              ]),
+              Text('${r.icon} ${r.service}', style: tx(12.5, w: FontWeight.w700), overflow: TextOverflow.ellipsis),
+              if (r.area.isNotEmpty) Text('📍 ${r.area}', style: tx(11.5, c: K.muted, w: FontWeight.w500), overflow: TextOverflow.ellipsis),
             ]),
           ),
           Text(_left(), style: tx(12, w: FontWeight.w800, c: K.acc)),
         ]),
         const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: const Color(0xFFFAF6EC), borderRadius: BorderRadius.circular(14)),
-          child: Row(children: [
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-              child: Icon(r.isOrder ? Icons.shopping_bag_rounded : r.icon, color: K.gold),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(r.need, style: tx(14, w: FontWeight.w800), maxLines: 2, overflow: TextOverflow.ellipsis),
-                Text(r.isOrder ? '${r.amount} · ${r.service}' : '${r.coins} coin · ${r.slots} slots left', style: tx(11.5, c: K.muted)),
+        GestureDetector(
+          onTap: () => setState(() => open = !open),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: const Color(0xFFFAF6EC), borderRadius: BorderRadius.circular(14)),
+            child: Column(children: [
+              Row(children: [
+                Container(width: 42, height: 42, alignment: Alignment.center, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)), child: Text(r.icon, style: const TextStyle(fontSize: 20))),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(r.need.isEmpty ? '${r.service} chahiye' : r.need, style: tx(14, w: FontWeight.w800), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text('${r.coins} coin · ${r.slots - r.taken} slots left', style: tx(11.5, c: K.muted)),
+                  ]),
+                ),
+                AnimatedRotation(turns: open ? .5 : 0, duration: const Duration(milliseconds: 200), child: const Icon(Icons.arrow_drop_down_rounded, color: K.muted, size: 28)),
               ]),
-            ),
-          ]),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 220),
+                child: !open
+                    ? const SizedBox(width: double.infinity)
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Row(children: [
+                          _chip('🕐 ${hm(r.at)}'),
+                          _chip(r.budget > 0 ? '💰 ₹${r.budget}' : '💰 —'),
+                          _chip('👥 ${r.taken}/${r.slots} ne li'),
+                        ]),
+                      ),
+              ),
+            ]),
+          ),
         ),
         const SizedBox(height: 10),
         Row(children: [
           Expanded(
             child: OutlinedButton(
-              onPressed: () {
-                Ring.i.stop(r);
-                Store.i.reject(r);
-              },
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                side: const BorderSide(color: K.line, width: 1.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              ),
+              onPressed: busy
+                  ? null
+                  : () {
+                      Ring.i.stop(r.id);
+                      Store.i.reject(r);
+                    },
+              style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 13), side: const BorderSide(color: K.line, width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
               child: Text('Reject', style: tx(15, w: FontWeight.w800, c: K.acc)),
             ),
           ),
@@ -214,29 +233,38 @@ class ReqCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: ElevatedButton(
-              onPressed: () => acceptReq(context, r),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: K.acc,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              ),
-              child: Text('Accept', style: tx(15, w: FontWeight.w800, c: Colors.white)),
+              onPressed: busy
+                  ? null
+                  : () async {
+                      setState(() => busy = true);
+                      await acceptReq(context, r);
+                      if (mounted) setState(() => busy = false);
+                    },
+              style: ElevatedButton.styleFrom(backgroundColor: K.acc, elevation: 0, padding: const EdgeInsets.symmetric(vertical: 13), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+              child: busy ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white)) : Text('Accept · ${r.coins} coin', style: tx(15, w: FontWeight.w800, c: Colors.white)),
             ),
           ),
         ]),
       ]),
     );
   }
+
+  Widget _chip(String t) => Expanded(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          padding: const EdgeInsets.symmetric(vertical: 7),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          child: Text(t, style: tx(11, w: FontWeight.w700), maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+      );
 }
 
-/// Accept — coin katega; coin kam ho to recharge ka message
-bool acceptReq(BuildContext context, Req r) {
-  Ring.i.stop(r);
-  final ok = Store.i.accept(r);
-  if (!ok) {
-    toast(context, 'Coins kam hain — pehle recharge karein');
-    return false;
-  }
-  toast(context, r.isOrder ? 'Order accept — ${r.name} ko bata diya' : '${r.coins} coin kata — ${r.name} ki lead aapki');
-  return true;
+/// Accept — server par coin katega. true = ho gaya
+Future<bool> acceptReq(BuildContext context, Req r) async {
+  Ring.i.stop(r.id);
+  final err = await Store.i.accept(r);
+  if (!context.mounted) return err == null;
+  toast(context, err ?? '✓ ${r.coins} coin kata — ${r.name} ki lead aapki. "Leads" me dekhein');
+  return err == null;
 }

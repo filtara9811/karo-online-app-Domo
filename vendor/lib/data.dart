@@ -1,174 +1,280 @@
-import 'dart:math';
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'api.dart';
+import 'catalog.dart';
 
-/// Ek request — lead (service) ya order (dukaan se saamaan)
+/// Ek lead (customer ki request)
 class Req {
-  final String id;
-  final String name;
-  final String service;
-  final IconData icon;
-  final String area;
-  final double km;
-  final String need;
-  final int coins;
-  final int slots;
-  final bool isOrder;
-  final String amount;
-  final DateTime at;
-  String status; // naya | chal | done | pending | missed | rejected
+  final int id;
+  final String name, phone, service, category, icon, need, area;
+  final int budget, coins, slots, taken;
+  final DateTime at, expires;
+  String step; // accept | action | working | reached | done | review
   Req({
     required this.id,
     required this.name,
+    this.phone = '',
     required this.service,
+    this.category = '',
     required this.icon,
-    required this.area,
-    required this.km,
-    required this.need,
+    this.need = '',
+    this.area = '',
+    this.budget = 0,
     this.coins = 1,
-    this.slots = 3,
-    this.isOrder = false,
-    this.amount = '',
-    DateTime? at,
-    this.status = 'naya',
-  }) : at = at ?? DateTime.now();
+    this.slots = 5,
+    this.taken = 0,
+    required this.at,
+    DateTime? expires,
+    this.step = 'accept',
+  }) : expires = expires ?? at.add(const Duration(minutes: 30));
 
-  String get initial => name.isEmpty ? '?' : name[0].toUpperCase();
+  factory Req.fromJson(Map<String, dynamic> j) {
+    final svc = (j['service'] ?? '').toString();
+    final ic = (j['icon'] ?? '').toString();
+    DateTime p(String k) => DateTime.tryParse((j[k] ?? '').toString())?.toLocal() ?? DateTime.now();
+    return Req(
+      id: (j['id'] as num).toInt(),
+      name: (j['name'] ?? 'Customer').toString(),
+      phone: (j['phone'] ?? '').toString(),
+      service: svc,
+      category: (j['category'] ?? '').toString(),
+      icon: ic.isNotEmpty ? ic : Catalog.iconFor(svc),
+      need: (j['need'] ?? '').toString(),
+      area: (j['area'] ?? '').toString(),
+      budget: (j['budget'] as num?)?.toInt() ?? 0,
+      coins: (j['coins'] as num?)?.toInt() ?? 1,
+      slots: (j['slots'] as num?)?.toInt() ?? 5,
+      taken: (j['taken'] as num?)?.toInt() ?? 0,
+      at: p('created_at'),
+      expires: j['expires_at'] == null ? null : p('expires_at'),
+      step: (j['step'] ?? 'accept').toString(),
+    );
+  }
+
+  String get initial => name.isEmpty ? '?' : name.substring(0, 1).toUpperCase();
+  Duration get left => expires.difference(DateTime.now());
 }
 
-/// Abhi ke liye namoone ka data (chaaran 5 me Supabase se aayega)
+/// 6 kadam — prototype jaisa
+const kSteps = ['accept', 'action', 'working', 'reached', 'done', 'review'];
+const kStepLabel = {
+  'accept': 'Accept',
+  'action': 'Action',
+  'working': 'Working',
+  'reached': 'Pahunch gaye',
+  'done': 'Done',
+  'review': 'Review',
+};
+
 class Store extends ChangeNotifier {
   Store._();
   static final Store i = Store._();
 
-  bool loggedIn = false;
   String phone = '';
-  String shopName = 'Ashu Garments';
-  int coins = 503;
+  Map<String, dynamic>? vendor; // backend se
   bool online = true;
+  bool loading = false;
+  String? error;
 
-  final List<Req> requests = [];
-  final List<Req> leads = [];
+  List<Req> inbox = []; // khuli leads (accept nahi ki)
+  List<Req> leads = []; // meri leads (accept ki hui)
+  final Set<int> _hidden = {}; // reject / local hata di
+  Timer? _poll;
 
-  static final _rnd = Random();
-  static const _pool = [
-    ['Rahul', 'AC repair', 'Bara Hindu Rao, Delhi', 'AC thanda nahi kar raha', Icons.ac_unit_rounded],
-    ['Priya', 'Plumber', 'Sadar Bazar, Delhi', 'Ghar par visit chahiye', Icons.plumbing_rounded],
-    ['Sameer', 'Bridal makeup', 'Subzi Mandi, Delhi', 'Aaj shaam tak kaam', Icons.brush_rounded],
-    ['Neha', 'Electrician', 'Kamla Nagar, Delhi', 'Pankha nahi chal raha', Icons.electrical_services_rounded],
-    ['Imran', 'Carpenter', 'Chandni Chowk, Delhi', 'Almari ka darwaza theek', Icons.handyman_rounded],
-  ];
+  bool get loggedIn => phone.isNotEmpty;
+  bool get joined => vendor != null;
+  String get vendorId => (vendor?['id'] ?? '').toString();
+  String get shopName => (vendor?['shop_name'] ?? 'Meri dukaan').toString();
+  String get ownerName => (vendor?['owner_name'] ?? '').toString();
+  int get coins => (vendor?['coins'] as num?)?.toInt() ?? 0;
+  List<String> get subs => List<String>.from(vendor?['subs'] ?? const []);
 
   Future<void> load() async {
     final p = await SharedPreferences.getInstance();
-    loggedIn = p.getBool('loggedIn') ?? false;
     phone = p.getString('phone') ?? '';
-    coins = p.getInt('coins') ?? 503;
     online = p.getBool('online') ?? true;
-    _seed();
+    final v = p.getString('vendor');
+    if (v != null) vendor = jsonDecode(v);
   }
 
   Future<void> _save() async {
     final p = await SharedPreferences.getInstance();
-    await p.setBool('loggedIn', loggedIn);
     await p.setString('phone', phone);
-    await p.setInt('coins', coins);
     await p.setBool('online', online);
-  }
-
-  void _seed() {
-    if (requests.isNotEmpty || leads.isNotEmpty) return;
-    for (var k = 0; k < 3; k++) {
-      final x = _pool[k];
-      requests.add(Req(
-        id: 'R${100 + k}', name: x[0] as String, service: x[1] as String, area: x[2] as String,
-        need: x[3] as String, icon: x[4] as IconData, km: .2 + k * .3, coins: k + 1, slots: 3 - k,
-        at: DateTime.now().subtract(Duration(minutes: k * 3)),
-      ));
-    }
-    requests.add(Req(id: 'O201', name: 'Meena Kapoor', service: 'Order · 3 item', area: 'Bara Hindu Rao, Delhi', need: 'Round Neck Tee ×2, Formal Shirt ×1', icon: Icons.shopping_bag_rounded, km: .4, isOrder: true, amount: '₹1,148', coins: 0));
-    requests.add(Req(id: 'O202', name: 'Deepak Jain', service: 'Order · 1 item', area: 'Karol Bagh, Delhi', need: 'Kurta Pyjama set (L)', icon: Icons.shopping_bag_rounded, km: 2.1, isOrder: true, amount: '₹899', coins: 0));
-    const names = ['Imran', 'Pooja', 'Arjun', 'Sana', 'Vikas', 'Ritu', 'Kabir', 'Anil', 'Farah', 'Mohit', 'Geeta', 'Raju'];
-    const st = ['chal', 'done', 'pending', 'chal', 'done', 'chal', 'pending', 'done', 'chal', 'pending', 'chal', 'done'];
-    for (var k = 0; k < names.length; k++) {
-      final x = _pool[k % _pool.length];
-      leads.add(Req(
-        id: 'L${300 + k}', name: names[k], service: x[1] as String, area: x[2] as String, need: x[3] as String,
-        icon: x[4] as IconData, km: .3 + k * .2, status: st[k], at: DateTime.now().subtract(Duration(hours: 1 + k * 5)),
-      ));
+    if (vendor == null) {
+      await p.remove('vendor');
+      await p.remove('vendorId');
+    } else {
+      await p.setString('vendor', jsonEncode(vendor));
+      await p.setString('vendorId', vendorId);
     }
   }
 
-  List<Req> get pendingLeads => requests.where((r) => !r.isOrder && r.status == 'naya').toList();
-  List<Req> get pendingOrders => requests.where((r) => r.isOrder && r.status == 'naya').toList();
-  int count(String s) => leads.where((l) => l.status == s).length;
-
-  Req? byId(String? id) {
-    for (final r in requests) {
-      if (r.id == id) return r;
-    }
-    return null;
-  }
-
-  /// Nayi request aayi (demo) — asli me Supabase/FCM se aayegi
-  Req newDemoRequest() {
-    final x = _pool[_rnd.nextInt(_pool.length)];
-    final r = Req(
-      id: 'R${DateTime.now().millisecondsSinceEpoch % 100000}', name: x[0] as String, service: x[1] as String,
-      area: x[2] as String, need: x[3] as String, icon: x[4] as IconData, km: (2 + _rnd.nextInt(18)) / 10,
-      coins: 1 + _rnd.nextInt(2), slots: 1 + _rnd.nextInt(3),
-    );
-    requests.insert(0, r);
-    notifyListeners();
-    return r;
-  }
-
-  /// Accept: coin katega, lead "chal rahi" me jayegi. false = coin kam hain
-  bool accept(Req r) {
-    if (!r.isOrder && coins < r.coins) return false;
-    if (!r.isOrder) coins -= r.coins;
-    r.status = 'chal';
-    requests.remove(r);
-    if (!r.isOrder) leads.insert(0, r);
-    _save();
-    notifyListeners();
-    return true;
-  }
-
-  void reject(Req r) {
-    r.status = 'rejected';
-    requests.remove(r);
-    notifyListeners();
-  }
-
-  void setStatus(Req r, String s) {
-    r.status = s;
-    notifyListeners();
-  }
-
-  void setOnline(bool v) {
-    online = v;
-    _save();
-    notifyListeners();
-  }
-
-  void addCoins(int n) {
-    coins += n;
-    _save();
-    notifyListeners();
-  }
-
+  /// OTP ke baad: backend me is number ki dukaan hai?
   Future<void> login(String ph) async {
-    loggedIn = true;
     phone = ph;
+    try {
+      final v = await Api.rpc('ko_vendor_get', {'p_phone': ph});
+      vendor = v == null ? null : Map<String, dynamic>.from(v);
+    } catch (e) {
+      vendor = null;
+      error = e.toString();
+    }
+    await _save();
+    notifyListeners();
+  }
+
+  /// Server par dukaan save (join flow). App abhi home par nahi jaati — success screen ke "Done" par [applyVendor].
+  Future<Map<String, dynamic>> saveVendor(Map<String, dynamic> data) async {
+    final v = await Api.rpc('ko_vendor_save', {'p': data});
+    return Map<String, dynamic>.from(v);
+  }
+
+  Future<void> applyVendor(Map<String, dynamic> v) async {
+    vendor = v;
+    online = true;
     await _save();
     notifyListeners();
   }
 
   Future<void> logout() async {
-    loggedIn = false;
+    stopPolling();
+    phone = '';
+    vendor = null;
+    inbox = [];
+    leads = [];
     await _save();
     notifyListeners();
+  }
+
+  // ---------------- leads ----------------
+  void startPolling() {
+    _poll?.cancel();
+    refresh();
+    _poll = Timer.periodic(const Duration(seconds: 6), (_) => refresh());
+  }
+
+  void stopPolling() {
+    _poll?.cancel();
+    _poll = null;
+  }
+
+  /// Nayi aayi lead ids (UI ko ghanti / full-screen ke liye)
+  final StreamController<Req> newLead = StreamController<Req>.broadcast();
+  final Set<int> _seen = {};
+  bool _first = true;
+
+  Future<void> refresh() async {
+    if (!joined) return;
+    try {
+      final a = await Api.rpc('ko_inbox', {'p_vendor': vendorId});
+      final b = await Api.rpc('ko_my_leads', {'p_vendor': vendorId});
+      final ib = [for (final x in (a as List)) Req.fromJson(Map<String, dynamic>.from(x))].where((r) => !_hidden.contains(r.id)).toList();
+      for (final r in ib) {
+        if (!_seen.contains(r.id)) {
+          _seen.add(r.id);
+          if (!_first) newLead.add(r);
+        }
+      }
+      _first = false;
+      inbox = ib;
+      leads = [for (final x in (b as List)) Req.fromJson(Map<String, dynamic>.from(x))];
+      error = null;
+    } catch (e) {
+      error = e.toString();
+    }
+    notifyListeners();
+  }
+
+  Req? byId(int? id) {
+    for (final r in inbox) {
+      if (r.id == id) return r;
+    }
+    return null;
+  }
+
+  /// Accept: server par coin katega. null = ho gaya, warna galti ka message
+  Future<String?> accept(Req r) async {
+    try {
+      final res = Map<String, dynamic>.from(await Api.rpc('ko_lead_accept', {'p_vendor': vendorId, 'p_lead': r.id}));
+      if (res['ok'] != true) return (res['msg'] ?? 'Nahi ho paya').toString();
+      vendor?['coins'] = res['coins'];
+      _hidden.add(r.id);
+      inbox.removeWhere((x) => x.id == r.id);
+      await _save();
+      notifyListeners();
+      refresh();
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> reject(Req r) async {
+    _hidden.add(r.id);
+    inbox.removeWhere((x) => x.id == r.id);
+    notifyListeners();
+    try {
+      await Api.rpc('ko_lead_reject', {'p_vendor': vendorId, 'p_lead': r.id});
+    } catch (_) {}
+  }
+
+  Future<void> setStep(Req r, String s) async {
+    r.step = s;
+    notifyListeners();
+    try {
+      await Api.rpc('ko_lead_step', {'p_vendor': vendorId, 'p_lead': r.id, 'p_step': s});
+    } catch (_) {}
+  }
+
+  Future<void> setOnline(bool v) async {
+    online = v;
+    await _save();
+    notifyListeners();
+    try {
+      await Api.rpc('ko_set_online', {'p_vendor': vendorId, 'p_online': v});
+    } catch (_) {}
+  }
+
+  Future<void> addCoins(int n) async {
+    try {
+      final c = await Api.rpc('ko_coins_add', {'p_vendor': vendorId, 'p_n': n});
+      vendor?['coins'] = c;
+      await _save();
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  /// Test: apni hi pehli service par ek asli lead banao (customer ki jagah)
+  Future<void> testLead() async {
+    final s = subs.isNotEmpty ? subs.first : 'General request';
+    await Api.rpc('ko_lead_create', {
+      'p': {
+        'customer_name': 'Test Customer',
+        'customer_phone': '9999999999',
+        'service': s,
+        'icon': Catalog.iconFor(s),
+        'need': '$s chahiye — aaj hi',
+        'budget': 500,
+        'area': (vendor?['area'] ?? 'Delhi').toString(),
+      }
+    });
+    await refresh();
+  }
+
+  // ---------------- leads ke ginti ----------------
+  int count(String bucket) {
+    switch (bucket) {
+      case 'pending':
+        return leads.where((l) => l.step == 'accept').length;
+      case 'chal':
+        return leads.where((l) => ['action', 'working', 'reached'].contains(l.step)).length;
+      case 'done':
+        return leads.where((l) => ['done', 'review'].contains(l.step)).length;
+    }
+    return leads.length;
   }
 }
 
@@ -178,4 +284,13 @@ String ago(DateTime t) {
   if (d.inMinutes < 60) return '${d.inMinutes} min';
   if (d.inHours < 24) return '${d.inHours}h ago';
   return '${d.inDays} din';
+}
+
+String hm(DateTime t) {
+  final h = t.hour % 12 == 0 ? 12 : t.hour % 12;
+  return '$h:${t.minute.toString().padLeft(2, '0')} ${t.hour < 12 ? 'am' : 'pm'}';
+}
+
+void debugLog(Object o) {
+  if (kDebugMode) debugPrint('$o');
 }

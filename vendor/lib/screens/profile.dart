@@ -46,19 +46,35 @@ class _ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserv
   Future<void> _test() async {
     await Ring.i.askNotifications();
     await Ring.i.askExactAlarm();
-    final r = Store.i.newDemoRequest();
-    final exact = await Ring.i.ringAfter(r, 10);
+    final exact = await Ring.i.testRingAfter(10);
     if (!mounted) return;
+    _info('10 second me ghanti bajegi',
+        'Ab app band kar dijiye (Recent apps se hata dein) aur phone lock kar dijiye.\n\n10 second baad poori screen par alert aayega aur ghanti bajti rahegi.${exact ? '' : '\n\n(Is phone par exact alarm ki permission nahi mili, isliye thoda late baj sakti hai.)'}');
+  }
+
+  /// Asli test: server par ek lead banti hai → background service pakadti hai → ghanti
+  Future<void> _realTest() async {
+    await Ring.i.askNotifications();
+    if (!Store.i.online) {
+      await Store.i.setOnline(true);
+      await Ring.i.setOnline(true);
+    }
+    _info('Asli test — 15 second',
+        '15 second baad server par aapki service ki ek test lead banegi.\n\nAbhi turant app band karein (Recent apps se hata dein) aur phone lock kar dein — lead aate hi ghanti bajni chahiye.');
+    Future.delayed(const Duration(seconds: 15), () async {
+      try {
+        await Store.i.testLead();
+      } catch (_) {}
+    });
+  }
+
+  void _info(String t, String m) {
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-        title: Text('10 second me ghanti bajegi', style: tx(17, w: FontWeight.w800)),
-        content: Text(
-          'Ab app band kar dijiye (Recent apps se hata dein) aur phone lock kar dijiye.\n\n10 second baad poori screen par nayi request aayegi aur ghanti bajti rahegi.'
-          '${exact ? '' : '\n\n(Is phone par exact alarm ki permission nahi mili, isliye thoda late baj sakti hai.)'}',
-          style: tx(13.5, w: FontWeight.w500),
-        ),
+        title: Text(t, style: tx(17, w: FontWeight.w800)),
+        content: Text(m, style: tx(13.5, w: FontWeight.w500)),
         actions: [TextButton(onPressed: () => Navigator.pop(c), child: Text('Theek hai', style: tx(14, w: FontWeight.w800, c: K.acc)))],
       ),
     );
@@ -103,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserv
                     value: s.online,
                     activeThumbColor: K.green,
                     onChanged: (v) async {
-                      s.setOnline(v);
+                      await s.setOnline(v);
                       await Ring.i.setOnline(v);
                     },
                     title: Text('Online rahein', style: tx(14.5, w: FontWeight.w800)),
@@ -132,8 +148,33 @@ class _ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserv
                   style: ElevatedButton.styleFrom(backgroundColor: K.acc, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
                 ),
               ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 54,
+                child: OutlinedButton.icon(
+                  onPressed: _realTest,
+                  icon: const Icon(Icons.cloud_sync_rounded, color: K.acc),
+                  label: Text('Asli test: server se lead (15 sec)', style: tx(14.5, w: FontWeight.w800, c: K.acc)),
+                  style: OutlinedButton.styleFrom(side: const BorderSide(color: K.acc, width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                ),
+              ),
               const SizedBox(height: 6),
               Text('Test ke baad app band karke phone lock kar dein — ghanti bajni chahiye.', style: tx(11.5, c: K.muted), textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              Box(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('MERI SERVICES (inki lead aayegi)', style: tx(11, w: FontWeight.w800, c: K.muted).copyWith(letterSpacing: 1)),
+                  const SizedBox(height: 8),
+                  Wrap(spacing: 6, runSpacing: 6, children: [
+                    for (final x in s.subs)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(color: const Color(0xFFFFF1E2), borderRadius: BorderRadius.circular(99)),
+                        child: Text(x, style: tx(12, w: FontWeight.w700, c: K.acc)),
+                      ),
+                  ]),
+                ]),
+              ),
               const SizedBox(height: 18),
               Text('DUKAAN', style: tx(11.5, w: FontWeight.w800, c: K.muted).copyWith(letterSpacing: 1)),
               const SizedBox(height: 8),

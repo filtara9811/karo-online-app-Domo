@@ -94,7 +94,7 @@ jobs:
           perms=''.join('    <uses-permission android:name="android.permission.%s"/>\n'%p for p in [
             'INTERNET','POST_NOTIFICATIONS','USE_FULL_SCREEN_INTENT','VIBRATE','WAKE_LOCK',
             'SCHEDULE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED','FOREGROUND_SERVICE',
-            'FOREGROUND_SERVICE_SPECIAL_USE','REQUEST_IGNORE_BATTERY_OPTIMIZATIONS','CALL_PHONE'])
+            'FOREGROUND_SERVICE_SPECIAL_USE','REQUEST_IGNORE_BATTERY_OPTIMIZATIONS','CALL_PHONE','ACCESS_NETWORK_STATE'])
           s=s.replace('<application','%s    <application'%perms,1)
           # lock screen par bhi request screen khule
           s=s.replace('<activity','<activity\n            android:showWhenLocked="true"\n            android:turnScreenOn="true"',1)
@@ -116,6 +116,17 @@ jobs:
                           android:value="Customer ki nayi service request turant dikhana aur ghanti bajana"/>
                   </service>
           '''
+          comp+='''
+                  <service android:name="id.flutter.flutter_background_service.BackgroundService"
+                      android:exported="false" android:stopWithTask="false" android:enabled="true"
+                      android:foregroundServiceType="specialUse"
+                      tools:replace="android:foregroundServiceType,android:exported,android:stopWithTask,android:enabled">
+                      <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                          android:value="Online vendor ko customer ki nayi request turant dikhana aur ghanti bajana"/>
+                  </service>
+          '''
+          if 'xmlns:tools' not in s:
+              s=s.replace('<manifest xmlns:android="http://schemas.android.com/apk/res/android"','<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:tools="http://schemas.android.com/tools"',1)
           s=s.replace('</application>',comp+'    </application>',1)
           q='''    <queries>
                   <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="https"/></intent>
