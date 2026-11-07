@@ -26415,4 +26415,35 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 </body>
 </html>
 
+<script>
+/* ===== KO-LEAD: customer ki request asli server par (Karo Business vendor app tak) ===== */
+(function(){
+  const U='https://goyvhgpfxjpxkytpeigr.supabase.co/rest/v1/rpc/';
+  const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveXZoZ3BmeGpweGt5dHBlaWdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MDU4NzMsImV4cCI6MjEwODE4MTg3M30.5IYnhNkUtzjr8IvPoKezo-qnU1cLbXLbND9Kh6wOcmg';
+  async function rpc(fn,p){ const r=await fetch(U+fn,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify(p||{})}); const t=await r.text(); if(!r.ok) throw new Error(t); return t?JSON.parse(t):null; }
+  window.koRpc=rpc;
+  const say=m=>{ try{ toast(m); }catch(e){} };
+  function watch(id){
+    let n=0, seen=0; clearInterval(window._koW);
+    window._koW=setInterval(async()=>{
+      if(++n>180){ clearInterval(window._koW); return; }
+      try{ const s=await rpc('ko_lead_status',{p_lead:id}); const v=(s&&s.vendors)||[];
+        if(v.length>seen){ const x=v[v.length-1]; seen=v.length; say('✅ '+x.shop+' ne aapki request accept ki! ('+seen+')'); window.koAccepted=v; } }catch(e){}
+    },5000);
+  }
+  if(typeof runFind!=='function') return;
+  const _rf=runFind;
+  runFind=function(){
+    const out=_rf.apply(this,arguments);
+    try{
+      const c=(typeof fvCtx!=='undefined'&&fvCtx)||{}, pd=(typeof PCD!=='undefined'&&PCD)||{};
+      const need=((document.getElementById('aiIn')||{}).value||'').trim();
+      rpc('ko_lead_create',{p:{customer_name:pd.name||'Customer',customer_phone:(pd.phone||'').replace(/\D/g,'').slice(-10),service:c.name||'General request',icon:c.icon||'',need:need||((c.name||'Service')+' chahiye'),area:pd.city||'Delhi'}})
+        .then(j=>{ window.koLead=j; say('📡 Request bheji — '+(j.vendors||0)+' asli vendor online'); watch(j.id); })
+        .catch(e=>console.warn('ko_lead_create',e));
+    }catch(e){ console.warn(e); }
+    return out;
+  };
+})();
+</script>
 </body></html>
