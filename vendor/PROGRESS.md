@@ -16,26 +16,27 @@ Har nayi chat me Claude pehle ye file padhe.
 - ✅ Ghanti test (10 sec, app band karke) + permissions (notification, full screen, battery, autostart) — `screens/profile.dart`
 - ⬜ Phone par test: app band → ghanti (Xiaomi/Oppo/Vivo/Samsung)
 
-## Chaaran 2 — My Leads ⬜
-- ✅ Lead card naya: bada icon, khulne wala detail (Call/WhatsApp/status), neeche progress patti (Customer → Kaam → Pura) — Happy Food My Orders jaisa
-- ⬜ Aaj ki leads date strip, chat
-- ⬜ Lead settings (category, doori, samay)
-- ⬜ Coins recharge + history
+## Chaaran 2 — Login + Join + My Leads ✅ (v1.1)
+- ✅ Login prototype jaisa (poster, Mobile/WhatsApp, OTP 4 dabbe, success) — demo OTP koi bhi 4 ank
+- ✅ Join: guide video, 1→2→✓, Service/Product/Other, category tiles, sub-service picker (toggle + items + rate + apna jodein), shop details, radius, "Service kaise / Aap kaun", registration, photo
+- ✅ Shop rent sheet (₹1 trial / ₹100 aaj LIVE, UPI app, demo payment) → success → server par dukaan save
+- ✅ Asli leads: customer page (docs/index.html radar) → Supabase ko_lead_create → vendor inbox (ko_inbox)
+- ✅ Background service (online) har 7 sec → ghanti + full-screen, app band ho tab bhi
+- ✅ Lead Bazar strip (timer, x/5 vendor, budget, Accept · coin), lead card 6 kadam (Accept→Action→Working→Pahunch gaye→Done→Review)
+- ⬜ Lead settings screen, coins recharge (Razorpay), chat
 
-## Chaaran 3 — My Shop ⬜
-- ⬜ Shop card (Sales/Invoice/Visitors/Stock/P&L, Open/Close)
-- ⬜ Aaj ke orders + order detail
-- ⬜ POS / Naya bill + invoice 3"/4"/A4 + UPI QR + WhatsApp/Print/PDF
-- ⬜ Products add/edit, stock
-- ⬜ Dukaan QR
+## Chaaran 3 — My Shop ✅ (v1.1, data abhi phone me)
+- ✅ Shop card 5 slide (shop, QR, stock, invoices, khata), aaj ke orders patti, POS grid (join ke items se), Add product
+- ✅ Bill: grahak, Cash/UPI/Card/Udhaar, invoice 3"/4"/A4 + UPI QR, WhatsApp / Print / PDF
+- ✅ Orders sheet (Sab/Online/POS, 7 kadam patti)
+- ⬜ Bills/products server par, online orders (digital dukaan se)
 
 ## Chaaran 4 — Khata + Profile ⬜
 - ⬜ Khata Book
 - ⬜ Profile: dukaan jaankari, samay, Shop rent + AutoPay, support
 
-## Chaaran 5 — Asli backend + launch ⬜
-- ⬜ Supabase project (free plan me 2 active ki limit — faisla baaki)
-- ⬜ Firebase (FCM) — asli ghanti server se
-- ⬜ Customer ऐप ka "request bhejein" Supabase se jodna
-- ⬜ Fast2SMS OTP, Razorpay
+## Chaaran 5 — Launch ⬜
+- ✅ Backend: Committee Manager Supabase me ko_ tables + RPC (supabase/karo_v1.sql)
+- ⬜ Asli OTP (Fast2SMS) + login token — abhi RPC khule hain (demo), launch se pehle band karna zaroori
+- ⬜ Razorpay AutoPay, FCM (extra pakki ghanti)
 - ⬜ Play Console nayi listing + AAB
