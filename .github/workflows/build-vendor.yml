@@ -197,6 +197,28 @@ jobs:
       - name: APK taiyaar
         run: cp vendor/build/app/outputs/flutter-apk/app-release.apk karo-business.apk
 
+      - name: AAB banao (Play Store ke liye)
+        working-directory: vendor
+        run: flutter build appbundle --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE
+
+      - name: AAB par Play Store upload key lagao
+        env:
+          KP: ${{ secrets.KARO_UPLOAD_PASS }}
+        shell: bash
+        run: |
+          A=vendor/build/app/outputs/bundle/release/app-release.aab
+          if [ -n "$KP" ]; then
+            openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in signing/karo-business-upload.jks.enc -out /tmp/up.jks -pass env:KP
+            zip -q -d "$A" 'META-INF/*' || true
+            jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore /tmp/up.jks -storepass "$KP" "$A" upload
+            rm -f /tmp/up.jks
+            cp "$A" karo-business.aab
+            echo "Play Store wali AAB (upload key se signed) taiyaar"
+          else
+            cp "$A" karo-business-test-signed.aab
+            echo "::warning::KARO_UPLOAD_PASS secret nahi hai — AAB test key se signed (Play Store par mat daalein)"
+          fi
+
       - uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -209,5 +231,7 @@ jobs:
           tag_name: vendor-v1.0.${{ github.run_number }}
           name: Karo Online Business 1.0.${{ github.run_number }}
           make_latest: false
-          body: "Vendor app (Flutter native) — karo-business.apk download karke install karein."
-          files: karo-business.apk
+          body: "Vendor app (Flutter native) — karo-business.apk phone par install karein; karo-business.aab Play Console par upload karein."
+          files: |
+            karo-business.apk
+            karo-business*.aab
