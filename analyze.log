@@ -1,0 +1,10 @@
+Analyzing vendor...                                             
+
+   info • Constructors for public widgets should have a named 'key' parameter. Try adding a named parameter to the constructor • lib/screens/join.dart:959:9 • use_key_in_widget_constructors
+   info • The import of 'dart:typed_data' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/services.dart'. Try removing the import directive • lib/screens/pos.dart:1:8 • unnecessary_import
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/pos.dart:337:74 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/pos.dart:348:75 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/pos.dart:353:65 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/pos.dart:354:39 • prefer_const_constructors
+
+6 issues found. (ran in 7.4s)
