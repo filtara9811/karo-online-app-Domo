@@ -1,0 +1,7 @@
+# Dart / Flutter build files
+.dart_tool/
+.packages
+build/
+pubspec.lock
+*.iml
+.idea/

@@ -1,0 +1,14 @@
+name: karo_core
+description: "Karo Online — saare ऐप (Vendor, Customer, Staff, Admin) ka saanjha Dart code: login (OTP), session, backend API."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  http: ^1.2.2
+
+dev_dependencies:
+  lints: ^4.0.0
+  test: ^1.25.0
