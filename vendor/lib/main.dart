@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'api.dart';
 import 'catalog.dart';
 import 'data.dart';
 import 'ring.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.dark));
   await Catalog.load();
+  await Api.init();
   await Store.i.load();
   try {
     await Ring.i.init();

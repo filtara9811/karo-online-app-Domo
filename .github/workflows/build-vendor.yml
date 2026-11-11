@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main, master]
-    paths: ['vendor/**', '.github/workflows/build-vendor.yml']
+    paths: ['vendor/**', 'packages/**', '.github/workflows/build-vendor.yml']
 
 permissions:
   contents: write

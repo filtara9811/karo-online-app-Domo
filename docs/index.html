@@ -26423,11 +26423,16 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
   async function rpc(fn,p){ const r=await fetch(U+fn,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify(p||{})}); const t=await r.text(); if(!r.ok) throw new Error(t); return t?JSON.parse(t):null; }
   window.koRpc=rpc;
   const say=m=>{ try{ toast(m); }catch(e){} };
-  function watch(id){
+  // v3 backend: status sirf token se (purana backend token nahi deta → purana tareeka)
+  const status=(id,tok)=>tok?rpc('ko_lead_status',{p_lead:id,p_token:tok}):rpc('ko_lead_status',{p_lead:id});
+  // customer ki location (doori se vendor match) — 2 sec me na mile to bina location
+  const pos=()=>new Promise(r=>{ try{ if(!navigator.geolocation) return r(null); const t=setTimeout(()=>r(null),2000);
+    navigator.geolocation.getCurrentPosition(p=>{clearTimeout(t);r({lat:+p.coords.latitude.toFixed(5),lng:+p.coords.longitude.toFixed(5)});},()=>{clearTimeout(t);r(null);},{timeout:1900,maximumAge:600000}); }catch(e){ r(null); } });
+  function watch(id,tok){
     let n=0, seen=0; clearInterval(window._koW);
     window._koW=setInterval(async()=>{
       if(++n>180){ clearInterval(window._koW); return; }
-      try{ const s=await rpc('ko_lead_status',{p_lead:id}); const v=(s&&s.vendors)||[];
+      try{ const s=await status(id,tok); const v=(s&&s.vendors)||[];
         if(v.length>seen){ const x=v[v.length-1]; seen=v.length; say('✅ '+x.shop+' ne aapki request accept ki! ('+seen+')'); window.koAccepted=v; } }catch(e){}
     },5000);
   }
@@ -26438,8 +26443,8 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
     try{
       const c=(typeof fvCtx!=='undefined'&&fvCtx)||{}, pd=(typeof PCD!=='undefined'&&PCD)||{};
       const need=((document.getElementById('aiIn')||{}).value||'').trim();
-      rpc('ko_lead_create',{p:{customer_name:pd.name||'Customer',customer_phone:(pd.phone||'').replace(/\D/g,'').slice(-10),service:c.name||'General request',icon:c.icon||'',need:need||((c.name||'Service')+' chahiye'),area:pd.city||'Delhi'}})
-        .then(j=>{ window.koLead=j; say('📡 Request bheji — '+(j.vendors||0)+' asli vendor online'); watch(j.id); })
+      pos().then(g=>rpc('ko_lead_create',{p:Object.assign({customer_name:pd.name||'Customer',customer_phone:(pd.phone||'').replace(/\D/g,'').slice(-10),service:c.name||'General request',icon:c.icon||'',need:need||((c.name||'Service')+' chahiye'),area:pd.city||'Delhi'},g||{})}))
+        .then(j=>{ window.koLead=j; say('📡 Request bheji — '+(j.vendors||0)+' asli vendor online'); watch(j.id,j.token); })
         .catch(e=>console.warn('ko_lead_create',e));
     }catch(e){ console.warn(e); }
     return out;

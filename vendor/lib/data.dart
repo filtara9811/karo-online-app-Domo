@@ -84,7 +84,7 @@ class Store extends ChangeNotifier {
   final Set<int> _hidden = {}; // reject / local hata di
   Timer? _poll;
 
-  bool get loggedIn => phone.isNotEmpty;
+  bool get loggedIn => phone.isNotEmpty && Api.auth.signedIn;
   bool get joined => vendor != null;
   String get vendorId => (vendor?['id'] ?? '').toString();
   String get shopName => (vendor?['shop_name'] ?? 'Meri dukaan').toString();
@@ -98,9 +98,9 @@ class Store extends ChangeNotifier {
   Future<void> updateVendor(Map<String, dynamic> patch) async {
     final v = Map<String, dynamic>.from(vendor ?? {});
     v.addAll(patch);
+    // phone server login se leta hai — yahan se nahi
     final saved = await Api.rpc('ko_vendor_save', {
       'p': {
-        'phone': v['phone'] ?? phone,
         'shop_name': v['shop_name'],
         'owner_name': v['owner_name'],
         'area': v['area'],
@@ -127,7 +127,7 @@ class Store extends ChangeNotifier {
 
   /// "+ New lead" — vendor ki apni lead (dukaan par aaya / phone aaya)
   Future<void> addManualLead(Map<String, dynamic> p) async {
-    await Api.rpc('ko_vendor_add_lead', {'p_vendor': vendorId, 'p': p});
+    await Api.rpc('ko_vendor_add_lead', {'p': p});
     await refresh();
   }
 
@@ -139,10 +139,21 @@ class Store extends ChangeNotifier {
 
   Future<void> load() async {
     final p = await SharedPreferences.getInstance();
-    phone = p.getString('phone') ?? '';
     online = p.getBool('online') ?? true;
-    final v = p.getString('vendor');
-    if (v != null) vendor = jsonDecode(v);
+    if (Api.auth.signedIn) {
+      // phone sirf asli login (OTP session) se — purane demo login wale ko dobara OTP dena hoga
+      phone = Api.auth.phone;
+      final v = p.getString('vendor');
+      if (v != null) vendor = jsonDecode(v);
+    } else {
+      phone = '';
+      vendor = null;
+      await _save();
+    }
+    // Session khatam (refresh token bekaar / server ne mana) → login screen
+    Api.auth.changes.listen((s) {
+      if (s == null && phone.isNotEmpty) _clear();
+    });
   }
 
   Future<void> _save() async {
@@ -158,11 +169,13 @@ class Store extends ChangeNotifier {
     }
   }
 
-  /// OTP ke baad: backend me is number ki dukaan hai?
-  Future<void> login(String ph) async {
-    phone = ph;
+  /// OTP verify ke baad: server par is login ki dukaan hai? (nahi = Join flow)
+  Future<void> afterLogin() async {
+    if (!Api.auth.signedIn) return;
+    phone = Api.auth.phone;
+    error = null;
     try {
-      final v = await Api.rpc('ko_vendor_get', {'p_phone': ph});
+      final v = await Api.rpc('ko_me');
       vendor = v == null ? null : Map<String, dynamic>.from(v);
     } catch (e) {
       vendor = null;
@@ -186,11 +199,18 @@ class Store extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    await Api.auth.signOut();
+    await _clear();
+  }
+
+  Future<void> _clear() async {
     stopPolling();
     phone = '';
     vendor = null;
     inbox = [];
     leads = [];
+    _seen.clear();
+    _first = true;
     await _save();
     notifyListeners();
   }
@@ -215,8 +235,8 @@ class Store extends ChangeNotifier {
   Future<void> refresh() async {
     if (!joined) return;
     try {
-      final a = await Api.rpc('ko_inbox', {'p_vendor': vendorId});
-      final b = await Api.rpc('ko_my_leads', {'p_vendor': vendorId});
+      final a = await Api.rpc('ko_inbox');
+      final b = await Api.rpc('ko_my_leads');
       final ib = [for (final x in (a as List)) Req.fromJson(Map<String, dynamic>.from(x))].where((r) => !_hidden.contains(r.id)).toList();
       final auto = settings['accept'] == 'auto';
       final minC = (settings['minCoins'] as num?)?.toInt() ?? 10;
@@ -250,7 +270,7 @@ class Store extends ChangeNotifier {
   /// Accept: server par coin katega. null = ho gaya, warna galti ka message
   Future<String?> accept(Req r) async {
     try {
-      final res = Map<String, dynamic>.from(await Api.rpc('ko_lead_accept', {'p_vendor': vendorId, 'p_lead': r.id}));
+      final res = Map<String, dynamic>.from(await Api.rpc('ko_lead_accept', {'p_lead': r.id}));
       if (res['ok'] != true) return (res['msg'] ?? 'Nahi ho paya').toString();
       vendor?['coins'] = res['coins'];
       _hidden.add(r.id);
@@ -269,7 +289,7 @@ class Store extends ChangeNotifier {
     inbox.removeWhere((x) => x.id == r.id);
     notifyListeners();
     try {
-      await Api.rpc('ko_lead_reject', {'p_vendor': vendorId, 'p_lead': r.id});
+      await Api.rpc('ko_lead_reject', {'p_lead': r.id});
     } catch (_) {}
   }
 
@@ -277,7 +297,7 @@ class Store extends ChangeNotifier {
     r.step = s;
     notifyListeners();
     try {
-      await Api.rpc('ko_lead_step', {'p_vendor': vendorId, 'p_lead': r.id, 'p_step': s});
+      await Api.rpc('ko_lead_step', {'p_lead': r.id, 'p_step': s});
     } catch (_) {}
   }
 
@@ -286,17 +306,21 @@ class Store extends ChangeNotifier {
     await _save();
     notifyListeners();
     try {
-      await Api.rpc('ko_set_online', {'p_vendor': vendorId, 'p_online': v});
+      await Api.rpc('ko_set_online', {'p_online': v});
     } catch (_) {}
   }
 
-  Future<void> addCoins(int n) async {
+  /// Demo coins (server par demo mode band ho to mana) — null = ho gaya, warna galti
+  Future<String?> addCoins(int n) async {
     try {
-      final c = await Api.rpc('ko_coins_add', {'p_vendor': vendorId, 'p_n': n});
+      final c = await Api.rpc('ko_coins_add', {'p_n': n});
       vendor?['coins'] = c;
       await _save();
       notifyListeners();
-    } catch (_) {}
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
   }
 
   /// Test: apni hi pehli service par ek asli lead banao (customer ki jagah)

@@ -1,0 +1,58 @@
+# Har push / PR par jaanch: backend security (SQL), saanjha Dart core, Vendor app analyze.
+# Koi bhi test fail = laal nishaan — merge se pehle theek karein.
+name: Tests
+
+on:
+  push:
+    paths: ['supabase/**', 'packages/**', 'vendor/**', '.github/workflows/tests.yml']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    name: Backend (SQL security tests)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - run: supabase/tests/run.sh
+
+  core:
+    name: karo_core (Dart tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - working-directory: packages/karo_core
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+          dart test
+
+  vendor:
+    name: Vendor app (analyze)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - working-directory: vendor
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos --no-fatal-warnings

@@ -158,7 +158,6 @@ class _JoinScreenState extends State<JoinScreen> {
         subs.addAll(v);
       });
       saved = await Store.i.saveVendor({
-        'phone': _phone.text.trim(),
         'shop_name': _name.text.trim(),
         'owner_name': _owner.text.trim(),
         'area': _area.text.trim(),
@@ -467,7 +466,8 @@ class _JoinScreenState extends State<JoinScreen> {
         const SizedBox(height: 10),
         _field(_name, 'Shop / Business name'),
         _field(_owner, 'Owner name'),
-        _field(_phone, 'Mobile number', phone: true),
+        // Login (OTP) wala number hi dukaan ka number — badla nahi ja sakta
+        _field(_phone, 'Mobile number', phone: true, readOnly: true),
         const SizedBox(height: 8),
         Text('Service area', style: sf(22)),
         const SizedBox(height: 10),
@@ -600,11 +600,12 @@ class _JoinScreenState extends State<JoinScreen> {
     return o[2];
   }
 
-  Widget _field(TextEditingController c, String hint, {bool phone = false, bool bold = false, double pr = 14}) {
+  Widget _field(TextEditingController c, String hint, {bool phone = false, bool bold = false, double pr = 14, bool readOnly = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: TextField(
         controller: c,
+        readOnly: readOnly,
         keyboardType: phone ? TextInputType.phone : TextInputType.text,
         maxLength: phone ? 10 : null,
         textCapitalization: phone ? TextCapitalization.none : TextCapitalization.words,

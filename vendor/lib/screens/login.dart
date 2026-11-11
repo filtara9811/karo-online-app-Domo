@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../api.dart';
 import '../data.dart';
 import '../theme.dart';
 
@@ -16,8 +17,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   bool viaWa = false;
   String cc = '+91';
   final _ph = TextEditingController();
-  final _otp = List.generate(4, (_) => TextEditingController());
-  final _otpF = List.generate(4, (_) => FocusNode());
+  /// Supabase Auth ka OTP 6 ank ka hota hai
+  static const kOtpLen = 6;
+  final _otp = List.generate(kOtpLen, (_) => TextEditingController());
+  final _otpF = List.generate(kOtpLen, (_) => FocusNode());
   Timer? _t;
   int resend = 30;
   bool busy = false;
@@ -38,11 +41,24 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (s == 1) Future.delayed(const Duration(milliseconds: 350), () {});
   }
 
-  void _send() {
+  Future<void> _send() async {
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(ph)) {
       toast(context, '⚠️ Sahi 10 ankon ka mobile number daaliye');
       return;
     }
+    if (busy) return;
+    setState(() => busy = true);
+    try {
+      await Api.auth.sendOtp(ph);
+    } catch (e) {
+      if (mounted) {
+        setState(() => busy = false);
+        toast(context, '⚠️ $e');
+      }
+      return;
+    }
+    if (!mounted) return;
+    setState(() => busy = false);
     for (final c in _otp) {
       c.clear();
     }
@@ -54,15 +70,27 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       if (resend == 0) t.cancel();
     });
     _go(2);
-    toast(context, viaWa ? 'WhatsApp par OTP bheja (demo: koi bhi 4 ank)' : 'OTP bheja (demo: koi bhi 4 ank)');
+    // WhatsApp OTP abhi nahi — dono button SMS bhejte hain (sach batate hain)
+    toast(context, viaWa ? 'OTP SMS se bheja (WhatsApp OTP jald aa raha hai)' : 'OTP SMS se bheja');
     Future.delayed(const Duration(milliseconds: 400), () => _otpF[0].requestFocus());
   }
 
   Future<void> _verify() async {
-    if (otp.length != 4) return;
+    if (otp.length != kOtpLen || busy) return;
     FocusScope.of(context).unfocus();
     setState(() => busy = true);
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      await Api.auth.verifyOtp(ph, otp);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => busy = false);
+      for (final c in _otp) {
+        c.clear();
+      }
+      _otpF[0].requestFocus();
+      toast(context, '⚠️ $e');
+      return;
+    }
     if (!mounted) return;
     setState(() {
       busy = false;
@@ -71,9 +99,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Future<void> _continue() async {
+    if (busy) return;
     setState(() => busy = true);
-    await Store.i.login(ph);
-    if (mounted) setState(() => busy = false);
+    await Store.i.afterLogin();
+    if (!mounted) return;
+    setState(() => busy = false);
+    if (Store.i.error != null && !Store.i.loggedIn) toast(context, '⚠️ ${Store.i.error}');
   }
 
   @override
@@ -301,24 +332,38 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         ]),
         const SizedBox(height: 18),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          for (var k = 0; k < 4; k++)
-            Container(
-              width: 62,
-              height: 66,
-              margin: const EdgeInsets.symmetric(horizontal: 6),
+          for (var k = 0; k < kOtpLen; k++)
+            Flexible(
+              child: Container(
+              constraints: const BoxConstraints(maxWidth: 54),
+              height: 62,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
               child: TextField(
                 controller: _otp[k],
                 focusNode: _otpF[k],
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                maxLength: 1,
+                maxLength: kOtpLen, // poora OTP paste ho sake
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: tx(26, w: FontWeight.w800, c: K.txt),
+                style: tx(24, w: FontWeight.w800, c: K.txt),
                 onChanged: (v) {
-                  if (v.isNotEmpty && k < 3) _otpF[k + 1].requestFocus();
-                  if (v.isEmpty && k > 0) _otpF[k - 1].requestFocus();
+                  if (v.length == 2) {
+                    // bhare dabbe me naya ank — sirf naya rakho, aage badho
+                    _otp[k].text = v.substring(1);
+                    if (k < kOtpLen - 1) _otpF[k + 1].requestFocus();
+                  } else if (v.length > 2) {
+                    // SMS se poora OTP paste / autofill hua — dabbon me baant do
+                    final d = v.replaceAll(RegExp(r'\D'), '');
+                    for (var j = 0; j < kOtpLen; j++) {
+                      _otp[j].text = j < d.length ? d[j] : '';
+                    }
+                    _otpF[(d.length.clamp(1, kOtpLen)) - 1].requestFocus();
+                  } else {
+                    if (v.isNotEmpty && k < kOtpLen - 1) _otpF[k + 1].requestFocus();
+                    if (v.isEmpty && k > 0) _otpF[k - 1].requestFocus();
+                  }
                   setState(() {});
-                  if (otp.length == 4) _verify();
+                  if (otp.length == kOtpLen) _verify();
                 },
                 decoration: InputDecoration(
                   counterText: '',
@@ -330,6 +375,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
               ),
             ),
+            ),
         ]),
         const SizedBox(height: 10),
         Center(
@@ -338,9 +384,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               : GestureDetector(onTap: _send, child: Text('Resend OTP', style: tx(13.5, w: FontWeight.w800, c: K.orD))),
         ),
         const SizedBox(height: 14),
-        _orangeBtn('Verify & Login', _verify, enabled: otp.length == 4 && !busy, loading: busy),
+        _orangeBtn('Verify & Login', _verify, enabled: otp.length == kOtpLen && !busy, loading: busy),
         const SizedBox(height: 12),
-        Center(child: Text('Demo: koi bhi 4 digit · naya number = Sign up, pehle wala = seedha Login', textAlign: TextAlign.center, style: tx(11.5, w: FontWeight.w500, c: K.sub))),
+        Center(child: Text('Naya number = Sign up · pehle wala = seedha Login', textAlign: TextAlign.center, style: tx(11.5, w: FontWeight.w500, c: K.sub))),
       ],
     ]);
   }

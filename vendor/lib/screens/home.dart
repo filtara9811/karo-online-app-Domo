@@ -770,8 +770,8 @@ class _LeadsTabState extends State<LeadsTab> with AutomaticKeepAliveClientMixin 
                   child: GestureDetector(
                     onTap: () async {
                       Navigator.pop(c);
-                      await s.addCoins(n);
-                      if (context.mounted) toast(context, '+$n coins (demo) — asli recharge Razorpay se aayega');
+                      final err = await s.addCoins(n);
+                      if (context.mounted) toast(context, err == null ? '+$n coins (demo) — asli recharge Razorpay se aayega' : '⚠️ $err');
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 4),

@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  karo_core:
+    path: ../packages/karo_core
   google_fonts: ^6.2.1
   flutter_local_notifications: 18.0.1
   timezone: any

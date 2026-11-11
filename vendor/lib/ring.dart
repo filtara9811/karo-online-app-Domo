@@ -75,6 +75,8 @@ Future<void> bgMain(ServiceInstance service) async {
     service.setAsForegroundService();
   }
   service.on('stop').listen((_) => service.stopSelf());
+  // Isi isolate me apna backend client (login session SharedPreferences se)
+  await Api.init();
 
   bool first = true;
   Future<void> tick() async {
@@ -83,8 +85,10 @@ Future<void> bgMain(ServiceInstance service) async {
       await p.reload();
       final vid = p.getString('vendorId') ?? '';
       if (vid.isEmpty || !(p.getBool('online') ?? true)) return;
+      // logout ho gaya / session khatam → kuch nahi (token se server dukaan pehchanta hai)
+      if (await Api.auth.accessToken() == null) return;
       final seen = (p.getStringList('seenLeads') ?? []).toSet();
-      final list = await Api.rpc('ko_inbox', {'p_vendor': vid}) as List;
+      final list = await Api.rpc('ko_inbox') as List;
       final fresh = <Map>[];
       for (final x in list) {
         final id = '${x['id']}';
