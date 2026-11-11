@@ -3,7 +3,7 @@
 Design ka aadhaar: 1QR prototype ka vendor panel (Lead Bazar, ink + gold theme, Plus Jakarta Sans).
 Package: `com.filipra.karoonline.business` · Naam: Karo Online Business
 APK: GitHub → Releases → "Karo Online Business 1.0.N" → `karo-business.apk`
-Har nayi chat me Claude pehle ye file padhe.
+Har nayi chat me Claude pehle ye file padhe. Poori feature list (prototype se milaan): `vendor/PARITY.md`.
 
 ## Chaaran 1 — Neenv + Ghanti ✅ (pehla build)
 - ✅ Theme (rang, font, card) — `lib/theme.dart`
@@ -37,8 +37,20 @@ Har nayi chat me Claude pehle ye file padhe.
 - ⬜ Khata Book
 - ⬜ Profile: dukaan jaankari, samay, Shop rent + AutoPay, support
 
+## Step 0 — Secure backend + saanjha core ✅ (code) · ⬜ (Supabase par lagana)
+- ✅ `supabase/migrations/20261111000000_karo_v3_secure.sql`: login (auth.uid) se dukaan, purane khule RPC hataye,
+  coins/plan client se nahi, coin ledger, lead token, doori se match, settings server par, spam limit — 13 SQL tests
+- ✅ `supabase/functions/send-sms`: asli OTP SMS (Fast2SMS, DLT ready)
+- ✅ `packages/karo_core`: OTP login, session (dono isolate), API — 11 tests
+- ⬜ Supabase project chunna + migration chalana + Phone auth + SMS hook (dekhein `supabase/README.md`)
+
+## Step 1 — Vendor ऐप ⏳
+- ✅ 1a: asli OTP login (6 ank), saare RPC token se (p_vendor hata), join me number login wala, session khatam → login
+- ⬜ 1b: PARITY.md ke ⬜ / 🟡 items, ek-ek karke (pehle: shop location, coin history, Khata, chat)
+
 ## Chaaran 5 — Launch ⬜
 - ✅ Backend: Committee Manager Supabase me ko_ tables + RPC (supabase/karo_v1.sql)
-- ⬜ Asli OTP (Fast2SMS) + login token — abhi RPC khule hain (demo), launch se pehle band karna zaroori
+- ✅ Asli OTP + login token (Step 0/1a) — Supabase par lagana baaki
+- ⬜ demo_payments = false (launch se pehle)
 - ⬜ Razorpay AutoPay, FCM (extra pakki ghanti)
 - ⬜ Play Console nayi listing + AAB
