@@ -26494,4 +26494,44 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
     e.addEventListener('touchend',end); window.addEventListener('mouseup',end, {once:false}); };
 })();
 </script>
-</body></html>
+</body></html><style id="sw3-css">
+.sw3{position:relative;height:62px;border-radius:31px;background:linear-gradient(135deg,#F47B20,#E2580A);box-shadow:0 8px 20px rgba(226,88,10,.35),inset 0 0 0 1.5px rgba(255,255,255,.25);overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:pan-y;margin-top:12px;flex:1}
+.fp-ft .sw3{margin-top:0}
+.sw3-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:31px}
+.sw3-t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding-left:58px;color:#fff;font-weight:800;font-size:15px;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.25);white-space:nowrap;pointer-events:none}
+.sw3-t small{display:block;font-size:10.5px;font-weight:700;opacity:.9;margin-top:1px}
+.sw3-t span{text-align:center;line-height:1.15}
+.sw3-shine{position:absolute;top:0;bottom:0;width:60px;left:-60px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:sw3sh 2.2s infinite;pointer-events:none}
+@keyframes sw3sh{0%{left:-60px}60%,100%{left:110%}}
+.sw3-k{position:absolute;left:5px;top:5px;width:52px;height:52px;border-radius:50%;background:#1C1917;color:#FDBA74;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35);cursor:grab;z-index:2}
+.sw3-k em{font-style:normal;animation:sw3n 1.2s infinite}
+@keyframes sw3n{0%,100%{transform:translateX(-2px)}50%{transform:translateX(3px)}}
+.sw3.off{background:#D6D3D1;box-shadow:none;pointer-events:none}.sw3.off .sw3-t{color:#78716C;text-shadow:none}.sw3.off .sw3-k{background:#A8A29E;color:#fff}.sw3.off .sw3-shine,.sw3.off .sw3-k em{animation:none}
+.sw3.ok .sw3-t{opacity:0}
+.sw3-src{display:none!important}
+</style>
+<script id="sw3-js">
+(function(){
+  function build(btn){
+    if(btn.dataset.sw3) return; btn.dataset.sw3=1;
+    const fp=btn.classList.contains('go');
+    const w=document.createElement('div'); w.className='sw3'+(btn.disabled?' off':'');
+    w.innerHTML='<div class="sw3-fill"></div><div class="sw3-shine"></div><div class="sw3-t"><span>Vendor dhoondhein ›››<small>'+(btn.disabled?'Pehle vendor type chunein':'Swipe karein · sabhi nearby ko request')+'</small></span></div><div class="sw3-k"><em>››</em></div>';
+    btn.parentNode.insertBefore(w,btn); btn.classList.add('sw3-src');
+    const k=w.querySelector('.sw3-k'), f=w.querySelector('.sw3-fill');
+    let x0=null,dx=0,max=0,done=false;
+    const paint=()=>{k.style.transform='translateX('+dx+'px)';f.style.width=(dx+57)+'px';};
+    const down=e=>{ if(done||btn.disabled) return; x0=(e.touches?e.touches[0]:e).clientX; max=w.clientWidth-62; k.style.transition=f.style.transition='none'; };
+    const move=e=>{ if(x0==null) return; dx=Math.max(0,Math.min(max,(e.touches?e.touches[0]:e).clientX-x0)); paint(); if(e.cancelable) e.preventDefault(); };
+    const up=()=>{ if(x0==null) return; x0=null; k.style.transition=f.style.transition='transform .25s,width .25s';
+      if(dx>max*.6){ done=true; dx=max; paint(); w.classList.add('ok'); k.innerHTML='✓'; try{navigator.vibrate&&navigator.vibrate(40)}catch(_){} setTimeout(()=>btn.click(),220); }
+      else { dx=0; paint(); } };
+    k.addEventListener('touchstart',down,{passive:true}); k.addEventListener('mousedown',down);
+    window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('mousemove',move);
+    window.addEventListener('touchend',up); window.addEventListener('mouseup',up);
+    w.addEventListener('click',e=>{ if(e.target===k||done||btn.disabled) return; w.animate([{transform:'translateX(0)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:300}); });
+  }
+  const scan=()=>document.querySelectorAll('button.cf-go:not([data-sw3]),.fp-ft button.go:not([data-sw3])').forEach(build);
+  new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true}); scan();
+})();
+</script>
