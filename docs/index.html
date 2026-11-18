@@ -6621,8 +6621,11 @@ const QR_DATA=[{"p":"https://1qr.app/s/glow-beauty-parlour","s":"glow-beauty-par
   /* ===== View Cart chooser: Enquiry Now / Order Now ===== */
   function shCh(){ if(!CART.length) return; const k=ctCalc(); document.getElementById('chsBody').innerHTML=`<div class="chs-sum"><div class="chs-th">${CART.slice(-3).map(c=>`<em>${c.emoji}</em>`).join('')}</div><div><b>${cartCount()} item${cartCount()>1?'s':''} · ${rupee(k.sub)}</b><small>${[...new Set(CART.map(c=>c.shop))].join(', ')}</small></div></div>
       <div class="chs-q">Aap kya karna chahte hain?</div>
-      <button class="chs-b enq" onclick="shEnquiry()"><i>💬</i><div><b>Enquiry Now</b><small>Pehle shop se price / availability poochein — payment nahi</small></div><u>›</u></button>
-      <button class="chs-b ord" onclick="closeSm('chsOv');setTimeout(openCart,200)"><i>🛒</i><div><b>Order Now</b><small>Address, coupon aur payment ke saath order karein</small></div><u>›</u></button>`; openSm('chsOv'); }
+      <div class="sw2" id="sw2"><div class="sw2-fill l"></div><div class="sw2-fill r"></div>
+        <div class="sw2-side l" onclick="sw2Go(-1)"><i>💬</i><div><b>Enquiry</b><small>Price poochein</small></div></div>
+        <div class="sw2-side r" onclick="sw2Go(1)"><div><b>Order</b><small>Pay karein</small></div><i>🛒</i></div>
+        <div class="sw2-k" id="sw2k"><span class="a l">‹</span><em>⇆</em><span class="a r">›</span></div></div>
+      <div class="sw2-h">⟵ <b>Enquiry</b> ke liye baayein &nbsp;·&nbsp; <b>Order</b> ke liye daayein ⟶</div>`; openSm('chsOv'); setTimeout(sw2Init,30); }
   function shEnquiry(){ if(!CART.length) return; const shops=[...new Set(CART.map(c=>c.shop))], k=ctCalc();
     const items=CART.map(c=>c.name+(c.variant&&c.variant!=='Standard'?' ('+c.variant+')':'')+' ×'+c.qty).join(', ');
     const r={id:Date.now(),time:tnow(),st:0,vs:'enq',tl:[tnow()],enq:true,kind:'💬 Enquiry',emoji:'💬',name:'Enquiry · '+cartCount()+(cartCount()>1?' items':' item'),price:rupee(k.sub),shop:shops.length>1?shops.length+' shops':shops[0],shopEmoji:CART[0].shopEmoji,items,lines:CART.map(c=>({e:c.emoji,n:c.name+(c.variant?' · '+c.variant:''),q:c.qty,u:c.unit})),bill:Object.assign({pay:'full',addr:''},k,{fd:0,total:k.sub,online:0,cod:0})};
@@ -26444,6 +26447,51 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
     }catch(e){ console.warn(e); }
     return out;
   };
+})();
+</script>
+<style>
+/* ===== Cart chooser: ek swipe button — baayein = Enquiry, daayein = Order ===== */
+.sw2{position:relative;height:78px;border-radius:99px;background:#fff;border:2px solid #EFE6D0;overflow:hidden;margin:4px 0 10px;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 8px 22px rgba(120,80,20,.08)}
+.sw2-fill{position:absolute;top:0;bottom:0;width:0;transition:width .25s}
+.sw2-fill.l{right:50%;background:linear-gradient(90deg,#2F6FD6,#6AA0F0)}.sw2-fill.r{left:50%;background:linear-gradient(90deg,#FA8C33,#EE6A0D)}
+.sw2.drag .sw2-fill{transition:none}
+.sw2-side{position:absolute;top:0;bottom:0;width:calc(50% - 34px);display:flex;align-items:center;gap:8px;padding:0 10px 0 12px;white-space:nowrap;cursor:pointer;z-index:1;transition:color .2s}
+.sw2-side.l{left:0;color:#2F6FD6}.sw2-side.r{right:0;justify-content:flex-end;text-align:right;padding:0 12px 0 10px;color:#EE6A0D}
+.sw2-side i{font-style:normal;font-size:20px;width:38px;height:38px;border-radius:14px;display:grid;place-items:center;flex:none}
+.sw2-side.l i{background:#EAF1FF}.sw2-side.r i{background:#FFF1E4}
+.sw2-side b{display:block;font-size:16.5px;font-weight:800}.sw2-side small{display:block;font-size:11px;color:#8a8070;font-weight:600}
+.sw2.gl .sw2-side.l,.sw2.gr .sw2-side.r{color:#fff}.sw2.gl .sw2-side.l small,.sw2.gr .sw2-side.r small{color:rgba(255,255,255,.85)}
+.sw2-k{position:absolute;top:7px;left:50%;width:64px;height:64px;margin-left:-32px;border-radius:50%;background:#1f1a14;color:#fff;display:flex;align-items:center;justify-content:center;gap:2px;z-index:2;box-shadow:0 6px 16px rgba(0,0,0,.28);transition:transform .32s cubic-bezier(.3,1.4,.5,1);cursor:grab}
+.sw2.drag .sw2-k{transition:none;cursor:grabbing}
+.sw2-k em{font-style:normal;font-size:20px;font-weight:800}
+.sw2-k .a{font-size:20px;font-weight:800;opacity:.75;animation:sw2a 1.3s ease-in-out infinite}
+.sw2-k .a.l{color:#8FB7FF}.sw2-k .a.r{color:#FFB070;animation-delay:.65s}
+@keyframes sw2a{0%,100%{opacity:.25}50%{opacity:1}}
+.sw2.hint .sw2-k{animation:sw2n 1.6s ease-in-out 2}
+@keyframes sw2n{0%,100%{transform:translateX(0)}25%{transform:translateX(-26px)}75%{transform:translateX(26px)}}
+.sw2-h{text-align:center;font-size:12px;color:#8a8070;font-weight:600;margin:0 0 6px}.sw2-h b{color:#2b2b2b}
+</style>
+<script>
+(function(){
+  let x0=0, dx=0, max=0, on=false, done=false;
+  const el=()=>document.getElementById('sw2'), k=()=>document.getElementById('sw2k');
+  function paint(){ const e=el(); if(!e) return; const f=Math.min(1,Math.abs(dx)/max);
+    k().style.transform='translateX('+dx+'px)';
+    e.querySelector('.sw2-fill.l').style.width=(dx<0?f*50:0)+'%'; e.querySelector('.sw2-fill.r').style.width=(dx>0?f*50:0)+'%';
+    e.classList.toggle('gl',dx<-max*.45); e.classList.toggle('gr',dx>max*.45); }
+  window.sw2Go=function(d){ if(done) return; done=true; const e=el(); if(!e) return; max=e.clientWidth/2-38; dx=d*max; e.classList.remove('drag'); paint();
+    try{ navigator.vibrate&&navigator.vibrate(25); }catch(_){}
+    setTimeout(()=>{ if(d<0) shEnquiry(); else { closeSm('chsOv'); setTimeout(openCart,200); } },260); };
+  window.sw2Init=function(){ const e=el(); if(!e) return; done=false; dx=0; max=e.clientWidth/2-38; paint();
+    e.classList.add('hint'); setTimeout(()=>e&&e.classList.remove('hint'),3300);
+    const kb=k();
+    const start=ev=>{ if(done) return; on=true; x0=(ev.touches?ev.touches[0]:ev).clientX-dx; e.classList.add('drag'); e.classList.remove('hint'); ev.preventDefault(); };
+    const move=ev=>{ if(!on) return; dx=Math.max(-max,Math.min(max,(ev.touches?ev.touches[0]:ev).clientX-x0)); paint(); ev.preventDefault(); };
+    const end=()=>{ if(!on) return; on=false; e.classList.remove('drag');
+      if(dx<-max*.55) return sw2Go(-1); if(dx>max*.55) return sw2Go(1); dx=0; paint(); };
+    kb.addEventListener('touchstart',start,{passive:false}); kb.addEventListener('mousedown',start);
+    e.addEventListener('touchmove',move,{passive:false}); window.addEventListener('mousemove',move);
+    e.addEventListener('touchend',end); window.addEventListener('mouseup',end, {once:false}); };
 })();
 </script>
 </body></html>
