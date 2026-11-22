@@ -138,9 +138,9 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       p.setOnShowFileSelector(_pickFiles);
     }
     _c = c;
-    // har baar taaza version (cache se purana na aaye)
-    c.loadRequest(Uri.parse('$kLiveUrl?v=${DateTime.now().millisecondsSinceEpoch}'),
-        headers: const {'Cache-Control': 'no-cache'});
+    // tez khulne ke liye cache wala page; naya version aate hi page ke andar
+    // "Update" button aata hai (version.json) — ek tap me taaza screens
+    c.loadRequest(Uri.parse(kLiveUrl));
   }
 
   // QR scanner (camera) aur voice search (mic) ke liye phone se permission maang kar WebView ko dena
