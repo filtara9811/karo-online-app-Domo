@@ -202,8 +202,8 @@ jobs:
       # ऐप ke andar "Update" button isi Release se nayi APK uthata hai
       - name: version.json banao
         run: |
-          MSG=$(git log -1 --pretty=%s | head -c 140 | sed 's/"/\\"/g')
-          printf '{"build":%s,"name":"1.0.%s","notes":"%s"}\n' "$VERSION_CODE" "$VERSION_CODE" "$MSG" > version.json
+          # app/notes.txt ki har line = ek badlav (update card me dikhti hai)
+          python3 -c "import json,os,subprocess;n=open('app/notes.txt').read().strip() if os.path.exists('app/notes.txt') else subprocess.check_output(['git','log','-1','--pretty=%s']).decode().strip();json.dump({'build':int(os.environ['VERSION_CODE']),'name':'1.0.'+os.environ['VERSION_CODE'],'notes':n},open('version.json','w'),ensure_ascii=False)"
           cp app/build/app/outputs/flutter-apk/app-release.apk karo-online.apk
           cat version.json
       - uses: softprops/action-gh-release@v2

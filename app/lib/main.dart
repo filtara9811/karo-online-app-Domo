@@ -68,6 +68,8 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
   String _newName = '';
   String _newNotes = '';
   bool _updHidden = false;
+  bool _updMini = false; // X dabane par chhota bubble
+  bool _updOpenNotes = false;
   int? _prog; // null = download shuru nahi hua
   String _updMsg = '';
 
@@ -99,6 +101,10 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       ..setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) async {
           await _c.runJavaScript(_bridge);
+          if (mounted) {
+            final sat = MediaQuery.of(context).padding.top;
+            await _c.runJavaScript("document.documentElement.style.setProperty('--sat','${sat.toStringAsFixed(1)}px');document.documentElement.classList.add('in-app');");
+          }
           if (mounted) setState(() => _loading = false);
         },
         onWebResourceError: (err) {
@@ -239,6 +245,39 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
     }
   }
 
+  // X ke baad: chhota sa bubble — tap = seedha update
+  Widget _updateBubble() {
+    return Positioned(
+      right: 14,
+      bottom: 150 + MediaQuery.of(context).padding.bottom,
+      child: GestureDetector(
+        onTap: _startUpdate,
+        onLongPress: () => setState(() => _updMini = false),
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF47B20),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2),
+            boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 12, offset: Offset(0, 4))],
+          ),
+          child: Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
+            const Icon(Icons.system_update_rounded, color: Colors.white, size: 22),
+            Positioned(
+                right: -2,
+                top: -2,
+                child: Container(
+                    width: 11,
+                    height: 11,
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 1.5)))),
+          ]),
+        ),
+      ),
+    );
+  }
+
   Widget _updateCard() {
     final busy = _prog != null;
     return Positioned(
@@ -276,22 +315,40 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
                 Text(busy ? 'Update ho raha hai' : 'Naya update aaya hai · $_newName',
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14)),
                 const SizedBox(height: 2),
-                Text(_updMsg.isNotEmpty ? _updMsg : (_newNotes.isNotEmpty ? _newNotes : 'Naye features aur sudhaar'),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Color(0xFFE9D8AE), fontSize: 11.5)),
+                if (_updMsg.isNotEmpty)
+                  Text(_updMsg, style: const TextStyle(color: Color(0xFFE9D8AE), fontSize: 11.5))
+                else
+                  GestureDetector(
+                    onTap: () => setState(() => _updOpenNotes = !_updOpenNotes),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      for (final n in (_newNotes.isNotEmpty ? _newNotes : 'Naye features aur sudhaar')
+                          .split('\n')
+                          .where((x) => x.trim().isNotEmpty)
+                          .take(_updOpenNotes ? 12 : 2))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text('• ${n.trim()}',
+                              maxLines: _updOpenNotes ? 3 : 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(color: Color(0xFFE9D8AE), fontSize: 11.5)),
+                        ),
+                      if (!_updOpenNotes && _newNotes.split('\n').where((x) => x.trim().isNotEmpty).length > 2)
+                        const Text('aur dekhein ▾', style: TextStyle(color: Color(0xFFF5A35C), fontSize: 11, fontWeight: FontWeight.w700)),
+                    ]),
+                  ),
               ]),
             ),
             if (!busy) ...[
-              TextButton(
-                  onPressed: () => setState(() => _updHidden = true),
-                  child: const Text('Baad me', style: TextStyle(color: Colors.white54))),
               FilledButton(
                   style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFFF47B20),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                   onPressed: _startUpdate,
                   child: const Text('Update', style: TextStyle(fontWeight: FontWeight.w800))),
+              IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => setState(() => _updMini = true),
+                  icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20)),
             ],
           ]),
         ),
@@ -405,7 +462,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
           bottom: false,
           child: Stack(children: [
             WebViewWidget(controller: _c),
-            if (_newBuild != null && !_updHidden && !_loading) _updateCard(),
+            if (_newBuild != null && !_updHidden && !_loading) (_updMini && _prog == null ? _updateBubble() : _updateCard()),
             if (_loading)
               Container(
                 color: const Color(0xFFF47B20),

@@ -26582,19 +26582,20 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
     else { try{ openCart(); }catch(e){} } };
   function dock(el){ if(!el.classList.contains('on')||el.querySelector('.dk-s')) return; const n=cnt(); if(!n) return;
     let em=''; try{ em=CART[CART.length-1].emoji||'🛍️'; }catch(e){ em='🛍️'; }
+    let im=''; try{ im=(window.koImgOf&&koImgOf(CART[0]))||''; }catch(e){}
     el.classList.add('dk');
-    el.innerHTML=`<button class="dk-v" onclick="dkView()"><span class="st">${em}<u>${n}</u></span><small>View</small></button>
-      <div class="dk-s hint"><div class="dk-f l"></div><div class="dk-f r"></div>
+    el.innerHTML=`<div class="dk-s hint"><div class="dk-f l"></div><div class="dk-f r"></div>
       <div class="dk-l" onclick="dkGo(-1)"><s><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></s>Enquiry</div><div class="dk-r" onclick="dkGo(1)">Order<s><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.7a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></svg></s></div>
-      <div class="dk-k"><span class="a l">‹</span>⇆<span class="a r">›</span></div></div>`;
+      <span class="dk-ar l">‹</span><span class="dk-ar r">›</span>
+      <div class="dk-k"><span class="kim"${im?` style="background-image:url('${im}')"`:''}>${im?'':em}</span><u>${n}</u></div></div>`;
     const s=el.querySelector('.dk-s'), k=s.querySelector('.dk-k'), fl=s.querySelector('.dk-f.l'), fr=s.querySelector('.dk-f.r');
     let x0=null,dx=0,max=0;
     const paint=()=>{ const f=max?Math.abs(dx)/max:0; k.style.transform=`translateX(${dx}px)`; fl.style.width=(dx<0?f*50:0)+'%'; fr.style.width=(dx>0?f*50:0)+'%'; const gl=dx<-max*.35, gr=dx>max*.35; if(s.classList.contains('gl')!==gl) s.classList.toggle('gl',gl); if(s.classList.contains('gr')!==gr) s.classList.toggle('gr',gr); };
     const anim=on=>{ const t=on?'transform .25s,width .25s':'none'; k.style.transition=t; fl.style.transition=fr.style.transition=t; };
-    const down=e=>{ x0=(e.touches?e.touches[0]:e).clientX; max=s.clientWidth/2-26; anim(false); s.classList.remove('hint'); };
-    const move=e=>{ if(x0==null) return; dx=Math.max(-max,Math.min(max,(e.touches?e.touches[0]:e).clientX-x0)); paint(); if(e.cancelable) e.preventDefault(); };
+    let mv=0; const down=e=>{ x0=(e.touches?e.touches[0]:e).clientX; mv=0; max=s.clientWidth/2-26; anim(false); s.classList.remove('hint'); };
+    const move=e=>{ if(x0==null) return; dx=Math.max(-max,Math.min(max,(e.touches?e.touches[0]:e).clientX-x0)); mv=Math.max(mv,Math.abs(dx)); paint(); if(e.cancelable) e.preventDefault(); };
     const up=()=>{ if(x0==null) return; x0=null; anim(true); const d=dx<-max*.55?-1:dx>max*.55?1:0;
-      if(d){ dx=d*max; paint(); setTimeout(()=>{ dkGo(d); dx=0; paint(); },230); } else { dx=0; paint(); } };
+      if(d){ dx=d*max; paint(); setTimeout(()=>{ dkGo(d); dx=0; paint(); },230); } else { dx=0; paint(); if(mv<5) dkView(); } };
     k.addEventListener('touchstart',down,{passive:true}); k.addEventListener('mousedown',down);
     window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('mousemove',move);
     window.addEventListener('touchend',up); window.addEventListener('mouseup',up); }
@@ -26630,7 +26631,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=259;
+window.KO_V=260;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -26831,5 +26832,164 @@ window.KO_V=259;
     $('soSh').innerHTML=`<div class="so-hd"><div class="ic">${em}</div><div><b>Mere orders</b><small>${n} se · ${L.length} order/enquiry</small></div><button onclick="closeSm('soOv')">✕</button></div>
       <div class="so-bd">${L.length?L.map(card).join(''):`<div class="so-em"><div>🛍️</div><b>Is dukaan se abhi koi order nahi</b><br><small>Yahan se order ya enquiry karte hi poori journey yahin dikhegi</small></div>`}</div>`;
     openSm('soOv'); };
+})();
+</script>
+<style id="v260-css">
+/* ---- update: card + mini bubble (purani pill band) ---- */
+#koUpd{display:none!important}
+#koUp2{position:fixed;left:12px;right:12px;top:calc(10px + var(--sat,env(safe-area-inset-top,0px)));z-index:99999;max-width:420px;margin:0 auto;background:#17130F;color:#fff;border-radius:20px;padding:14px 14px 12px;box-shadow:0 16px 40px rgba(0,0,0,.35);transform:translateY(-150%);transition:transform .4s cubic-bezier(.22,1,.36,1)}
+#koUp2.on{transform:none}
+#koUp2 .h{display:flex;align-items:center;gap:10px}
+#koUp2 .h i{width:36px;height:36px;border-radius:12px;background:#F47B20;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:18px;flex:none}
+#koUp2 .h b{font-size:14.5px;display:block}#koUp2 .h small{font-size:11px;color:#C9BBA0}
+#koUp2 .h .x{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:14px;cursor:pointer;flex:none}
+#koUp2 ul{margin:10px 0 12px;padding:0 0 0 2px;list-style:none;max-height:38vh;overflow:auto}
+#koUp2 li{font-size:12.5px;color:#EADCBD;padding:4px 0 4px 18px;position:relative;line-height:1.35}
+#koUp2 li:before{content:'✓';position:absolute;left:0;color:#34D399;font-weight:900}
+#koUp2 .go{width:100%;border:0;border-radius:14px;background:#F47B20;color:#fff;font:inherit;font-weight:900;font-size:14.5px;padding:12px;cursor:pointer}
+#koUpB{position:fixed;right:12px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:99999;width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:#F47B20;color:#fff;display:none;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.3);cursor:pointer;padding:0;touch-action:none}
+#koUpB.on{display:flex}#koUpB svg{width:21px;height:21px}
+#koUpB:after{content:'';position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:#EF4444;border:1.5px solid #fff}
+#koUpB.busy svg{animation:kspin 1s linear infinite}@keyframes kspin{to{transform:rotate(360deg)}}
+/* ---- Nearby list: vendor ki photo ---- */
+.yt-av{background:#fff var(--avatar) center/cover no-repeat!important;font-size:0!important;color:transparent!important;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.yt-av>*{display:none!important}
+/* ---- stuck search: status bar ke neeche ---- */
+#homeSheet .hs-bar.stuck{padding-top:calc(10px + var(--sat,0px))!important}
+#nfPanel .nf-hs.stuck{padding-top:calc(10px + var(--sat,0px))!important}
+#shopsOv .nf-back{top:calc(10px + var(--sat,0px))!important}
+/* ---- beech ka button: category patti ke upar, border + shadow ---- */
+.phone .bottom-nav,#shopsOv .bottom-nav{z-index:30!important}
+.phone .bottom-nav .nb-btn,#shopsOv .bottom-nav .nb-btn{border:3px solid #fff!important;box-shadow:0 8px 20px rgba(120,50,0,.35),0 0 0 4px rgba(244,123,32,.28)!important;border-radius:50%!important}
+/* ---- product dock: bilkul neeche, knob me product ---- */
+.pd-bar2.dk{margin:0!important;border-radius:22px 22px 0 0!important;padding:8px 12px 10px!important}
+.dk-k{width:50px!important;height:50px!important;margin-left:-25px!important;top:1px!important;padding:0!important;border:2.5px solid #1C1917;background:#1C1917!important}
+.dk-k .kim{width:100%;height:100%;border-radius:50%;background:#FFF1E3 center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden}
+.dk-k u{position:absolute;top:-5px;right:-6px;min-width:19px;height:19px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#EE6A0D;color:#fff;font-size:10.5px;font-weight:900;text-decoration:none;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.dk-k.pop{animation:dkpop .5s cubic-bezier(.3,1.6,.5,1)}@keyframes dkpop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+.dk-ar{position:absolute;top:50%;transform:translateY(-50%);font-weight:900;font-size:16px;color:#C9B994;z-index:1;pointer-events:none}
+.dk-ar.l{left:calc(50% - 44px)}.dk-ar.r{right:calc(50% - 44px)}
+.ko-fly{position:fixed;z-index:99990;width:64px;height:64px;border-radius:50%;background:#FFF1E3 center/cover no-repeat;box-shadow:0 10px 24px rgba(0,0,0,.3);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:30px;pointer-events:none}
+/* ---- product edit: Front / Back / Video / + ---- */
+.mz-sl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 8px}
+.mz-b{position:relative;aspect-ratio:3/4;border-radius:14px;border:1.8px dashed #E2C99A;background:#FFFBF3 center/cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#B4621A;font-size:11px;font-weight:800;cursor:pointer;overflow:hidden;text-align:center}
+.mz-b input{display:none}
+.mz-b .pl{font-size:22px;line-height:1}
+.mz-b.f{border:1.5px solid #EADCC0}
+.mz-b.f .lb{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:2px 6px;font-size:9.5px}
+.mz-b .cv{position:absolute;top:4px;left:4px;border:0;border-radius:8px;padding:2px 6px;font-size:9.5px;font-weight:900;background:rgba(255,255,255,.92);color:#8a7f68;cursor:pointer}
+.mz-b .cv.on{background:#0FA968;color:#fff}
+.mz-b .rm{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:11px;cursor:pointer}
+.mz-b video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mz-b.vd:not(.f){border-color:#C4B5FD;color:#6D28D9;background:#F7F3FF}
+/* ---- cart: payment cards hata diye, info sheet ---- */
+#ctFoot .ct-pay,#ctFoot .ct-split{display:none!important}
+.pw-l,.pw-r{max-width:calc(50% - 42px)}.pw-r{right:18px!important}.pw-l{left:18px!important}
+.pw-l small,.pw-r small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pw-l b:after,.pw-r b:after{content:' ⓘ';font-size:10px;opacity:.75}
+#pwInfo .sm-sheet{padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.pi-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px}.pi-hd i{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:24px;flex:none}
+.pi-hd b{font-size:18px;display:block}.pi-hd small{color:#8a7f68;font-size:12.5px}
+.pi-amt{display:flex;gap:8px;margin:6px 0 12px}.pi-amt div{flex:1;background:#F6F2E9;border-radius:14px;padding:10px}.pi-amt small{font-size:11px;color:#8a7f68;display:block}.pi-amt b{font-size:17px}
+.pi-li{list-style:none;padding:0;margin:0 0 14px}.pi-li li{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #F0E8D6;font-size:13.5px}.pi-li li:last-child{border:0}.pi-li li i{font-style:normal;flex:none}
+.pi-go{width:100%;border:0;border-radius:16px;padding:14px;font:inherit;font-weight:900;font-size:15px;color:#fff;cursor:pointer}
+/* ---- dukaan products: Meesho jaisa bina gap grid ---- */
+#slGrid.sl-grid.pl-2{gap:1px!important;padding:0!important;margin:0 0 30px!important;background:#E9E1CF;border-top:1px solid #E9E1CF;border-bottom:1px solid #E9E1CF}
+#slGrid.sl-grid.pl-2 .sl-p{border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;margin:0!important}
+#slGrid.sl-grid.pl-2 .sl-pt{height:auto!important;aspect-ratio:4/5;border-radius:0!important;overflow:hidden}
+#slGrid.sl-grid.pl-2 .sl-pt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#slGrid.sl-grid.pl-2 .sh-add{position:absolute!important;right:8px!important;bottom:8px!important;left:auto!important;top:auto!important;transform:none!important;padding:6px 11px!important;font-size:12px!important;min-height:0!important;z-index:2}
+#slGrid.sl-grid.pl-2 .sl-pb{padding:8px 10px 10px!important}
+#slGrid.sl-grid.pl-2 .sl-pb b{font-size:12.5px!important;font-weight:600!important;color:#5b5446!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block!important;-webkit-line-clamp:unset!important}
+#slGrid.sl-grid.pl-2 .sl-pb>span{display:none!important}
+.mz-pr{display:flex;align-items:baseline;gap:6px;margin-top:3px;flex-wrap:wrap}.mz-pr b{font-size:16px!important;color:#17130f!important;font-weight:900!important}.mz-pr s{font-size:11.5px;color:#9b917c}.mz-pr em{font-style:normal;font-size:11.5px;font-weight:800;color:#0B8A57}
+.mz-rt{display:flex;align-items:center;gap:6px;margin-top:6px}.mz-rt span{background:#0FA968;color:#fff;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:900}.mz-rt small{font-size:11px;color:#8a7f68}
+.mz-fd{font-size:10.5px;color:#8a7f68;margin-top:4px}
+.mz-vb{position:absolute;top:8px;left:8px;z-index:2;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}.mz-vb svg{width:16px;height:16px;color:#fff}
+</style>
+<script id="v260-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  /* ================= 1. Update card + mini bubble ================= */
+  if(/^https?:/.test(location.protocol)){
+    let shown=false, J=null;
+    const RF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>';
+    const doUpd=()=>{ const b=$('koUpB'); if(b) b.classList.add('busy'); const g=document.querySelector('#koUp2 .go'); if(g) g.textContent='Update ho raha hai…'; location.replace(location.pathname+'?v='+Date.now()); };
+    function show(j){ shown=true; J=j; const notes=Array.isArray(j.notes)?j.notes:(j.note?[j.note]:['Naye features aur sudhaar']);
+      const c=document.createElement('div'); c.id='koUp2';
+      c.innerHTML=`<div class="h"><i>✨</i><div><b>Naya update aaya hai</b><small>Version ${j.v} · ek tap me lag jayega</small></div><button class="x" aria-label="Chhota karein">✕</button></div><ul>${notes.map(n=>`<li>${n}</li>`).join('')}</ul><button class="go">Update karein</button>`;
+      document.body.appendChild(c);
+      const bb=document.createElement('button'); bb.id='koUpB'; bb.setAttribute('aria-label','Update'); bb.innerHTML=RF; document.body.appendChild(bb);
+      c.querySelector('.go').onclick=doUpd;
+      c.querySelector('.x').onclick=()=>{ c.classList.remove('on'); setTimeout(()=>bb.classList.add('on'),250); };
+      let st=null,mv=false;
+      bb.addEventListener('pointerdown',e=>{ st={y:e.clientY,b:parseFloat(getComputedStyle(bb).bottom)}; mv=false; bb.setPointerCapture(e.pointerId); });
+      bb.addEventListener('pointermove',e=>{ if(!st) return; const d=e.clientY-st.y; if(Math.abs(d)>6) mv=true; if(mv) bb.style.bottom=Math.max(70,Math.min(innerHeight-120,st.b-d))+'px'; });
+      bb.addEventListener('pointerup',()=>{ if(!st) return; st=null; if(!mv) doUpd(); });
+      requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.add('on'))); }
+    async function chk(){ if(shown) return; try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if((+j.v||0)>window.KO_V) show(j); }catch(e){} }
+    setTimeout(chk,3500); setInterval(chk,90000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) chk(); });
+  }
+
+  /* ================= 2. product photo + udta hua animation ================= */
+  window.koImgOf=function(c){ if(!c) return ''; try{ const u=mqImgOf(c.name); if(u) return u; }catch(e){}
+    try{ const t=document.querySelector(`.sl-p[onclick="openProd(${c.si},${c.pi})"] .sl-pt`); if(t){ const m=getComputedStyle(t).backgroundImage.match(/url\("?(.*?)"?\)$/); if(m) return m[1]; } }catch(e){}
+    try{ const h=document.querySelector('#prodOv.open .pd-hero img, #prodOv.open img'); if(h&&c.si===pd.si&&c.pi===pd.pi) return h.src; }catch(e){} return ''; };
+  function fly(fromEl,item){ const tgt=()=>document.querySelector('#prodOv.open #pdBar2 .dk-k')||document.querySelector('#shopOv.open #shCart .dk-k')||document.querySelector('.sh-cart.on .dk-k');
+    let r0; try{ r0=(fromEl&&fromEl.getBoundingClientRect)?fromEl.getBoundingClientRect():null; }catch(e){} if(!r0||!r0.width) r0={left:innerWidth/2-32,top:innerHeight*.35,width:64,height:64};
+    const im=koImgOf(item); const f=document.createElement('div'); f.className='ko-fly'; if(im) f.style.backgroundImage=`url('${im}')`; else f.textContent=item.emoji||'🛍️';
+    const x0=r0.left+r0.width/2-32, y0=r0.top+r0.height/2-32; f.style.left=x0+'px'; f.style.top=y0+'px'; document.body.appendChild(f);
+    let tries=0; const go=()=>{ const k=tgt(); if(!k){ if(++tries<12) return setTimeout(go,70); f.remove(); return; } const r=k.getBoundingClientRect(); const dx=r.left+r.width/2-32-x0, dy=r.top+r.height/2-32-y0;
+      const a=f.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.5}px,${dy*.5-120}px) scale(.85)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:.9}],{duration:720,easing:'cubic-bezier(.35,.1,.25,1)',fill:'forwards'});
+      a.onfinish=()=>{ f.remove(); const k2=tgt(); if(k2){ k2.classList.remove('pop'); void k2.offsetWidth; k2.classList.add('pop'); } try{ navigator.vibrate&&navigator.vibrate(25); }catch(e){} }; }; setTimeout(go,60); }
+  try{ const _ca=cartAdd; cartAdd=function(item,fromEl){ const r=_ca.apply(this,arguments); try{ fly(fromEl,item); }catch(e){} return r; }; window.cartAdd=cartAdd; }catch(e){ console.warn('ca',e); }
+  try{ if(typeof flyTo==='function'){ flyTo=function(){}; } }catch(e){}
+
+  /* ================= 3. product edit: Front / Back / Video / + ================= */
+  const ROLES=[['front','Front photo','image/*','📷'],['back','Back photo','image/*','📷'],['video','Video','video/*','🎬']];
+  function slotOf(M,role){ let m=M.find(x=>x.r===role); if(m) return m; if(role==='video') return M.find(x=>x.t==='vid'&&!x.r); const imgs=M.filter(x=>x.t==='img'&&!x.r); return role==='front'?imgs[0]:(M.find(x=>x.r==='front')?imgs[0]:imgs[1]); }
+  window.mzAdd=function(inp){ if(!window.PQ&&typeof PQ==='undefined') return; const role=inp.dataset.role, n=PQ.d.media.length; pqFiles(inp);
+    let t=0; const iv=setInterval(()=>{ t++; if(PQ&&PQ.d.media.length>n){ clearInterval(iv); if(role) PQ.d.media.slice(n).forEach((m,k)=>{ if(k===0) m.r=role; }); if(role==='front'&&!PQ.d.media.some((m,i)=>i===0&&m.r==='front')){ const i=PQ.d.media.findIndex(m=>m.r==='front'); if(i>0){ const [m]=PQ.d.media.splice(i,1); PQ.d.media.unshift(m); } } pqRender(); } if(t>60) clearInterval(iv); },100); };
+  window.mzCover=function(i){ const M=PQ.d.media; if(i>0){ const [m]=M.splice(i,1); M.unshift(m); } pqRender(); try{ toast('★ Cover photo badal gayi'); }catch(e){} };
+  window.mzRm=function(i){ PQ.d.media.splice(i,1); pqRender(); };
+  function mediaSlots(){ const b=$('pqBody'); if(!b||typeof PQ==='undefined'||!PQ) return; const up=b.querySelector('.pq-up'); if(!up||up.dataset.mz) return; up.dataset.mz=1;
+    const card=up.closest('.pq-card'); const M=PQ.d.media; const used=new Set();
+    const tile=(m,lbl,role,acc,ic)=>{ if(m){ const i=M.indexOf(m); used.add(m); const isV=m.t==='vid';
+        return `<div class="mz-b f ${isV?'vd':''}" style="${isV?'':`background-image:url('${m.u}')`}">${isV?`<video src="${m.u}" muted loop playsinline autoplay></video>`:''}<button class="cv ${i===0?'on':''}" onclick="mzCover(${i})">${i===0?'★ Cover':'☆ Cover'}</button><button class="rm" onclick="mzRm(${i})">✕</button><span class="lb">${lbl}</span></div>`; }
+      return `<label class="mz-b ${role==='video'?'vd':''}"><input type="file" accept="${acc}" data-role="${role||''}" onchange="mzAdd(this)"><span class="pl">${ic}</span>${lbl}</label>`; };
+    let h=ROLES.map(r=>tile(slotOf(M,r[0]),r[1],r[0],r[2],r[3])).join('');
+    M.forEach(m=>{ if(!used.has(m)) h+=tile(m,m.t==='vid'?'Video':'Photo'); });
+    h+=`<label class="mz-b"><input type="file" accept="image/*,video/*" data-role="" onchange="mzAdd(this)"><span class="pl">＋</span>Aur</label>`;
+    const box=document.createElement('div'); box.className='mz-sl'; box.innerHTML=h; up.replaceWith(box);
+    const old=card.querySelector('.pq-md'); if(old) old.remove(); [...card.querySelectorAll('.pq-hint')].forEach(p=>{ if(/koi media nahi|dabane se/.test(p.textContent)) p.textContent='★ Cover dabakar chunein kaunsi photo dukaan ke grid me dikhe. Video product page par chalega.'; }); }
+  new MutationObserver(()=>mediaSlots()).observe(document.body,{childList:true,subtree:true});
+
+  /* ================= 4. cart: Half / Full info sheet ================= */
+  const pi=document.createElement('div'); pi.className='sm-ov top2'; pi.id='pwInfo'; pi.onclick=e=>{ if(e.target===pi) closeSm('pwInfo'); }; pi.innerHTML='<div class="sm-sheet" id="pwInfoB"></div>'; document.body.appendChild(pi);
+  const R=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+  window.pwInfo=function(d){ let after=0; try{ const k=ctCalc(); after=k.sub-k.cp; }catch(e){} const full=after-Math.round(after*.10), half=Math.ceil(after/2);
+    const H=d<0?{ic:'🌓',bg:'#DCFCE7',t:'Half payment',s:'Aadha abhi online, aadha delivery par',a:[['Abhi online',R(half)],['Delivery par cash',R(after-half)]],li:[['🛡️','Order pakka ho jata hai — dukaan turant packing shuru karti hai'],['💵','Baaki paisa saman haath me aane par cash/UPI se'],['↩️','Order cancel karne par online diya paisa wapas'],['ℹ️','Is option me 10% discount nahi milta']],c:'#0E9F6E',btn:`Half payment karein · ${R(half)}`}
+      :{ic:'💳',bg:'#FFEDD5',t:'Full payment',s:'Poora online abhi — sabse zyada bachat',a:[['Aap denge',R(full)],['Aapki bachat',R(after-full)]],li:[['🏷️','Seedha 10% OFF — '+R(after-full)+' ki bachat'],['⚡','Priority packing — order sabse pehle taiyaar'],['🧾','Delivery par koi cash ka jhanjhat nahi'],['↩️','Cancel/return par poora paisa wapas']],c:'#E2580A',btn:`Full payment karein · ${R(full)}`};
+    $('pwInfoB').innerHTML=`<div class="pi-hd"><i style="background:${H.bg}">${H.ic}</i><div><b>${H.t}</b><small>${H.s}</small></div></div>
+      <div class="pi-amt">${H.a.map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div>
+      <ul class="pi-li">${H.li.map(x=>`<li><i>${x[0]}</i><span>${x[1]}</span></li>`).join('')}</ul>
+      <button class="pi-go" style="background:${H.c}" onclick="closeSm('pwInfo');pwGo(${d})">${H.btn} ➤</button>`;
+    openSm('pwInfo'); };
+  function payLabels(){ const s=document.querySelector('#ctFoot .pw-s'); if(!s||s.dataset.pi) return; s.dataset.pi=1; const l=s.querySelector('.pw-l'), r=s.querySelector('.pw-r'); if(l) l.setAttribute('onclick','pwInfo(-1)'); if(r) r.setAttribute('onclick','pwInfo(1)');
+    const h=s.parentNode.querySelector('.pw-h'); if(h) h.textContent='Swipe karein = seedha payment · naam dabayein = poori jaankari'; }
+  new MutationObserver(payLabels).observe($('ctFoot')||document.body,{childList:true,subtree:true});
+
+  /* ================= 5. dukaan grid: Meesho jaisa ================= */
+  const VB='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  const VV=['guide2','refer1','login','support','guide1'];
+  function meesho(){ const g=$('slGrid'); if(!g||!g.classList.contains('pl-2')) return;
+    [...g.querySelectorAll('.sl-p:not([data-mz])')].forEach((c,k)=>{ c.dataset.mz=1; const m=(c.getAttribute('onclick')||'').match(/openProd\((\d+),(\d+)\)/); if(!m) return; const si=+m[1], pj=+m[2];
+      let p=null; try{ p=(PROD[SHOPS[si][2]]||[])[pj]; }catch(e){} if(!p) return;
+      const num=x=>{ const v=parseFloat(String(x||'').replace(/[^\d.]/g,'')); return isNaN(v)?0:v; };
+      const pr=num(p[2]); let mrp=num(p[5]); if(!(mrp>pr)) mrp=Math.round(pr*1.35/10)*10; const off=mrp>pr?Math.round((1-pr/mrp)*100):0;
+      const seed=(String(p[1]).length*13+pj*7)%10; const rt=(4+seed/12).toFixed(1), rv=120+seed*347;
+      const pb=c.querySelector('.sl-pb'); if(pb) pb.insertAdjacentHTML('beforeend',`<div class="mz-pr"><b>₹${pr.toLocaleString('en-IN')}</b>${off?`<s>₹${mrp.toLocaleString('en-IN')}</s><em>${off}% off</em>`:''}</div><div class="mz-rt"><span>${rt} ★</span><small>(${rv.toLocaleString('en-IN')})</small></div><div class="mz-fd">Free delivery</div>`);
+      if(pj%5===1){ const t=c.querySelector('.sl-pt'); const v=VV[(pj+si)%VV.length]; if(t&&!t.querySelector('video')){ t.insertAdjacentHTML('afterbegin',`<video muted loop playsinline autoplay preload="metadata" poster="${v==='login'?'login-poster':v}.jpg"><source src="${v}.mp4" type="video/mp4"><source src="${v}.webm" type="video/webm"></video><span class="mz-vb">${VB}</span>`); const vv=t.querySelector('video'); vv.muted=true; vv.play&&vv.play().catch(()=>{}); } } }); }
+  new MutationObserver(()=>meesho()).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
