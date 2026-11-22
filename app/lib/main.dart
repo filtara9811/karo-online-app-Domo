@@ -411,14 +411,21 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
                 color: const Color(0xFFF47B20),
                 alignment: Alignment.center,
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: Image.asset('assets/logo.png', width: 120, height: 120),
-                  ),
-                  const SizedBox(height: 18),
+                  Image.asset('assets/splash_logo.png', height: 150, filterQuality: FilterQuality.high),
+                  const SizedBox(height: 16),
                   const Text('Karo Online',
-                      style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 18),
+                      style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w800, letterSpacing: .3)),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: .18),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white54)),
+                    child: const Text('BETA VERSION',
+                        style: TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
+                  ),
+                  const SizedBox(height: 26),
                   const SizedBox(
                       width: 26, height: 26, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3)),
                 ]),
