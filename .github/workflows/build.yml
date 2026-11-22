@@ -103,6 +103,9 @@ jobs:
               s=s.replace('android {','android {\n'+sc,1)
               s=s.replace('signingConfig signingConfigs.debug','signingConfig signingConfigs.fixed')
           assert 'getByName("fixed")' in s or 'signingConfigs.fixed' in s, 'signing patch fail'
+          # release lint (lintVital) naye Flutter par crash karta hai — band
+          if g.endswith('.kts'): s=s.replace('android {','android {\n    lint {\n        checkReleaseBuilds = false\n        abortOnError = false\n    }',1)
+          else: s=s.replace('android {','android {\n    lintOptions {\n        checkReleaseBuilds false\n        abortOnError false\n    }',1)
           open(g,'w').write(s)
           m='android/app/src/main/AndroidManifest.xml'
           s=open(m).read()
