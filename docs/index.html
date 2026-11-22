@@ -26603,3 +26603,59 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
   new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class']}); scan();
 })();
 </script>
+<style id="v257-css">
+/* shop menu: My Orders + count */
+.vb9>.vb9-t i.cn{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#EF4444;color:#fff;font-style:normal;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.vb9>.vb9-t i.cn:empty{display:none}
+.vb9 .vb9-m button.mo u{margin-left:auto;min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:99px;background:#0FA968;color:#fff;font-size:11px;font-weight:900;text-decoration:none;display:flex;align-items:center;justify-content:center}
+.vb9 .vb9-m button.mo u:empty{display:none}
+.vb9 .vb9-m button.mo i svg{width:16px;height:16px;color:#B4621A}
+/* Requests sheet seedha dukaan ke upar */
+#sdShOv.fx{position:fixed!important;inset:0!important;z-index:9000!important;max-width:430px;margin:0 auto}
+/* home: search bar poora upar stick, map bilkul upar chala jaye */
+:root{--hsPeek:env(safe-area-inset-top,0px)!important}
+#hsPeek{display:none!important}
+#homeSheet{min-height:calc(100vh + 40px)}
+#homeSheet .hs-bar.stuck{border-radius:0 0 18px 18px!important;box-shadow:0 8px 16px -8px rgba(60,40,10,.25)!important}
+/* home: orange patti patli */
+.phone .bottom-nav{padding:0 16px calc(2px + env(safe-area-inset-bottom,0px))!important;height:auto!important;align-items:center!important}
+.phone .bottom-nav .nav-orders{flex-direction:row!important;gap:6px!important;font-size:12px!important;height:40px!important;padding:0!important;align-items:center!important}
+.phone .bottom-nav .nav-orders svg{width:18px!important;height:18px!important}
+.phone .bottom-nav .nav-prof{width:34px!important;height:34px!important}
+.phone .bottom-nav .nb-wrap{margin:-22px 0 -6px!important}
+.phone .bottom-nav .nb-btn{width:58px!important;height:58px!important}
+/* update pill */
+#koUpd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translate(-50%,-140%);z-index:99999;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:99px;background:#17130F;color:#fff;font-size:13px;font-weight:700;box-shadow:0 10px 26px rgba(0,0,0,.3);transition:transform .35s cubic-bezier(.22,1,.36,1);white-space:nowrap}
+#koUpd.on{transform:translate(-50%,0)}
+#koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
+</style>
+<script id="v257-js">
+window.KO_V=257;
+(function(){
+  /* ---- My Orders in shop menu ---- */
+  const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
+  const cnt=()=>{ try{ const P=sdPending(); return {o:P.orders.length,l:P.leads.length}; }catch(e){ return {o:0,l:0}; } };
+  function addMo(v){ const m=v.querySelector('.vb9-m'); if(!m||m.querySelector('.mo')||!m.querySelector('#vbEd')) return;
+    const b=document.createElement('button'); b.className='mo'; b.onclick=()=>window.shopOrders(); b.innerHTML='<i>'+BAG+'</i>My Orders<u></u>';
+    const pos=[...m.children].find(x=>/vbPos/.test(x.getAttribute('onclick')||'')); pos?pos.after(b):m.appendChild(b);
+    const t=v.querySelector('.vb9-t'); if(t&&!t.querySelector('.cn')) t.insertAdjacentHTML('beforeend','<i class="cn"></i>'); paint(); }
+  function paint(){ const c=cnt(); document.querySelectorAll('.vb9').forEach(v=>{ const u=v.querySelector('.mo u'), n=v.querySelector('.vb9-t .cn'); if(!u) return; const s=c.o+c.l; u.textContent=s||''; if(n) n.textContent=s||''; }); }
+  window.shopOrders=function(){ const ov=document.getElementById('sdShOv'); if(!ov) return; if(!ov._home){ ov._home=ov.parentNode; ov._next=ov.nextSibling; }
+    document.body.appendChild(ov); ov.classList.add('fx');
+    try{ const c=cnt(); sdInbox(c.o?'orders':(c.l?'leads':'orders')); }catch(e){ console.warn(e); } };
+  const _close=window.sdShClose; if(typeof _close==='function'){ window.sdShClose=function(){ const r=_close.apply(this,arguments); const ov=document.getElementById('sdShOv');
+    if(ov&&ov.classList.contains('fx')){ setTimeout(()=>{ if(ov.classList.contains('on')) return; ov.classList.remove('fx'); if(ov._home) ov._home.insertBefore(ov,ov._next&&ov._next.parentNode===ov._home?ov._next:null); paint(); },500); } return r; }; }
+  try{ sdShClose=window.sdShClose; }catch(e){}
+  ['sdBadges','sdInboxRender'].forEach(f=>{ const o=window[f]; if(typeof o==='function'){ window[f]=function(){ const r=o.apply(this,arguments); try{ paint(); }catch(e){} return r; }; } });
+  try{ sdBadges=window.sdBadges; sdInboxRender=window.sdInboxRender; }catch(e){}
+  new MutationObserver(()=>document.querySelectorAll('.vb9[data-m]').forEach(addMo)).observe(document.documentElement,{childList:true,subtree:true});
+  setInterval(paint,3000);
+  /* ---- Update pill: naya version aate hi "Update" ---- */
+  if(!/^https?:/.test(location.protocol)) return;
+  let shown=false;
+  async function chk(){ if(shown) return; try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json();
+      if((+j.v||0)>window.KO_V){ shown=true; const d=document.createElement('div'); d.id='koUpd'; d.innerHTML='✨ '+(j.note||'Naya update aaya hai')+'<button>Update</button>'; document.body.appendChild(d);
+        d.querySelector('button').onclick=()=>{ d.querySelector('button').textContent='…'; location.replace(location.pathname+'?v='+Date.now()); }; requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('on'))); } }catch(e){} }
+  setTimeout(chk,4000); setInterval(chk,90000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) chk(); });
+})();
+</script>
