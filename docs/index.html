@@ -26631,7 +26631,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=260;
+window.KO_V=261;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -26914,18 +26914,28 @@ window.KO_V=260;
   if(/^https?:/.test(location.protocol)){
     let shown=false, J=null;
     const RF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>';
-    const doUpd=()=>{ const b=$('koUpB'); if(b) b.classList.add('busy'); const g=document.querySelector('#koUp2 .go'); if(g) g.textContent='Update ho raha hai…'; location.replace(location.pathname+'?v='+Date.now()); };
-    function show(j){ shown=true; J=j; const notes=Array.isArray(j.notes)?j.notes:(j.note?[j.note]:['Naye features aur sudhaar']);
+    let pre=null; const prefetch=()=>{ if(!pre) pre=fetch(location.pathname,{cache:'reload'}).then(r=>r.text()).catch(()=>null); return pre; };
+    const doUpd=async()=>{ const b=$('koUpB'); if(b) b.classList.add('busy'); const g=document.querySelector('#koUp2 .go'); if(g) g.textContent='Update ho raha hai…';
+      // naya page pehle se cache me aa chuka hai — reload turant
+      try{ await Promise.race([prefetch(),new Promise(r=>setTimeout(r,2500))]); }catch(e){}
+      try{ location.reload(); }catch(e){ location.replace(location.pathname+'?v='+Date.now()); } };
+    function show(j){ shown=true; J=j; prefetch(); const notes=Array.isArray(j.notes)?j.notes:(j.note?[j.note]:['Naye features aur sudhaar']);
       const c=document.createElement('div'); c.id='koUp2';
       c.innerHTML=`<div class="h"><i>✨</i><div><b>Naya update aaya hai</b><small>Version ${j.v} · ek tap me lag jayega</small></div><button class="x" aria-label="Chhota karein">✕</button></div><ul>${notes.map(n=>`<li>${n}</li>`).join('')}</ul><button class="go">Update karein</button>`;
       document.body.appendChild(c);
       const bb=document.createElement('button'); bb.id='koUpB'; bb.setAttribute('aria-label','Update'); bb.innerHTML=RF; document.body.appendChild(bb);
       c.querySelector('.go').onclick=doUpd;
-      c.querySelector('.x').onclick=()=>{ c.classList.remove('on'); setTimeout(()=>bb.classList.add('on'),250); };
+      const mini=()=>{ c.classList.remove('on'); setTimeout(()=>bb.classList.add('on'),250); };
+      c.querySelector('.x').onclick=mini;
+      let lp=null; c.addEventListener('pointerdown',e=>{ if(e.target.closest('button')) return; lp=setTimeout(()=>{ try{ navigator.vibrate&&navigator.vibrate(30); }catch(_){} mini(); },550); });
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>c.addEventListener(ev,()=>clearTimeout(lp)));
+      let P=null; try{ P=JSON.parse(localStorage.getItem('ko_upb')||'null'); }catch(e){}
+      const put=()=>{ const W=innerWidth,H=innerHeight; const p=P||{x:W-56,y:H-210}; p.x=Math.max(6,Math.min(W-50,p.x)); p.y=Math.max(50,Math.min(H-100,p.y)); bb.style.left=p.x+'px'; bb.style.top=p.y+'px'; bb.style.right='auto'; bb.style.bottom='auto'; };
+      put(); addEventListener('resize',put);
       let st=null,mv=false;
-      bb.addEventListener('pointerdown',e=>{ st={y:e.clientY,b:parseFloat(getComputedStyle(bb).bottom)}; mv=false; bb.setPointerCapture(e.pointerId); });
-      bb.addEventListener('pointermove',e=>{ if(!st) return; const d=e.clientY-st.y; if(Math.abs(d)>6) mv=true; if(mv) bb.style.bottom=Math.max(70,Math.min(innerHeight-120,st.b-d))+'px'; });
-      bb.addEventListener('pointerup',()=>{ if(!st) return; st=null; if(!mv) doUpd(); });
+      bb.addEventListener('pointerdown',e=>{ st={x:e.clientX,y:e.clientY,l:bb.offsetLeft,t:bb.offsetTop}; mv=false; bb.setPointerCapture(e.pointerId); });
+      bb.addEventListener('pointermove',e=>{ if(!st) return; const dx=e.clientX-st.x, dy=e.clientY-st.y; if(Math.abs(dx)+Math.abs(dy)>6) mv=true; if(mv){ P={x:st.l+dx,y:st.t+dy}; put(); } });
+      bb.addEventListener('pointerup',()=>{ if(!st) return; st=null; if(mv){ P.x=P.x+22<innerWidth/2?10:innerWidth-54; put(); try{ localStorage.setItem('ko_upb',JSON.stringify(P)); }catch(e){} } else doUpd(); });
       requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.add('on'))); }
     async function chk(){ if(shown) return; try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if((+j.v||0)>window.KO_V) show(j); }catch(e){} }
     setTimeout(chk,3500); setInterval(chk,90000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) chk(); });
@@ -26991,5 +27001,99 @@ window.KO_V=260;
       const pb=c.querySelector('.sl-pb'); if(pb) pb.insertAdjacentHTML('beforeend',`<div class="mz-pr"><b>₹${pr.toLocaleString('en-IN')}</b>${off?`<s>₹${mrp.toLocaleString('en-IN')}</s><em>${off}% off</em>`:''}</div><div class="mz-rt"><span>${rt} ★</span><small>(${rv.toLocaleString('en-IN')})</small></div><div class="mz-fd">Free delivery</div>`);
       if(pj%5===1){ const t=c.querySelector('.sl-pt'); const v=VV[(pj+si)%VV.length]; if(t&&!t.querySelector('video')){ t.insertAdjacentHTML('afterbegin',`<video muted loop playsinline autoplay preload="metadata" poster="${v==='login'?'login-poster':v}.jpg"><source src="${v}.mp4" type="video/mp4"><source src="${v}.webm" type="video/webm"></video><span class="mz-vb">${VB}</span>`); const vv=t.querySelector('video'); vv.muted=true; vv.play&&vv.play().catch(()=>{}); } } }); }
   new MutationObserver(()=>meesho()).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+})();
+</script>
+<style id="v261-css">
+/* ---- Nearby: back hata, Sell button search ke baayein ---- */
+#shopsOv .nf-back{display:none!important}
+#nfPanel .nf-hs.stuck{padding-left:16px!important}
+.nf-sell{width:48px;height:48px;border-radius:16px;border:none;background:linear-gradient(180deg,#FA8C33,#EE6A0D);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:0 8px 18px rgba(238,106,13,.35);cursor:pointer;flex:none;padding:0;font:inherit;font-size:9.5px;font-weight:900;letter-spacing:.2px}
+.nf-sell svg{width:19px;height:19px}
+.nf-sell.vend{background:linear-gradient(180deg,#2B2219,#120E0A);color:#F5D58A}
+body:has(#shopsOv.open) #sellFab{display:none!important}
+/* ---- scroll par neeche ki patti chhupe ---- */
+.phone .bottom-dock{transition:transform .32s cubic-bezier(.22,1,.36,1)!important}
+.phone .bottom-dock.kh{transform:translateY(calc(100% + 60px))!important}
+#shopsOv .nf-dock{transition:margin-bottom .32s cubic-bezier(.22,1,.36,1),opacity .25s}
+#shopsOv .nf-dock.kh{opacity:0;pointer-events:none}
+/* ---- scanner: jsQR fallback status ---- */
+/* ---- Aapne dekha ---- */
+.rv-band{margin:12px 0 6px;padding:14px 0 16px;background:linear-gradient(135deg,#C68A33,#B0741F);position:relative;overflow:hidden}
+.rv-band:before{content:'';position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+.rv-hd{padding:0 16px 10px;color:#fff;position:relative}.rv-hd b{font-size:17px;display:flex;align-items:center;gap:6px}.rv-hd small{font-size:12px;opacity:.85}
+.rv-row{display:flex;gap:10px;overflow-x:auto;padding:0 16px 2px;scroll-snap-type:x mandatory;scrollbar-width:none;position:relative}.rv-row::-webkit-scrollbar{display:none}
+.rv-c{flex:0 0 138px;scroll-snap-align:start;background:#fff;border-radius:18px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.rv-im{position:relative;height:112px;background:#FFF5E6 center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:44px}
+.rv-im .off{position:absolute;top:8px;right:8px;background:#B0741F;color:#fff;border-radius:99px;padding:2px 8px;font-size:10px;font-weight:900}
+.rv-im .tg{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:2px 6px;font-size:9.5px;font-weight:800}
+.rv-bd{padding:8px 10px 10px;display:flex;flex-direction:column;gap:4px;flex:1}
+.rv-bd b{font-size:13px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:31px}
+.rv-ft{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:4px}
+.rv-ft .pr{display:flex;flex-direction:column;line-height:1.05}.rv-ft .pr s{font-size:10px;color:#9b917c}.rv-ft .pr em{font-style:normal;font-weight:900;font-size:14.5px}
+.rv-ft .st{font-size:11px;color:#8a7f68;font-weight:700}
+.rv-add{border:1.6px solid #B0741F;background:#fff;color:#8A5A14;border-radius:12px;padding:5px 9px;font:inherit;font-size:11.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+#shopBody .rv-band{margin:10px 0 12px}
+</style>
+<script id="v261-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  /* ---------- Sell button search bar ke baayein ---------- */
+  const STORE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v7h14v-7"/><path d="M10 20v-4h4v4"/></svg>';
+  function sellBtn(){ const row=document.querySelector('#nfPanel .nf-hs'); if(!row) return; let b=row.querySelector('.nf-sell');
+    if(!b){ b=document.createElement('button'); b.className='nf-sell'; b.setAttribute('aria-label','Sell'); b.onclick=e=>{ e.stopPropagation(); const f=$('sellFab'); if(f){ f._moved=false; f.click(); } }; row.insertBefore(b,row.firstChild); }
+    const t=($('fabTx')||{}).textContent||'Sell'; const h=STORE+'<span>'+t+'</span>'; if(b.innerHTML!==h) b.innerHTML=h; const v=/vendor/i.test(t); if(b.classList.contains('vend')!==v) b.classList.toggle('vend',v); }
+  sellBtn(); setInterval(sellBtn,3000);
+
+  /* ---------- scanner: BarcodeDetector na ho to jsQR ---------- */
+  let jsq=null; const loadJsQR=()=>jsq||(jsq=new Promise((ok,no)=>{ if(window.jsQR) return ok(window.jsQR); const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'; s.onload=()=>ok(window.jsQR); s.onerror=no; document.head.appendChild(s); }));
+  try{ scStart=async function(){ const v=$('scVid'), st=$('scSt'); if(!v||!st) return; st.textContent='Camera khul raha hai…';
+      if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ st.textContent='Is phone me camera nahi mil raha — neeche code type karein'; return; }
+      try{ scStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false}); v.setAttribute('playsinline',''); v.muted=true; v.srcObject=scStream; await v.play(); }
+      catch(e){ st.textContent='Camera ki permission dein (Settings › Apps › Karo Online › Camera) ya neeche code type karein'; return; }
+      st.textContent='QR code camera ke saamne laayein…';
+      if('BarcodeDetector' in window){ try{ const det=new BarcodeDetector({formats:['qr_code']}); scTimer=setInterval(async()=>{ if(v.readyState<2||scLock) return; try{ const r=await det.detect(v); if(r.length) scDone(r[0].rawValue); }catch(e){} },300); return; }catch(e){} }
+      let Q=null; try{ Q=await loadJsQR(); }catch(e){ st.textContent='Scanner load nahi hua — net check karein ya code type karein'; return; }
+      const cv=document.createElement('canvas'), cx=cv.getContext('2d',{willReadFrequently:true});
+      scTimer=setInterval(()=>{ if(v.readyState<2||scLock||!v.videoWidth) return; const w=480, h=Math.round(v.videoHeight*480/v.videoWidth); cv.width=w; cv.height=h; cx.drawImage(v,0,0,w,h);
+        try{ const r=Q(cx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'dontInvert'}); if(r&&r.data) scDone(r.data); }catch(e){} },280); };
+  }catch(e){ console.warn('scStart',e); }
+
+  /* ---------- scroll par neeche ki patti chhupe / dikhe ---------- */
+  function hider(scrollEl,dockSel,isWin){ let last=0, hid=false;
+    const get=()=>isWin?(window.scrollY||document.documentElement.scrollTop):scrollEl.scrollTop;
+    const set=h=>{ const d=document.querySelector(dockSel); if(!d||hid===h) return; hid=h; d.classList.toggle('kh',h); if(!isWin){ d.style.marginBottom=h?(-(d.offsetHeight+40))+'px':''; } };
+    (isWin?window:scrollEl).addEventListener('scroll',()=>{ const y=get(), dy=y-last; if(y<40) set(false); else if(dy>8) set(true); else if(dy<-8) set(false); if(Math.abs(dy)>8) last=y; },{passive:true});
+    return ()=>set(false); }
+  const sc=$('nfScroller'); const showNf=sc?hider(sc,'#shopsOv .nf-dock',false):()=>{};
+  const showHome=hider(null,'.phone .bottom-dock',true);
+  /* neeche ki taraf swipe (upar khinchna) = patti wapas */
+  let ty=null; addEventListener('touchstart',e=>{ ty=e.touches[0].clientY; },{passive:true});
+  addEventListener('touchmove',e=>{ if(ty==null) return; if(e.touches[0].clientY-ty>30){ showNf(); showHome(); ty=null; } },{passive:true});
+
+  /* ---------- Aapne dekha (recently viewed) ---------- */
+  const KEY='ko_rv'; const rd=()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; } };
+  const wr=L=>{ try{ localStorage.setItem(KEY,JSON.stringify(L.slice(0,14))); }catch(e){} };
+  const push=x=>{ const k=x.t==='s'?'s'+x.i:'p'+x.si+'_'+x.pi; const L=rd().filter(y=>(y.t==='s'?'s'+y.i:'p'+y.si+'_'+y.pi)!==k); L.unshift(x); wr(L); };
+  try{ const _os=openShop; openShop=function(i){ try{ push({t:'s',i}); }catch(e){} return _os.apply(this,arguments); }; window.openShop=openShop; }catch(e){}
+  try{ const _op=openProd; openProd=function(si,pi){ try{ push({t:'p',si,pi}); }catch(e){} const r=_op.apply(this,arguments); setTimeout(paintAll,400); return r; }; window.openProd=openProd; }catch(e){}
+  const num=x=>{ const v=parseFloat(String(x||'').replace(/[^\d.]/g,'')); return isNaN(v)?0:v; };
+  const R=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+  function card(x){ try{
+    if(x.t==='s'){ const S=SHOPS[x.i]; if(!S) return '';
+      return `<div class="rv-c" onclick="openShop(${x.i})"><div class="rv-im" style="background-image:var(--avatar)"><span class="tg">${S[1]} Dukaan</span></div><div class="rv-bd"><b>${S[0]}</b><div class="rv-ft"><span class="st">★ ${S[4]} · ${S[3]}</span><button class="rv-add" onclick="event.stopPropagation();openShop(${x.i})">Visit ›</button></div></div></div>`; }
+    const S=SHOPS[x.si]; const p=(PROD[S[2]]||[])[x.pi]; if(!p) return ''; const pr=num(p[2]); let mrp=num(p[5]); if(!(mrp>pr)) mrp=0; const off=mrp?Math.round((1-pr/mrp)*100):0;
+    const im=(window.koImgOf&&koImgOf({name:p[1],si:x.si,pi:x.pi}))||'';
+    return `<div class="rv-c" onclick="openProd(${x.si},${x.pi})"><div class="rv-im"${im?` style="background-image:url('${im}')"`:''}>${im?'':p[0]}${off?`<span class="off">${off}% OFF</span>`:''}</div><div class="rv-bd"><b>${p[1]}</b><div class="rv-ft"><span class="pr">${mrp?`<s>${R(mrp)}</s>`:''}<em>${R(pr)}</em></span><button class="rv-add" onclick="event.stopPropagation();shAdd(${x.si},${x.pi},this)">ADD +</button></div></div></div>`; }catch(e){ return ''; } }
+  function band(L,sub){ return `<div class="rv-hd"><b>👀 Aapne dekha</b><small>${sub}</small></div><div class="rv-row">${L.map(card).join('')}</div>`; }
+  function paintNf(){ const ch=document.querySelector('#nfPanel .yt-chips'); if(!ch) return; let b=$('rvNf'); const L=rd();
+    if(!L.length){ if(b) b.remove(); return; } if(!b){ b=document.createElement('div'); b.id='rvNf'; b.className='rv-band'; ch.insertAdjacentElement('afterend',b); }
+    const h=band(L,'Jahan chhoda tha wahin se shuru karein'); if(b._h!==h){ b.innerHTML=h; b._h=h; } }
+  function paintShop(){ const g=$('slGrid'); if(!g||window._curShop==null) return; const si=window._curShop; const L=rd().filter(x=>x.t==='p'&&x.si===si);
+    let b=$('rvShop'); if(!L.length){ if(b) b.remove(); return; } const bw=$('bpWrap'); const wrap=(bw&&bw.classList.contains('side'))?bw:g;
+    if(!b||b.nextElementSibling!==wrap){ if(b) b.remove(); b=document.createElement('div'); b.id='rvShop'; b.className='rv-band'; wrap.parentNode.insertBefore(b,wrap); }
+    const h=band(L,'Is dukaan me aapne ye dekhe'); if(b._h!==h){ b.innerHTML=h; b._h=h; } }
+  function paintAll(){ try{ paintNf(); }catch(e){} try{ paintShop(); }catch(e){} }
+  let q=0; new MutationObserver(()=>{ if(q) return; q=requestAnimationFrame(()=>{ q=0; paintAll(); }); }).observe(document.body,{childList:true,subtree:true});
+  paintAll();
 })();
 </script>

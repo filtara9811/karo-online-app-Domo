@@ -69,6 +69,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
   String _newNotes = '';
   bool _updHidden = false;
   bool _updMini = false; // X dabane par chhota bubble
+  Offset? _bub; // bubble ki jagah
   bool _updOpenNotes = false;
   int? _prog; // null = download shuru nahi hua
   String _updMsg = '';
@@ -247,12 +248,19 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
 
   // X ke baad: chhota sa bubble — tap = seedha update
   Widget _updateBubble() {
+    final sz = MediaQuery.of(context).size;
+    final pos = _bub ?? Offset(sz.width - 58, sz.height - 210);
     return Positioned(
-      right: 14,
-      bottom: 150 + MediaQuery.of(context).padding.bottom,
+      left: pos.dx,
+      top: pos.dy,
       child: GestureDetector(
         onTap: _startUpdate,
         onLongPress: () => setState(() => _updMini = false),
+        // ungli se uthakar kahin bhi rakhein — chhodne par kinare se chipak jata hai
+        onPanUpdate: (d) => setState(() => _bub = Offset(
+            (pos.dx + d.delta.dx).clamp(6.0, sz.width - 50),
+            (pos.dy + d.delta.dy).clamp(40.0, sz.height - 110))),
+        onPanEnd: (_) => setState(() => _bub = Offset(pos.dx + 22 < sz.width / 2 ? 10 : sz.width - 54, pos.dy)),
         child: Container(
           width: 44,
           height: 44,
@@ -284,7 +292,9 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       left: 12,
       right: 12,
       bottom: 12 + MediaQuery.of(context).padding.bottom,
-      child: Material(
+      child: GestureDetector(
+       onLongPress: busy ? null : () => setState(() => _updMini = true),
+       child: Material(
         elevation: 12,
         borderRadius: BorderRadius.circular(22),
         color: const Color(0xFF17130F),
@@ -352,6 +362,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
             ],
           ]),
         ),
+       ),
       ),
     );
   }
