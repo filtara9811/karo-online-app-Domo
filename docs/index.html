@@ -26631,7 +26631,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=262;
+window.KO_V=263;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -27122,11 +27122,13 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   const rd=()=>{ try{ return JSON.parse(localStorage.getItem('ko_rv')||'[]'); }catch(e){ return []; } };
   const num=x=>{ const v=parseFloat(String(x||'').replace(/[^\d.]/g,'')); return isNaN(v)?0:v; };
   const R=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+  const POS=['guide1.jpg','refer1.jpg','support.jpg','guide2.jpg','login-poster.jpg','guide3.jpg'];
+  function coverOf(i){ try{ const t=document.querySelector(`#ytFeed .yt-card[onclick*="openShop(${i})"] .yt-thumb`); if(t){ const v=t.querySelector('video'); if(v&&v.poster) return v.poster; const im=t.querySelector('img'); if(im&&im.src) return im.src; const m=getComputedStyle(t).backgroundImage.match(/url\("?(.*?)"?\)/); if(m) return m[1]; } }catch(e){} return POS[i%POS.length]; }
   function shopCard(i,tag){ const S=SHOPS[i]; if(!S) return '';
-    return `<div class="rv-c" onclick="openShop(${i})"><div class="rv-im" style="background-image:var(--avatar)"><span class="tg">${S[1]} ${S[2]}</span>${tag?`<span class="off ${tag==='NEW'?'ft-new':''}">${tag}</span>`:''}</div><div class="rv-bd"><b>${S[0]}</b><div class="rv-ft"><span class="st">★ ${S[4]} · ${S[3]}</span><button class="rv-add" onclick="event.stopPropagation();openShop(${i})">Visit ›</button></div></div></div>`; }
+    return `<div class="rv-c ft-s" onclick="openShop(${i})"><div class="rv-im" style="background-image:url('${coverOf(i)}')">${tag?`<span class="off ${tag==='NEW'?'ft-new':''}">${tag}</span>`:''}<span class="ft-av" style="background-image:var(--avatar)"></span></div><div class="rv-bd"><b>${S[0]}</b><span class="st">★ ${S[4]} · ${S[2]}</span></div></div>`; }
   function prodCard(si,pi){ const S=SHOPS[si]; const p=S&&(PROD[S[2]]||[])[pi]; if(!p) return ''; const pr=num(p[2]); let mrp=num(p[5]); if(!(mrp>pr)) mrp=0; const off=mrp?Math.round((1-pr/mrp)*100):0;
     const im=(window.koImgOf&&koImgOf({name:p[1],si,pi}))||'';
-    return `<div class="rv-c" onclick="openProd(${si},${pi})"><div class="rv-im"${im?` style="background-image:url('${im}')"`:''}>${im?'':p[0]}${off?`<span class="off">${off}% OFF</span>`:''}</div><div class="rv-bd"><b>${p[1]}</b><div class="rv-ft"><span class="pr">${mrp?`<s>${R(mrp)}</s>`:''}<em>${R(pr)}</em></span><button class="rv-add" onclick="event.stopPropagation();shAdd(${si},${pi},this)">ADD +</button></div></div></div>`; }
+    return `<div class="rv-c" onclick="openProd(${si},${pi})"><div class="rv-im"${im?` style="background-image:url('${im}')"`:''}>${im?'':p[0]}${off?`<span class="off">${off}% OFF</span>`:''}<span class="ft-av" style="background-image:var(--avatar)"></span></div><div class="rv-bd"><b>${p[1]}</b><div class="rv-ft"><span class="pr"><em>${R(pr)}</em>${mrp?`<s>${R(mrp)}</s>`:''}</span><button class="rv-add" onclick="event.stopPropagation();shAdd(${si},${pi},this)">+</button></div></div></div>`; }
   const TABS={
     seen:{t:'👀 Aapne dekha',sub:'Jahan chhoda tha wahin se',list:()=>rd().map(x=>x.t==='s'?shopCard(x.i):prodCard(x.si,x.pi)).filter(Boolean)},
     nw:{t:'🆕 Nayi dukanein',sub:'Abhi Karo Online par judi',list:()=>{ const o=[]; for(let i=SHOPS.length-1;i>=0&&o.length<10;i--) o.push(shopCard(i,'NEW')); return o.filter(Boolean); }},
@@ -27142,11 +27144,162 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
     const anchor=$('rvNf')||ch; if(b.previousElementSibling!==anchor) anchor.insertAdjacentElement('afterend',b);
     if(!cur){ let s=null; try{ s=localStorage.getItem('ko_ft'); }catch(e){} cur=(s&&TABS[s])?s:(rd().length?'seen':'nw'); }
     let items=[]; try{ items=TABS[cur].list(); }catch(e){}
-    const h=`<div class="ft-hd"><div><b>✨ Featured</b><small>${TABS[cur].sub}</small></div></div>
-      <div class="ft-tabs">${Object.keys(TABS).map(k=>`<button class="${k===cur?'on':''}" onclick="ftTab('${k}')">${TABS[k].t}</button>`).join('')}</div>
+    const h=`<div class="ft-tabs"><b class="ft-ti">✨</b>${Object.keys(TABS).map(k=>`<button class="${k===cur?'on':''}" onclick="ftTab('${k}')">${TABS[k].t}</button>`).join('')}</div>
       ${items.length?`<div class="rv-row">${items.join('')}</div>`:`<div class="ft-em">Abhi kuch nahi dekha — dukanein kholte hi yahan dikhengi 👇</div>`}`;
     if(force||b._h!==h){ const sx=b.querySelector('.rv-row'); const keep=!force&&sx?sx.scrollLeft:0; b.innerHTML=h; b._h=h; const nx=b.querySelector('.rv-row'); if(nx&&keep) nx.scrollLeft=keep; } }
   let q=0; new MutationObserver(()=>{ if(q) return; q=requestAnimationFrame(()=>{ q=0; try{ paint(); }catch(e){} }); }).observe(document.body,{childList:true,subtree:true});
   try{ paint(); }catch(e){}
+})();
+</script>
+<style id="v263-css">
+/* ---- Featured: kinare se kinare, patla, chhote card ---- */
+.ft-band{margin:8px 0 6px!important;border-radius:0!important;padding:8px 0 10px!important;box-shadow:none!important;background:linear-gradient(135deg,#F47B20,#E2580A)!important}
+.ft-band:after{width:120px!important;height:120px!important;right:-40px!important;top:-50px!important}
+.ft-band .ft-tabs{padding:0 12px 8px!important;gap:5px!important;align-items:center}
+.ft-band .ft-ti{color:#fff;font-size:15px;flex:none;margin-right:2px}
+.ft-band .ft-tabs button{padding:4px 10px!important;font-size:11px!important;border-width:1.2px!important}
+.ft-band .rv-row{gap:8px!important;padding:2px 12px 4px!important}
+.ft-band .rv-c{flex:0 0 104px!important;border-radius:14px!important;box-shadow:0 6px 14px rgba(80,25,0,.25)!important}
+.ft-band .rv-im{height:66px!important;font-size:30px!important;overflow:visible!important;background-color:#2a211a!important}
+.ft-band .rv-im .off{top:5px!important;right:5px!important;font-size:8.5px!important;padding:1px 6px!important}
+.ft-band .ft-av{position:absolute;left:8px;bottom:-14px;width:30px;height:30px;border-radius:50%;background:#fff center/cover no-repeat;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:1}
+.ft-band .rv-bd{padding:16px 8px 8px!important;gap:2px!important}
+.ft-band .rv-bd b{font-size:11.5px!important;min-height:0!important;-webkit-line-clamp:1!important;white-space:nowrap;text-overflow:ellipsis;display:block!important}
+.ft-band .rv-bd .st{font-size:9.5px;color:#8a7f68;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ft-band .rv-ft .pr{flex-direction:row!important;align-items:baseline;gap:4px}.ft-band .rv-ft .pr em{font-size:12px!important}.ft-band .rv-ft .pr s{font-size:9px!important}
+.ft-band .rv-add{padding:1px 8px!important;font-size:13px!important;border-radius:9px!important;line-height:18px}
+.ft-band .ft-em{padding:8px 14px!important;font-size:12px!important}
+/* ---- Sell button par count ---- */
+.kbdg{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;box-sizing:border-box;border-radius:99px;background:#EF4444;color:#fff;font-size:10.5px;font-weight:900;font-style:normal;text-decoration:none;display:flex;align-items:center;justify-content:center;border:2px solid #fff;z-index:3;animation:kbp 1.8s ease-in-out infinite}
+@keyframes kbp{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.nf-sell{position:relative;overflow:visible}
+/* ---- guide video: progress khinch kar aage-peeche ---- */
+#sv .sv-bar{height:6px!important;bottom:0!important;background:rgba(255,255,255,.3)!important;z-index:5;cursor:pointer;touch-action:none}
+#sv .sv-bar:before{content:'';position:absolute;left:0;right:0;bottom:0;height:28px}
+#sv .gv-bar{background:#F47B20!important}
+#sv .gv-knob{position:absolute;bottom:-4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);pointer-events:none;left:0}
+#sv .gv-flash{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;z-index:5;opacity:0;pointer-events:none;transition:opacity .25s}
+#sv .gv-flash.on{opacity:1}
+#sv .gv-t{position:absolute;right:10px;bottom:10px;z-index:5;font-size:10.5px;font-weight:800;color:#fff;background:rgba(0,0,0,.45);border-radius:8px;padding:1px 6px}
+/* ---- + Other category ---- */
+.sj-cat.sj-oth{border-style:dashed!important;color:#B4621A}
+.sj-cat.sj-oth>div{font-size:26px}
+#ocOv .sm-sheet{padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+#ocOv h3{margin:0 0 4px;font-size:18px}#ocOv p{margin:0 0 12px;color:#8a7f68;font-size:12.5px}
+#ocOv input{width:100%;box-sizing:border-box;border:1.6px solid #EADFC8;border-radius:14px;padding:13px 14px;font:inherit;font-size:15px;outline:none;margin-bottom:12px}
+#ocOv .oc-sg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}#ocOv .oc-sg button{border:1.4px solid #EADFC8;background:#fff;border-radius:99px;padding:6px 11px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+/* ---- subcat sheet: + tile; footer chhupa jab tak badlav na ho ---- */
+.sjp-ig .sjp-plus{border:1.8px dashed #6EE7B7!important;background:#F0FDF8!important;color:#0B7A4B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:800;font-size:12px;cursor:pointer;border-radius:16px;min-height:96px}
+.sjp-ig .sjp-plus i{font-style:normal;font-size:24px;line-height:1}
+.sjp-ft.ks-hide{transform:translateY(130%);opacity:0;pointer-events:none}
+.sjp-ft{transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .25s}
+.sjp-ft>button.ks-src,#sjFoot>.ks-src,.ft-go.ks-src,#sellOv #sjFoot.sj-foot>button#sjBack.ks-src,#sellOv #sjFoot.sj-foot>button#sjNext.ks-src{display:none!important}
+/* ---- registration: ek line me ---- */
+.bd2-c{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;gap:6px!important;padding-bottom:2px}.bd2-c::-webkit-scrollbar{display:none}
+.bd2-c button{flex:none!important;white-space:nowrap;padding:7px 11px!important;font-size:12px!important}
+/* ---- shop photo: 3 dabbe ---- */
+.sp3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 4px}
+.sp3 label{position:relative;aspect-ratio:1;border:1.8px dashed #E2C99A;border-radius:14px;background:#FFFBF3 center/cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:800;color:#B4621A;cursor:pointer;text-align:center}
+.sp3 label i{font-style:normal;font-size:22px}.sp3 label.f{border-style:solid;color:transparent}.sp3 label.f i{display:none}
+.sp3 label.f:after{content:'✓';position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:#0FA968;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+#sjPh.ks-src{display:none!important}
+/* ---- swipe bar (saare flow) ---- */
+.ksw{position:relative;height:58px;border-radius:29px;background:linear-gradient(90deg,#1b1611,#2a2015);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;box-shadow:0 8px 22px rgba(0,0,0,.25),inset 0 0 0 1px rgba(245,213,138,.25);flex:1;width:100%}
+.ksw-f{position:absolute;top:0;bottom:0;width:0}.ksw-f.l{right:50%;background:linear-gradient(270deg,#57534E,#292524)}.ksw-f.r{left:50%;background:linear-gradient(90deg,#F47B20,#D9520A)}
+.ksw.pay .ksw-f.l{background:linear-gradient(270deg,#0E9F6E,#047857)}
+.ksw-l,.ksw-r{position:absolute;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:1;cursor:pointer;line-height:1.12;max-width:calc(50% - 40px)}
+.ksw-l{left:16px;align-items:flex-start}.ksw-r{right:16px;align-items:flex-end;text-align:right}
+.ksw-l b,.ksw-r b{font-size:13.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ksw-l b{color:#D6D3D1}.ksw-r b{color:#FDBA74}.ksw.pay .ksw-l b{color:#6EE7B7}
+.ksw-l small,.ksw-r small{font-size:10px;font-weight:700;color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ksw.gl .ksw-l b,.ksw.gr .ksw-r b{color:#fff}
+.ksw-l.off{opacity:.3;pointer-events:none}
+.ksw-k{position:absolute;left:50%;top:4px;width:50px;height:50px;margin-left:-25px;border-radius:50%;background:linear-gradient(135deg,#F5D58A,#C9932E);color:#1d1810;display:flex;align-items:center;justify-content:center;gap:2px;font-weight:900;font-size:16px;box-shadow:0 4px 12px rgba(0,0,0,.45);z-index:2;cursor:grab}
+.ksw-k .a{font-size:12px;opacity:.75}
+.ksw.hint .ksw-k{animation:sw2n 1.6s ease-in-out 1}
+.ksw-wrap{display:flex;flex-direction:column;gap:6px;width:100%}
+.ksw-h{text-align:center;font-size:10.5px;color:#8a7f68;font-weight:600}
+</style>
+<script id="v263-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  /* ================= swipe bar banane ka ek tareeka ================= */
+  window.koSwipe=function(o){ const w=document.createElement('div'); w.className='ksw hint'+(o.cls?' '+o.cls:'');
+    w.innerHTML=`<div class="ksw-f l"></div><div class="ksw-f r"></div><div class="ksw-l"><b></b><small></small></div><div class="ksw-r"><b></b><small></small></div><div class="ksw-k"><span class="a">‹</span>${o.k||'⇆'}<span class="a">›</span></div>`;
+    const k=w.querySelector('.ksw-k'), fl=w.querySelector('.ksw-f.l'), fr=w.querySelector('.ksw-f.r'), L=w.querySelector('.ksw-l'), R=w.querySelector('.ksw-r');
+    const st=(el,v)=>{ v=v||''; if(el.textContent!==v) el.textContent=v; };
+    w.set=x=>{ const l=x.l||{}, r=x.r||{}; st(L.querySelector('b'),l.t); st(L.querySelector('small'),l.s); st(R.querySelector('b'),r.t); st(R.querySelector('small'),r.s); if(L.classList.contains('off')!==!l.t) L.classList.toggle('off',!l.t); w._l=l.fn; w._r=r.fn; };
+    w.set(o); L.onclick=()=>{ if(o.tapGo!==false&&w._l) w._l(); }; R.onclick=()=>{ if(o.tapGo!==false&&w._r) w._r(); };
+    let x0=null,dx=0,max=0;
+    const paint=()=>{ const f=max?Math.abs(dx)/max:0; k.style.transform=`translateX(${dx}px)`; fl.style.width=(dx<0?f*50:0)+'%'; fr.style.width=(dx>0?f*50:0)+'%'; w.classList.toggle('gl',dx<-max*.35); w.classList.toggle('gr',dx>max*.35); };
+    const an=on=>{ const t=on?'transform .25s,width .25s':'none'; k.style.transition=t; fl.style.transition=fr.style.transition=t; };
+    k.addEventListener('pointerdown',e=>{ x0=e.clientX; max=w.clientWidth/2-29; an(false); w.classList.remove('hint'); k.setPointerCapture(e.pointerId); });
+    k.addEventListener('pointermove',e=>{ if(x0==null) return; let d=e.clientX-x0; if(d<0&&!w._l) d=0; dx=Math.max(-max,Math.min(max,d)); paint(); });
+    const up=()=>{ if(x0==null) return; x0=null; an(true); const d=dx<-max*.55?-1:dx>max*.55?1:0;
+      if(d){ dx=d*max; paint(); try{ navigator.vibrate&&navigator.vibrate(30); }catch(e){} setTimeout(()=>{ const f=d<0?w._l:w._r; dx=0; paint(); if(f) f(); },220); } else { dx=0; paint(); } };
+    k.addEventListener('pointerup',up); k.addEventListener('pointercancel',up);
+    return w; };
+  const txt=b=>{ if(!b) return ['','']; const sm=b.querySelector('small'); const s=sm?sm.textContent.trim():''; let t=b.textContent.trim(); if(s) t=t.replace(s,'').trim(); return [t.replace(/[←→✓]/g,'').trim(),s]; };
+
+  /* ================= Sell par count ================= */
+  function badge(){ let n=1; try{ const P=sdPending(); const j=/vendor/i.test(($('fabTx')||{}).textContent||''); n=j?(P.orders.length+P.leads.length):1; }catch(e){}
+    [$('sellFab'),document.querySelector('.nf-sell')].forEach(el=>{ if(!el) return; let u=el.querySelector('.kbdg'); if(!n){ if(u) u.remove(); return; } if(!u){ u=document.createElement('u'); u.className='kbdg'; el.appendChild(u); } if(u.textContent!==String(n)) u.textContent=n; }); }
+  badge(); setInterval(badge,2500);
+
+  /* ================= guide video: tap = roko/chalao, bar = aage-peeche ================= */
+  (function(){ const sv=$('sv'); if(!sv) return; const bar=sv.querySelector('.sv-bar'); const vid=()=>sv.querySelector('video.gv');
+    sv.insertAdjacentHTML('beforeend','<div class="gv-flash"></div><span class="gv-t"></span>'); const fl=sv.querySelector('.gv-flash'), tt=sv.querySelector('.gv-t');
+    if(bar&&!bar.querySelector('.gv-knob')) bar.insertAdjacentHTML('beforeend','<i class="gv-knob"></i>'); const kn=bar&&bar.querySelector('.gv-knob');
+    const fmt=s=>{ s=Math.max(0,Math.floor(s||0)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+    setInterval(()=>{ const v=vid(); if(!v||!v.duration) return; const p=v.currentTime/v.duration*100; if(kn) kn.style.left=p+'%'; tt.textContent=fmt(v.currentTime)+' / '+fmt(v.duration); },250);
+    sv.addEventListener('click',()=>{ setTimeout(()=>{ let pl=true; try{ pl=svPlaying; }catch(e){} fl.textContent=pl?'❚❚':'▶'; fl.classList.add('on'); setTimeout(()=>fl.classList.remove('on'),600); },20); });
+    if(bar){ let drag=false; const seek=e=>{ const v=vid(); if(!v||!v.duration) return; const r=bar.getBoundingClientRect(); const f=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)); v.currentTime=f*v.duration; const g=sv.querySelector('.gv-bar'); if(g) g.style.width=f*100+'%'; if(kn) kn.style.left=f*100+'%'; };
+      bar.addEventListener('pointerdown',e=>{ e.stopPropagation(); drag=true; bar.setPointerCapture(e.pointerId); seek(e); });
+      bar.addEventListener('pointermove',e=>{ if(drag) seek(e); }); bar.addEventListener('pointerup',e=>{ drag=false; e.stopPropagation(); });
+      bar.addEventListener('click',e=>e.stopPropagation()); }
+  })();
+
+  /* ================= + Other category ================= */
+  const oc=document.createElement('div'); oc.className='sm-ov top2'; oc.id='ocOv'; oc.onclick=e=>{ if(e.target===oc) closeSm('ocOv'); };
+  oc.innerHTML=`<div class="sm-sheet"><h3>Apni category likhein</h3><p>List me nahi hai? Apna kaam likhiye — phir uski services jodein.</p><input id="ocIn" placeholder="jaise: Carpenter, Tent house, Photo studio"><div class="oc-sg"></div><div id="ocSw"></div></div>`;
+  document.body.appendChild(oc);
+  const SUG={svc:['Carpenter','Painter','Plumber','Tent house','Caterer','Photo studio','Pest control','Driver'],prd:['Hardware','Stationery','Toys','Furniture','Gifts','Sweets'],oth:['NGO','Coaching','Gym','Event venue']};
+  window.ocOpen=function(){ const ty=(typeof SJ!=='undefined'&&SJ.ty)||'svc'; oc.querySelector('.oc-sg').innerHTML=(SUG[ty]||SUG.svc).map(x=>`<button onclick="document.getElementById('ocIn').value='${x}'">${x}</button>`).join('');
+    const sw=$('ocSw'); sw.innerHTML=''; sw.appendChild(koSwipe({l:{t:'Wapas',s:'band karein',fn:()=>closeSm('ocOv')},r:{t:'Aage',s:'services chunein',fn:ocSave}})); $('ocIn').value=''; openSm('ocOv'); setTimeout(()=>{ try{ $('ocIn').focus(); }catch(e){} },350); };
+  window.ocSave=function(){ const n=($('ocIn').value||'').trim(); if(!n){ try{ toast('Category ka naam likhiye'); }catch(e){} return; }
+    try{ const T=SJT[SJ.ty]; let i=T.c.findIndex(c=>c[1].toLowerCase()===n.toLowerCase()); if(i<0){ T.c.push(['✨',n,[]]); i=T.c.length-1; } closeSm('ocOv'); sjCatsR(); setTimeout(()=>sjpOpen(i),250); }catch(e){ console.warn(e); } };
+  function otherTile(){ const g=$('sjCats'); if(!g||g.querySelector('.sj-oth')) return; const d=document.createElement('div'); d.className='sj-cat sj-oth'; d.onclick=ocOpen; d.innerHTML='<div>＋</div>Other<small>apni category</small>'; g.appendChild(d); }
+
+  /* ================= subcat sheet: + tile, footer = swipe, badlav par hi dikhe ================= */
+  let orig=null;
+  try{ const _o=sjpOpen; sjpOpen=function(){ const r=_o.apply(this,arguments); orig=JSON.stringify((SJ.tmp||[]).slice().sort()); return r; }; window.sjpOpen=sjpOpen; }catch(e){}
+  function sjpUi(){ const ov=$('sjpOv'); if(!ov) return;
+    const ig=ov.querySelector('.sjp-ig'); if(ig&&!ig.querySelector('.sjp-plus')){ const t=document.createElement('div'); t.className='sjp-plus'; t.innerHTML='<i>＋</i>Apna service'; t.onclick=e=>{ e.stopPropagation(); const i=ov.querySelector('.sjp-add input'); if(i){ i.focus(); i.scrollIntoView({block:'center',behavior:'smooth'}); } }; ig.appendChild(t); }
+    const ft=ov.querySelector('.sjp-ft'); if(!ft) return; const bs=[...ft.querySelectorAll(':scope>button')]; const cancel=bs.find(b=>/cancel/i.test(b.textContent)), save=$('sjpS');
+    if(cancel&&save){ bs.forEach(b=>b.classList.add('ks-src')); let w=ft.querySelector('.ksw'); const st=txt(save);
+      const cfg={l:{t:'Wapas',s:'Cancel',fn:()=>cancel.click()},r:{t:st[0].replace(/^\s*Save\s*/,'Save ').slice(0,28)||'Save',s:'aage badhein',fn:()=>save.click()}};
+      if(!w){ w=koSwipe(cfg); ft.appendChild(w); } else w.set(cfg); }
+    const changed=orig!==null&&JSON.stringify((SJ.tmp||[]).slice().sort())!==orig; if(ft.classList.contains('ks-hide')===changed) ft.classList.toggle('ks-hide',!changed); }
+
+  /* ================= join steps: Back/Next = swipe ================= */
+  function sjFootUi2(){ const f=$('sjFoot'); if(!f) return; const bk=$('sjBack'), nx=$('sjNext'); if(!bk||!nx) return; [...f.children].forEach(b=>{ if(!b.classList.contains('ksw')&&!b.classList.contains('ks-src')) b.classList.add('ks-src'); });
+    let bv=true; try{ bv=typeof sjStep==='number'?sjStep>0:true; }catch(e){} const n=txt(nx); const cfg={l:bv?{t:'Wapas',s:'pichla step',fn:()=>bk.click()}:{},r:{t:n[0]||'Aage',s:n[1]||'agla step',fn:()=>nx.click()}};
+    let w=f.querySelector('.ksw'); if(!w){ w=koSwipe(cfg); f.appendChild(w); } else w.set(cfg); }
+
+  /* ================= shop photo: 3 dabbe ================= */
+  function photos(){ const ph=$('sjPh'); if(!ph||ph.dataset.k3) return; ph.dataset.k3=1; ph.classList.add('ks-src');
+    const box=document.createElement('div'); box.className='sp3';
+    box.innerHTML=[['bahar','🏪','Dukaan bahar se'],['andar','🛍️','Andar ki photo'],['aap','🙂','Aapki photo']].map((x,i)=>`<label data-i="${i}"><i>${x[1]}</i>${x[2]}<input type="file" accept="image/*" hidden></label>`).join('');
+    box.querySelectorAll('input').forEach((inp,i)=>inp.onchange=()=>{ const f=inp.files&&inp.files[0]; if(!f) return; const u=URL.createObjectURL(f); const l=inp.parentElement; l.style.backgroundImage=`url('${u}')`; l.classList.add('f');
+      if(i===0){ try{ const real=ph.querySelector('input'); const dt=new DataTransfer(); dt.items.add(f); real.files=dt.files; sjPhoto(real); }catch(e){} } });
+    ph.insertAdjacentElement('afterend',box); }
+
+  /* ================= Shop rent: baayein ₹1 trial, daayein ₹100 LIVE ================= */
+  function rentUi(){ const o=$('ftOv'); if(!o) return; const go=o.querySelector('.ft-go'); if(!go||go.dataset.k) return; go.dataset.k=1; go.classList.add('ks-src');
+    const w=koSwipe({cls:'pay',k:'₹',tapGo:false,l:{t:'₹1 · 1 hafta',s:'trial shuru',fn:()=>{ FT.plan='trial'; ftR(); setTimeout(()=>ftPay(),80); }},r:{t:'₹100 · aaj LIVE',s:'pehla mahina',fn:()=>{ FT.plan='p100'; ftR(); setTimeout(()=>ftPay(),80); }}});
+    const wr=document.createElement('div'); wr.className='ksw-wrap'; wr.appendChild(w); wr.insertAdjacentHTML('beforeend','<div class="ksw-h">Baayein = ₹1 trial · Daayein = ₹100 me aaj hi LIVE</div>'); go.insertAdjacentElement('afterend',wr); }
+
+  let q=0; new MutationObserver(()=>{ if(q) return; q=requestAnimationFrame(()=>{ q=0; try{ otherTile(); sjpUi(); sjFootUi2(); photos(); rentUi(); }catch(e){ console.warn(e); } }); }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  setInterval(()=>{ try{ sjpUi(); sjFootUi2(); }catch(e){} },700);
 })();
 </script>
