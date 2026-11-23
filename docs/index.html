@@ -26631,7 +26631,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=263;
+window.KO_V=264;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -27301,5 +27301,63 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
 
   let q=0; new MutationObserver(()=>{ if(q) return; q=requestAnimationFrame(()=>{ q=0; try{ otherTile(); sjpUi(); sjFootUi2(); photos(); rentUi(); }catch(e){ console.warn(e); } }); }).observe(document.body,{childList:true,subtree:true,characterData:true});
   setInterval(()=>{ try{ sjpUi(); sjFootUi2(); }catch(e){} },700);
+})();
+</script>
+<style id="v264-css">
+.ksw-wrap .ksw{flex:none!important;height:58px}
+/* rent: upar ke plan card hata diye, faisla neeche swipe se */
+#ftOv .ft-pl3{display:none!important}
+#ftOv .ft-nt.k2{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px!important;background:none!important}
+#ftOv .ft-nt.k2>div{border-radius:14px;padding:10px;font-size:11.5px;line-height:1.4;color:#3d3628}
+#ftOv .ft-nt.k2>div b{display:block;font-size:15px;margin-bottom:2px}
+#ftOv .ft-nt.k2 .l{background:#ECFDF5;border:1.4px solid #A7F3D0}#ftOv .ft-nt.k2 .l b{color:#047857}
+#ftOv .ft-nt.k2 .r{background:#FFF4EA;border:1.4px solid #FBD0A8;text-align:right}#ftOv .ft-nt.k2 .r b{color:#D9520A}
+/* request tracker */
+.kt{padding:4px 2px}
+.kt-hd{text-align:center;margin:6px 0 14px}.kt-hd .ic{width:58px;height:58px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:28px;background:#FFF1E3}
+.kt-hd b{font-size:18px;display:block}.kt-hd small{color:#8a7f68;font-size:12.5px}
+.kt .kt-st{position:relative;margin:0 6px 14px;display:block!important;grid-template-columns:none!important}
+.kt .kt-st .kt-s{display:flex!important;flex-direction:row!important;gap:12px;position:relative;padding-bottom:16px;width:auto!important;text-align:left!important;align-items:flex-start}
+.kt-s:not(:last-child):before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2.5px;background:#E8E1D0}
+.kt-s.ok:not(:last-child):before{background:#0FA968}
+.kt-d{width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;background:#EFE8D8;color:#8a7f68;z-index:1}
+.kt-s.ok .kt-d{background:#0FA968;color:#fff}
+.kt-s.now .kt-d{background:#F47B20;color:#fff;box-shadow:0 0 0 0 rgba(244,123,32,.5);animation:ktp 1.4s infinite}
+@keyframes ktp{0%{box-shadow:0 0 0 0 rgba(244,123,32,.55)}100%{box-shadow:0 0 0 12px rgba(244,123,32,0)}}
+.kt-s.no .kt-d{background:#EF4444;color:#fff}
+.kt-t b{font-size:14px;display:block}.kt-t small{font-size:11.5px;color:#8a7f68}
+.kt-s.now .kt-t b{color:#D9520A}
+.kt-pg{height:6px;border-radius:99px;background:#EFE8D8;overflow:hidden;margin:0 6px 14px}.kt-pg i{display:block;height:100%;background:linear-gradient(90deg,#F47B20,#0FA968);transition:width .6s}
+.kt-ad{font-size:11.5px;color:#8a7f68;text-align:center;margin-top:8px}
+</style>
+<script id="v264-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  const end=n=>{ const d=new Date(); d.setDate(d.getDate()+n); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); };
+  /* swipe se pehle: dono plan ek nazar me */
+  function notes(){ const o=$('ftOv'); if(!o) return; const n=o.querySelector('.ft-nt'); if(!n||n.classList.contains('k2')) return; n.classList.add('k2');
+    n.innerHTML=`<div class="l"><b>⟵ ₹1</b>1 hafta trial · ${end(7)} tak free<br>AutoPay · pasand aaye to ₹199/mahina</div><div class="r"><b>₹100 ⟶</b>Aaj hi LIVE · ${end(30)} tak<br>🎁 ₹100 lead coins free</div>`; }
+  /* payment ke baad: kadam-dar-kadam status, admin ke paas request */
+  const STEPS=[['💳','Payment request','UPI app me approve karein'],['✓','Payment mil gayi','Shop rent shuru'],['🛡️','Admin ke paas request','Team aapki dukaan check kar rahi hai'],['📋','Details verify','Naam, photo, area, category'],['🚀','Dukaan LIVE','Customers aapko dekh payenge']];
+  let APP=null; try{ APP=JSON.parse(localStorage.getItem('ko_myapp')||'null'); }catch(e){}
+  function stOf(){ if(!APP) return 0; let st=APP.st||1; try{ const v=AD_V.find(x=>x.id===APP.id); if(v){ if(v.st==='ok') st=5; else if(v.st==='rj') st=-1; else st=Math.max(st,2); } }catch(e){} return st; }
+  function trk(c){ const s=stOf(); const pct=s<0?100:Math.min(100,s/4*100);
+    const row=(x,i)=>{ const cls=s<0&&i===2?'no':(i<s||s===5?'ok':(i===s?'now':'')); return `<div class="kt-s ${cls}"><div class="kt-d">${cls==='ok'?'✓':cls==='no'?'✕':(i+1)}</div><div class="kt-t"><b>${x[1]}</b><small>${cls==='no'?'Request reject hui — support se baat karein':x[2]}</small></div></div>`; };
+    c.innerHTML=`<div class="kt"><div class="kt-hd"><div class="ic">${s>=5?'🎉':s<0?'⚠️':'⏳'}</div><b>${s>=5?'Badhai ho! Dukaan LIVE hai':s<0?'Request ruk gayi':'Aapki request admin ke paas hai'}</b><small>${APP?APP.name+' · '+APP.id+' · '+(APP.plan==='trial'?'₹1 trial':'₹100 Shop rent'):''}</small></div>
+      <div class="kt-pg"><i style="width:${pct}%"></i></div><div class="kt-st">${STEPS.map(row).join('')}</div><div id="ktSw"></div><div class="kt-ad">Approve hote hi SMS + notification aayega · aam taur par 24 ghante me</div></div>`;
+    const w=koSwipe({l:{t:'Band karein',s:'baad me dekhein',fn:()=>{ const o=$('ftOv'); if(o) o.remove(); }},r:{t:s>=5?'Dukaan kholein':'Aage badhein',s:s>=5?'apni dukaan':'products jodein',fn:()=>{ const o=$('ftOv'); if(o) o.remove(); try{ FT.ok=true; sjGo(1); }catch(e){} }}});
+    $('ktSw').appendChild(w); }
+  window.koTrack=function(){ let o=$('ftOv'); if(!o){ o=document.createElement('div'); o.id='ftOv'; o.className='sjp-ov'; o.onclick=e=>{ if(e.target===o) o.remove(); }; document.body.appendChild(o); }
+    o.innerHTML='<div class="ft-c" id="ktC"></div>'; o.classList.add('on'); trk($('ktC')); };
+  try{ const _p=ftPay; ftPay=function(){ const c=document.querySelector('#ftOv .ft-c'); if(!c) return; const p=FT.plan;
+      const ins=[...document.querySelectorAll('#sjTrack .sj-panel:first-child .sj-in')]; const nm=(ins[0]&&ins[0].value.trim())||'Meri Dukaan', ow=(ins[1]&&ins[1].value.trim())||'—', ph=(ins[2]&&ins[2].value.trim())||'—', area=(($('sjArea')||{}).value||'').trim();
+      let cat='—'; try{ const k=Object.keys(SJ.sel)[0]; if(k) cat=k.split(':').pop(); }catch(e){}
+      APP={id:'V-'+(1050+Math.floor(Math.random()*900)),name:nm,plan:p,st:1,t:Date.now()};
+      c.innerHTML='<div id="ktC"></div>'; const tc=$('ktC'); trk(tc);
+      setTimeout(()=>{ APP.st=2; try{ AD_V.unshift({id:APP.id,n:nm,o:ow,e:'🏪',cat,area:area||'—',ph,st:'pd',plan:p==='trial'?'₹1 Trial':'₹100 Rent',rt:0,ord:0,gmv:0,kyc:[1,0,0],by:'Self signup (app)',at:'abhi'}); }catch(e){} try{ localStorage.setItem('ko_myapp',JSON.stringify(APP)); }catch(e){} try{ xSnd(); }catch(e){} try{ toast('✓ Payment mili — request admin ke paas gayi'); }catch(e){} trk(tc); },1600);
+    }; window.ftPay=ftPay; }catch(e){ console.warn('ftPay',e); }
+  /* admin approve kare to status khud badle */
+  setInterval(()=>{ const c=$('ktC'); if(c&&APP){ const s=stOf(); if(c._s!==s){ c._s=s; trk(c); } } },1500);
+  let q=0; new MutationObserver(()=>{ if(q) return; q=requestAnimationFrame(()=>{ q=0; try{ notes(); }catch(e){} }); }).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
