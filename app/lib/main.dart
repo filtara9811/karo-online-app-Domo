@@ -16,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'splash.dart';
 
 /// Karo Online — Customer app
 /// LIVE: ऐप khulte hi GitHub Pages se taaza version load hota hai — GitHub par
@@ -59,6 +60,7 @@ class WebHome extends StatefulWidget {
 class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
   late final WebViewController _c;
   bool _loading = true;
+  bool _splashDone = false; // intro animation khatam?
   bool _offline = false;
   DateTime? _lastBack;
   DateTime _pausedAt = DateTime.now();
@@ -473,30 +475,10 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
           bottom: false,
           child: Stack(children: [
             WebViewWidget(controller: _c),
-            if (_newBuild != null && !_updHidden && !_loading) (_updMini && _prog == null ? _updateBubble() : _updateCard()),
-            if (_loading)
-              Container(
-                color: const Color(0xFFF47B20),
-                alignment: Alignment.center,
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Image.asset('assets/splash_logo.png', height: 150, filterQuality: FilterQuality.high),
-                  const SizedBox(height: 16),
-                  const Text('Karo Online',
-                      style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w800, letterSpacing: .3)),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: .18),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white54)),
-                    child: const Text('BETA VERSION',
-                        style: TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
-                  ),
-                  const SizedBox(height: 26),
-                  const SizedBox(
-                      width: 26, height: 26, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3)),
-                ]),
+            if (_newBuild != null && !_updHidden && _splashDone) (_updMini && _prog == null ? _updateBubble() : _updateCard()),
+            if (!_splashDone)
+              Positioned.fill(
+                child: KoSplash(ready: !_loading, onDone: () => setState(() => _splashDone = true)),
               ),
           ]),
         ),

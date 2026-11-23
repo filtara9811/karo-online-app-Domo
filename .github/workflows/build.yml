@@ -134,6 +134,10 @@ jobs:
               s=s.replace('</manifest>',q+'</manifest>')
           open(m,'w').write(s)
           print(open(m).read())
+          # app khulte hi pehli screen kaali (intro ke saath mel)
+          import glob
+          for f in glob.glob('android/app/src/main/res/drawable*/launch_background.xml'):
+              open(f,'w').write('<?xml version="1.0" encoding="utf-8"?>\n<layer-list xmlns:android="http://schemas.android.com/apk/res/android">\n    <item android:drawable="@android:color/black" />\n</layer-list>\n')
           PY
 
       - run: flutter pub get
