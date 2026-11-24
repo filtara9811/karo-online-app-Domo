@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=271;
+window.KO_V=272;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -28067,5 +28067,63 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   if('IntersectionObserver' in window){ const io=new IntersectionObserver(es=>es.forEach(e=>{ const v=e.target; if(!e.isIntersecting){ if(!v.paused){ v._koOff=1; try{ v.pause(); }catch(_){} } } else if(v._koOff&&!document.querySelector('.sm-ov.open')){ v._koOff=0; try{ v.play().catch(()=>{}); }catch(_){} } }),{threshold:.05});
     const seen=new WeakSet(); const scan=()=>document.querySelectorAll('video[autoplay]').forEach(v=>{ if(!seen.has(v)){ seen.add(v); io.observe(v); } });
     scan(); new MutationObserver(scan).observe(document.body,{childList:true,subtree:true}); }
+})();
+</script>
+<style id="v272-css">
+#reqFab{display:none!important}
+body:has(#shopOv.open) #o2B{display:none!important}
+.ls-g{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:10px;border:1.5px solid #E6DCC8;background:#fff;border-radius:16px;padding:13px;font:inherit;font-size:15px;font-weight:800;color:#1d1810;cursor:pointer}
+.ls-g svg{width:20px;height:20px}
+.ls-sim{font-size:11.5px;color:#0B7A4B;font-weight:800;margin-top:6px;display:none}.ls-sim.on{display:block}
+/* live order card: chhote, gap wale steps; detail me dobara nahi */
+.ol-c .ol-st{gap:0;margin-top:6px}
+.ol-c .ol-st span{width:15px!important;height:15px!important;font-size:8px!important}
+.ol-c .ol-st i{height:1.5px!important;margin:0 4px;background:repeating-linear-gradient(90deg,#E2D8C4 0 3px,transparent 3px 6px)!important}
+.ol-d .ol-dst{display:none!important}
+.kav2{background-size:cover!important;background-position:center!important;color:#fff!important;font-weight:900;display:flex!important;align-items:center;justify-content:center;font-size:13px}
+</style>
+<script id="v272-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  /* ================= har dukaan ki apni photo (Ashu = asli photo) ================= */
+  const _art=window.koShopArt;
+  window.koShopArt=function(si){ const A=_art(si); const S=SHOPS[si]||['']; if(/ashu/i.test(S[0])&&!A.prof) A.prof='avatar-ashu.jpg';
+    try{ const t=document.querySelector(`#ytFeed .yt-card[onclick*="openShop(${si})"] .yt-thumb`); if(t){ const v=t.querySelector('video'); const u=(v&&v.poster)||((t.querySelector('img')||{}).src)||''; if(u) A.cover=u; } }catch(e){}
+    return A; };
+  function av(el,si){ if(si==null||si<0||!SHOPS[si]) return; const A=koShopArt(si); const key=si+'|'+A.prof; if(el._av===key) return; el._av=key; el.classList.add('kav2');
+    if(A.prof){ el.style.setProperty('background',`#fff url('${A.prof}') center/cover no-repeat`,'important'); if(!el.children.length) el.textContent=''; }
+    else { el.style.setProperty('background',A.bg,'important'); if(!el.children.length||el.classList.contains('yt-av')) { [...el.children].forEach(c=>c.style.display='none'); if(!el.querySelector('.ini')){ const b=document.createElement('b'); b.className='ini'; b.style.cssText='font-size:inherit;color:#fff'; el.appendChild(b); } el.querySelector('.ini').textContent=A.ini; el.querySelector('.ini').style.display=''; } } }
+  const siOf=el=>{ const c=el.closest('[onclick*="openShop("],[onclick*="openProd("]'); const m=c&&(c.getAttribute('onclick')||'').match(/open(?:Shop|Prod)\((\d+)/); return m?+m[1]:null; };
+  function paintAv(){
+    document.querySelectorAll('#ytFeed .yt-av,.ft-band .ft-av,#rvShop .ft-av,.oc2-s .kav').forEach(el=>av(el,siOf(el)));
+    const sb=$('shopBody'); if(sb&&window._curShop!=null) sb.querySelectorAll('.sl-av').forEach(el=>av(el,window._curShop));
+    /* order radar ke aas-paas alag-alag dukanein */
+    document.querySelectorAll('.ot-rd .v').forEach((el,k)=>av(el,(k*5+2)%SHOPS.length));
+    document.querySelectorAll('#o2S .o2-cm .av').forEach(el=>{ if(el.textContent.trim()) return; const b=el.parentElement.querySelector('b'); const si=SHOPS.findIndex(x=>b&&x[0]===b.textContent.trim()); if(si>=0) av(el,si); });
+  }
+  new MutationObserver(paintAv).observe(document.body,{childList:true,subtree:true}); setTimeout(paintAv,800);
+  /* .yt-av par v260 ka CSS var(--avatar) zabardasti lagata hai — inline jeete */
+  const st=document.createElement('style'); st.textContent='.yt-av.kav2{font-size:16px!important;color:#fff!important}.yt-av.kav2>.ini{display:block!important}'; document.head.appendChild(st);
+
+  /* ================= Login: SIM number, OTP apne-aap, Gmail ================= */
+  const inApp=()=>!!window.KoAuth;
+  window.koAuthCb=function(k,v){
+    if(k==='phone'){ const d=String(v).replace(/\D/g,'').slice(-10); const i=$('lsNum'); if(i&&d.length===10){ i.value=d; i.dispatchEvent(new Event('input',{bubbles:true})); const h=document.querySelector('.ls-sim'); if(h) h.classList.add('on'); setTimeout(()=>{ const b=$('lsSend'); if(b&&!b.disabled) b.focus(); },50); } }
+    else if(k==='otp'){ const d=String(v).replace(/\D/g,''); const ins=[...document.querySelectorAll('#lsOtp input')]; if(!d) return; const c=d.slice(-ins.length); ins.forEach((x,j)=>{ x.value=c[j]||''; x.dispatchEvent(new Event('input',{bubbles:true})); }); setTimeout(()=>{ try{ lsVerify(); }catch(e){} },400); }
+    else if(k==='gmail'){ try{ localStorage.setItem('ko_email',v); if(typeof PCD!=='undefined'){ PCD.email=v; if(!PCD.name) PCD.name=v.split('@')[0]; } }catch(e){} try{ toast('✓ '+v+' se login'); }catch(e){} try{ lsGo(3); }catch(e){} } };
+  (function(){ const n=$('lsNum'); if(!n) return; let asked=false; const ask=()=>{ if(!inApp()||asked||n.value.length===10) return; asked=true; try{ n.blur(); }catch(e){} KoAuth.postMessage('phone'); };
+    n.addEventListener('focus',ask); n.addEventListener('click',ask);
+    n.insertAdjacentHTML('afterend',''); const ph=n.closest('.ls-ph'); if(ph) ph.insertAdjacentHTML('afterend','<div class="ls-sim">✓ Aapke SIM ka number bhar diya</div>');
+    const p0=$('lsP0'); if(p0&&!p0.querySelector('.ls-g')){ p0.insertAdjacentHTML('beforeend',`<button class="ls-g" onclick="koGmail()"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 38.2 44 33 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Google (Gmail) se login</button>`); } })();
+  window.koGmail=function(){ if(inApp()) KoAuth.postMessage('gmail'); else { try{ toast('Gmail chunna app me chalega — abhi mobile number se login karein'); }catch(e){} } };
+  try{ const _s=lsSendOtp; lsSendOtp=function(){ const r=_s.apply(this,arguments); if(inApp()) KoAuth.postMessage('otp'); return r; }; window.lsSendOtp=lsSendOtp; }catch(e){}
+
+  /* ================= vendor app se: ?shop=my&mode=edit ================= */
+  window.koShopMode=function(m){ try{ const on=!!(SE&&SE.on); if((m==='edit')!==on) vbEdit(); }catch(e){} };
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('shop')==='my'){ const go=()=>{ try{ spSkip(); }catch(e){} const sp=$('splash'); if(sp) sp.style.display='none'; const l=$('loginScr'); if(l) l.classList.remove('on');
+      try{ window._zxNoSplash=1; openShop(typeof MY_SHOP!=='undefined'?MY_SHOP:0); }catch(e){}
+      if(qs.get('mode')==='edit') setTimeout(()=>koShopMode('edit'),1200); };
+    if(document.readyState==='complete') setTimeout(go,500); else addEventListener('load',()=>setTimeout(go,500)); }
 })();
 </script>

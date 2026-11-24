@@ -5,6 +5,7 @@ import '../shop.dart';
 import '../theme.dart';
 import 'pos.dart';
 import 'soon.dart';
+import 'shop_editor.dart';
 
 /// My Shop — prototype jaisa: sunehra shop card (5 slide), aaj ke orders, POS · Naya bill, neeche bill bar
 class MyShopTab extends StatefulWidget {
@@ -40,10 +41,10 @@ class _MyShopTabState extends State<MyShopTab> {
         }).toList();
         return Stack(children: [
           ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 190),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 190),
             children: [
               SizedBox(
-                height: 252,
+                height: 232,
                 child: PageView(
                   controller: _pc,
                   onPageChanged: (i) => setState(() => slide = i),
@@ -194,10 +195,13 @@ class _MyShopTabState extends State<MyShopTab> {
       decoration: _goldCard,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Stack(clipBehavior: Clip.none, children: [
-            Container(width: 48, height: 48, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.storefront_rounded, color: K.ink, size: 28)),
-            Positioned(right: -4, bottom: -4, child: Container(padding: const EdgeInsets.all(3), decoration: const BoxDecoration(color: K.acc, shape: BoxShape.circle), child: const Icon(Icons.edit_rounded, size: 11, color: Colors.white))),
-          ]),
+          GestureDetector(
+            onTap: () => openShopEditor(context),
+            child: Stack(clipBehavior: Clip.none, children: [
+              Container(width: 48, height: 48, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.storefront_rounded, color: K.ink, size: 28)),
+              Positioned(right: -4, bottom: -4, child: Container(padding: const EdgeInsets.all(3), decoration: const BoxDecoration(color: K.acc, shape: BoxShape.circle), child: const Icon(Icons.edit_rounded, size: 11, color: Colors.white))),
+            ]),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

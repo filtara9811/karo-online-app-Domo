@@ -134,6 +134,11 @@ jobs:
               s=s.replace('</manifest>',q+'</manifest>')
           open(m,'w').write(s)
           print(open(m).read())
+          # Gmail chunne ke liye Android account picker
+          import glob as _g
+          for f in _g.glob('android/app/src/main/kotlin/**/MainActivity.kt',recursive=True):
+              pkg=open(f).read().split('\n')[0]
+              open(f,'w').write(pkg+'\n\n'+open('MainActivity.kt.txt').read())
           # app khulte hi pehli screen kaali (intro ke saath mel)
           import glob
           for f in glob.glob('android/app/src/main/res/drawable*/launch_background.xml'):

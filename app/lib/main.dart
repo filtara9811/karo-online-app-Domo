@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gal/gal.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:smart_auth/smart_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -101,6 +102,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       ..setBackgroundColor(const Color(0xFFF3ECDD))
       ..addJavaScriptChannel('KaroApp', onMessageReceived: (m) => _openExternal(m.message))
       ..addJavaScriptChannel('KaroFile', onMessageReceived: (m) => _onFile(m.message))
+      ..addJavaScriptChannel('KoAuth', onMessageReceived: (m) => _onAuth(m.message))
       ..setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) async {
           await _c.runJavaScript(_bridge);
@@ -417,6 +419,26 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       ),
     );
   }
+
+  /// Login: SIM wala number, OTP apne-aap, Gmail chunna
+  Future<void> _onAuth(String m) async {
+    try {
+      if (m == 'phone') {
+        final r = await SmartAuth.instance.requestPhoneNumberHint();
+        if (r.hasData) _authCb('phone', r.requireData);
+      } else if (m == 'otp') {
+        final r = await SmartAuth.instance.getSmsWithUserConsentApi();
+        final code = r.hasData ? r.requireData.code : null;
+        if (code != null) _authCb('otp', code);
+      } else if (m == 'gmail') {
+        final e = await const MethodChannel('ko/accounts').invokeMethod<String>('pick');
+        if (e != null && e.isNotEmpty) _authCb('gmail', e);
+      }
+    } catch (_) {}
+  }
+
+  void _authCb(String k, String v) =>
+      _c.runJavaScript('window.koAuthCb&&koAuthCb(${jsonEncode(k)},${jsonEncode(v)})');
 
   /// Web se file (bill photo / PDF / card): share = WhatsApp wagairah, save = gallery me
   Future<void> _onFile(String raw) async {
