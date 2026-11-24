@@ -26631,7 +26631,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=267;
+window.KO_V=268;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -27787,7 +27787,8 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
     const o=L[0]; const pct=Math.min(1,Math.max(0,o.st)/4); const rg=$('o2Rg'); if(rg) rg.setAttribute('stroke-dashoffset',String(182.2*(1-pct)));
     bb.querySelector('.em').textContent=o.rf?'↩️':SS[Math.max(0,Math.min(4,o.st))][0]; bb.querySelector('u').textContent=L.length>1?L.length:''; bb.querySelector('u').style.display=L.length>1?'':'none'; bb.querySelector('small').textContent=L.length>1?L.length+' order live':lab(o); }
   function list(){ const L=OTS.filter(live); if(!L.length) return;
-    $('olB').innerHTML=`<div class="pc-h">🛵 Aapke live orders</div><div class="pc-s">${L.length} order chal rahe hain — kisi par dabayein, radar khulega</div>`+L.map(o=>`<div class="ol-c" onclick="o2Open('${o.id}')"><div class="im" style="${o.img?`background-image:url('${o.img}')`:''}">${o.img?'':o.em}</div><div><b>${o.shop}</b><small>${o.id} · ${R(o.tot)} · ${MODES[o.mode].t}</small><div class="ol-st">${SS.map((x,k)=>`<span class="${o.st<0?'':k<o.st||(o.st>=4)?'ok':k===o.st?'now':''}">${k<o.st||o.st>=4?'✓':x[0]}</span>`).join('<i></i>')}</div></div><em>${lab(o)}</em></div>`).join('');
+    const G={}; L.forEach(o=>{ (G[o.si]=G[o.si]||[]).push(o); });
+    $('olB').innerHTML=`<div class="pc-h">🛵 Aapke live orders</div><div class="pc-s">${L.length} order · ${Object.keys(G).length} dukaan — order par dabayein, radar khulega</div>`+Object.keys(G).map(si=>`<div class="ol-g"><div class="hd"><span></span><div><b>${(SHOPS[si]||['Dukaan'])[0]}</b><small>${G[si].length} order live</small></div></div>`+G[si].map(o=>`<div class="ol-c" onclick="o2Open('${o.id}')"><div class="im" style="${o.img?`background-image:url('${o.img}')`:''}">${o.img?'':o.em}</div><div><b>${(o.items||'').split(',')[0]}</b><small>${o.id} · ${R(o.tot)} · ${MODES[o.mode].t}</small><div class="ol-st">${SS.map((x,k)=>`<span class="${o.st<0?'':k<o.st||(o.st>=4)?'ok':k===o.st?'now':''}">${k<o.st||o.st>=4?'✓':x[0]}</span>`).join('<i></i>')}</div></div><em>${lab(o)}</em></div>`).join('')+`</div>`).join('');
     if(!list.quiet){ openSm('olOv'); setTimeout(bub,50); } }
   function paintAll(){ paint(); bub(); if(lo.classList.contains('open')) listR(); }
   function listR(){ const L=OTS.filter(live); if(!L.length){ closeSm('olOv'); return; } const sc=$('olB').scrollTop; list.quiet=1; list(); list.quiet=0; $('olB').scrollTop=sc; }
@@ -27796,7 +27797,8 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   let st0=null,mv=false; bb.addEventListener('pointerdown',e=>{ st0={x:e.clientX,y:e.clientY,l:bb.offsetLeft,t:bb.offsetTop}; mv=false; bb.setPointerCapture(e.pointerId); });
   bb.addEventListener('pointermove',e=>{ if(!st0) return; const dx=e.clientX-st0.x, dy=e.clientY-st0.y; if(Math.abs(dx)+Math.abs(dy)>12) mv=true; if(mv){ BP={x:st0.l+dx,y:st0.t+dy}; put(); } });
   bb.addEventListener('pointercancel',()=>{ st0=null; });
-  bb.addEventListener('pointerup',()=>{ if(!st0) return; st0=null; if(mv){ BP.x=BP.x+29<innerWidth/2?10:innerWidth-68; put(); try{ localStorage.setItem('ko_o2b',JSON.stringify(BP)); }catch(e){} } else list(); });
+  bb.addEventListener('click',e=>{ if(bb._dr){ bb._dr=0; return; } if(!lo.classList.contains('open')) list(); });
+  bb.addEventListener('pointerup',()=>{ if(!st0) return; st0=null; if(mv){ bb._dr=1; BP.x=BP.x+29<innerWidth/2?10:innerWidth-68; put(); try{ localStorage.setItem('ko_o2b',JSON.stringify(BP)); }catch(e){} } });
   new MutationObserver(()=>bub()).observe(lo,{attributes:true,attributeFilter:['class']}); new MutationObserver(()=>bub()).observe(ov,{attributes:true,attributeFilter:['class']});
   bub();
 })();
@@ -27836,5 +27838,58 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
       const m=tx.match(/(?:UTR|UPI\s*(?:Ref|Reference|transaction)[^\d]{0,4}(?:No|ID|number)?|Transaction\s*ID|Ref\.?\s*No)[^\d]{0,20}(\d[\d\s]{10,16}\d)/i); let v=m?m[1].replace(/\s/g,''):'';
       if(!/^\d{12}$/.test(v)){ const all=(tx.match(/\b\d{12}\b/g)||[]); v=all[0]||''; }
       if(v) cb(v); else { const u=document.querySelector('#pwInfo .p2-utr'); if(u) u.placeholder='UTR nahi mila — khud likhein (12 ank)'; } }).catch(()=>done()); };
+})();
+</script>
+<style id="v268-css">
+#rlList .mq-tl2,#rlList .mq-hint{display:none!important}
+#rlList .mq-sg.two{grid-template-columns:1fr 1fr!important}
+#rlList .mq-sg.two>button{flex:1}
+.sg2{display:flex;position:relative;background:#F3ECDC;border-radius:18px;padding:4px;margin:2px 0 12px}
+.sg2 .th{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:#fff;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.08);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.sg2 button{flex:1;position:relative;z-index:1;border:0;background:none;padding:8px 4px;font:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.sg2 button b{font-size:20px;color:#8a7f68}.sg2 button small{font-size:13.5px;font-weight:800;color:#8a7f68}
+.sg2 button.on b{color:#E2580A}.sg2 button.on small{color:#1d1810}
+.gs{background:#fff;border:1.6px solid #EFE3CB;border-radius:20px;margin-bottom:12px;overflow:hidden;box-shadow:0 6px 16px rgba(120,80,20,.06)}
+.gs-h{display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer}
+.gs-h .av{width:52px;height:52px;border-radius:50%;background:#FFF1E3 var(--avatar) center/cover;flex:none;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);position:relative}
+.gs-h .av u{position:absolute;bottom:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;border-radius:99px;background:#F47B20;color:#fff;font-size:10.5px;font-weight:900;text-decoration:none;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.gs-h>div{flex:1;min-width:0}.gs-h b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gs-h small{display:block;font-size:11.5px;color:#8a7f68;margin-top:2px}
+.gs-h .ths{display:flex;margin-top:6px}.gs-h .ths span{width:28px;height:28px;border-radius:8px;background:#FFF5E6 center/cover;border:2px solid #fff;margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 4px rgba(0,0,0,.12)}.gs-h .ths span:first-child{margin-left:0}
+.gs-h .st{font-size:11px;font-weight:900;color:#C9450A;background:#FFF1E3;border-radius:99px;padding:3px 9px;white-space:nowrap}
+.gs-h .ch{width:30px;height:30px;border-radius:50%;background:#F6EEDD;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none;transition:transform .3s}
+.gs.op .gs-h .ch{transform:rotate(180deg)}
+.gs-b{display:none;padding:0 10px 10px;border-top:1px dashed #EFE3CB}
+.gs.op .gs-b{display:block;animation:gsI .3s ease}@keyframes gsI{from{opacity:0;transform:translateY(-6px)}}
+.gs-b>*{margin-top:10px!important}
+.gs-b .mq-top{display:none!important}
+/* bubble list: dukaan ke hisaab se */
+.ol-g{margin-top:12px}.ol-g>.hd{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.ol-g>.hd span{width:38px;height:38px;border-radius:50%;background:#FFF1E3 var(--avatar) center/cover;flex:none;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.ol-g>.hd b{font-size:15px}.ol-g>.hd small{display:block;font-size:11px;color:#8a7f68}
+.ol-g .ol-c{margin-top:8px;margin-left:14px}
+</style>
+<script id="v268-js">
+(function(){
+  /* ---- My Orders: sirf Enquiry / Order, dukaan ke hisaab se ---- */
+  if(typeof MQ!=='undefined'&&(MQ.f==='all'||!MQ.f)) MQ.f='ord';
+  const OPEN={};
+  window.gsTog=k=>{ OPEN[k]=!OPEN[k]; const e=document.querySelector(`.gs[data-k="${CSS.escape(k)}"]`); if(e) e.classList.toggle('op',!!OPEN[k]); };
+  window.mqF2=f=>{ if(MQ.f===f) return; MQ.f=f; refreshReqList(); };
+  const LBL={new:'Bheja',enq:'Enquiry',fvs:'Accept',acc:'Accepted',pack:'Packing',out:'Raste me',done:'Delivered',rej:'Reject'};
+  const shopIdx=n=>{ try{ return SHOPS.findIndex(s=>s[0]===n); }catch(e){ return -1; } };
+  const _r=refreshReqList;
+  refreshReqList=function(){ const box=document.getElementById('rlList'); if(!box) return; if(MQ.f==='all') MQ.f='ord';
+    const ne=REQS.filter(r=>r.enq).length, no=REQS.length-ne; const L=REQS.filter(r=>MQ.f==='enq'?r.enq:!r.enq);
+    const G=[]; const M={}; L.forEach(r=>{ const k=String(r.shop||'Dukaan'); if(!M[k]){ M[k]={k,list:[]}; G.push(M[k]); } M[k].list.push(r); });
+    if(!Object.keys(OPEN).length&&G[0]) OPEN[G[0].k]=true;
+    const sg=`<div class="sg2"><span class="th" style="transform:translateX(${MQ.f==='enq'?0:100}%)"></span><button class="${MQ.f==='enq'?'on':''}" onclick="mqF2('enq')"><b>${ne}</b><small>💬 Enquiry</small></button><button class="${MQ.f==='ord'?'on':''}" onclick="mqF2('ord')"><b>${no}</b><small>🛒 Order</small></button></div>`;
+    const grp=g=>{ const si=shopIdx(g.k), S=si>=0?SHOPS[si]:null; const live=g.list.filter(r=>!['done','rej'].includes(r.vs)).length; const last=g.list[0];
+      const im=r=>{ let u=''; try{ u=(window.mqImgOf&&mqImgOf(r.name))||''; }catch(e){} return `<span style="${u?`background-image:url('${u}')`:''}">${u?'':(r.emoji||'🛒')}</span>`; };
+      return `<div class="gs ${OPEN[g.k]?'op':''}" data-k="${g.k.replace(/"/g,'')}"><div class="gs-h" onclick="gsTog('${g.k.replace(/'/g,"\\'")}')"><span class="av"><u>${g.list.length}</u></span><div><b>${g.k}</b><small>${S?'⭐ '+S[4]+' · '+S[3]+' · ':''}${g.list.length} ${MQ.f==='enq'?'enquiry':'order'}${live?' · '+live+' live':''}</small><div class="ths">${g.list.slice(0,5).map(im).join('')}</div></div><span class="st">${LBL[last.vs||'new']||''}</span><span class="ch">▾</span></div>
+        <div class="gs-b">${g.list.map(r=>mqCard(r,REQS.indexOf(r))).join('')}</div></div>`; };
+    const sc=box.scrollTop; box.innerHTML=sg+(G.length?G.map(grp).join(''):`<div style="text-align:center;color:#8a8373;padding:40px 0">Abhi koi ${MQ.f==='enq'?'enquiry':'order'} nahi</div>`); box.scrollTop=sc; };
+  try{ window.refreshReqList=refreshReqList; }catch(e){}
+  /* swipe: sirf do */
+  try{ mqF=function(f){ mqF2(f==='all'?'enq':f); }; }catch(e){}
 })();
 </script>
