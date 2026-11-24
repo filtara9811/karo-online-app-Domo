@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=272;
+window.KO_V=273;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -28125,5 +28125,21 @@ body:has(#shopOv.open) #o2B{display:none!important}
       try{ window._zxNoSplash=1; openShop(typeof MY_SHOP!=='undefined'?MY_SHOP:0); }catch(e){}
       if(qs.get('mode')==='edit') setTimeout(()=>koShopMode('edit'),1200); };
     if(document.readyState==='complete') setTimeout(go,500); else addEventListener('load',()=>setTimeout(go,500)); }
+})();
+</script>
+<style id="v273-css">
+/* link se khuli dukaan: poori screen */
+#shopOv.ko-full{align-items:stretch!important;background:#FDFAF3!important}
+#shopOv.ko-full .sm-sheet{height:100vh!important;height:100dvh!important;max-height:none!important;max-width:none!important;border-radius:0!important}
+#shopOv.ko-full .sm-grab,#shopOv.ko-full .sm-handle{display:none!important}
+#shopOv.ko-full .sl-cover>.sl-back{top:calc(10px + var(--sat,0px))!important}
+</style>
+<script id="v273">
+(function(){
+  const ov=document.getElementById('shopOv'); if(!ov) return;
+  const qs=new URLSearchParams(location.search); const q=qs.get('shop');
+  if(q!==null){ ov.classList.add('ko-full');
+    /* band hote hi normal sheet wapas */
+    let was=false; new MutationObserver(()=>{ const o=ov.classList.contains('open'); if(was&&!o) ov.classList.remove('ko-full'); was=o; }).observe(ov,{attributes:true,attributeFilter:['class']}); }
 })();
 </script>
