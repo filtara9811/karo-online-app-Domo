@@ -26631,7 +26631,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=266;
+window.KO_V=267;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -27671,7 +27671,7 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   window.p2Mode=m=>{ P.mode=m; render(); if(P.snd) say(caps().join('. ')); };
   window.p2Snd=()=>{ P.snd=!P.snd; const v=document.querySelector('#pwInfo .p2-v video'); if(v){ v.muted=!P.snd; v.play&&v.play().catch(()=>{}); } const b=document.querySelector('#pwInfo .p2-v .snd'); if(b) b.textContent=P.snd?'🔊':'🔇'; if(P.snd) say(caps().join('. ')); else try{ speechSynthesis.cancel(); }catch(e){} };
   window.p2Tc=()=>{ P.tc=!P.tc; const t=document.querySelector('#pwInfo .p2-tc'); if(t) t.classList.toggle('op',P.tc); };
-  window.p2Add=inp=>{ const fs=[...(inp.files||[])].slice(0,3-P.proofs.length); fs.forEach(f=>{ const r=new FileReader(); r.onload=()=>{ const im=new Image(); im.onload=()=>{ const cv=document.createElement('canvas'); const s=Math.min(1,320/Math.max(im.width,im.height)); cv.width=im.width*s; cv.height=im.height*s; cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height); if(P.proofs.length<3) P.proofs.push(cv.toDataURL('image/jpeg',.65)); proofUi(); }; im.src=r.result; }; r.readAsDataURL(f); }); inp.value=''; };
+  window.p2Add=inp=>{ const fs=[...(inp.files||[])].slice(0,3-P.proofs.length); fs.forEach(f=>{ const r=new FileReader(); r.onload=()=>{ if(!P.utr) koUtr(r.result,v=>{ if(P.utr) return; P.utr=v; const u=document.querySelector('#pwInfo .p2-utr'); if(u){ u.value=v; u.classList.add('ocr'); } gate(); toast('✓ Screenshot se UTR mil gaya: '+v); }); const im=new Image(); im.onload=()=>{ const cv=document.createElement('canvas'); const s=Math.min(1,320/Math.max(im.width,im.height)); cv.width=im.width*s; cv.height=im.height*s; cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height); if(P.proofs.length<3) P.proofs.push(cv.toDataURL('image/jpeg',.65)); proofUi(); }; im.src=r.result; }; r.readAsDataURL(f); }); inp.value=''; };
   window.p2Rm=i=>{ P.proofs.splice(i,1); proofUi(); };
   window.p2Utr=v=>{ P.utr=v.replace(/\D/g,''); gate(); };
   const upi=()=>`upi://pay?pa=${encodeURIComponent((P.c.upi||'').trim()||'karoonline.demo@upi')}&pn=${encodeURIComponent(P.c.name||'Dukaan')}&am=${amtOf(P.mode)}&cu=INR&tn=${encodeURIComponent('Karo Online order')}`;
@@ -27679,7 +27679,7 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
     const am=opts.map(o=>`<button class="${o===m?'on':''}" onclick="p2Mode('${o}')"><small>${MODES[o].ic} ${MODES[o].t}</small><b>${o==='cod'?R(0):R(amtOf(o))}</b><em>${o==='full'?'10% OFF · '+R(P.after-P.full)+' bachat':o==='half'?'baaki '+R(P.after-P.half)+' delivery par':R(P.after)+' delivery par'}</em></button>`).join('');
     const tc={half:[['🛡️','Order pakka — dukaan turant packing shuru karti hai'],['💵','Baaki paisa saman milne par cash/UPI se'],['↩️','Cancel par online diya paisa 3-5 din me wapas'],['ℹ️','Is option me 10% discount nahi']],full:[['🏷️','Seedha 10% OFF'],['⚡','Priority packing'],['↩️','Cancel/return par poora paisa wapas'],['🧾','Delivery par koi cash nahi']],cod:[['🤝','Saman dekh kar paisa dein'],['📦','Dukaan accept karte hi packing'],['ℹ️','COD me 10% discount nahi'],['⚠️','Baar-baar cancel par COD band ho sakta hai']]}[m];
     B.innerHTML=`<div class="p2-v"><video src="guide2.mp4" poster="guide2.jpg" autoplay muted loop playsinline></video><button class="x" onclick="closeSm('pwInfo')">✕</button><button class="snd" onclick="p2Snd()">${P.snd?'🔊':'🔇'}</button><div class="cap"><small>▶ Guide · ${MODES[m].t}</small><b id="p2Cap">${caps()[0]}</b></div><i class="pg" id="p2Pg"></i></div>
-      <div class="p2-b"><div class="p2-am">${am}</div>
+      <div class="p2-b"><div class="p2-it"><span style="${P.img?`background-image:url('${P.img}')`:''}">${P.img?'':P.em}</span><div><b>${CART.map(x=>x.name).join(', ')}</b><small>${CART.reduce((a,x)=>a+x.qty,0)} item · ${P.c.name||''}</small></div><em>${R(P.after)}</em></div><div class="p2-am">${am}</div>
       <div class="p2-tc ${P.tc?'op':''}"><button onclick="p2Tc()"><span>📋 Fayde, sharte aur refund niyam</span><i>▾</i></button><ul>${tc.map(x=>`<li><span>${x[0]}</span><span>${x[1]}</span></li>`).join('')}</ul></div>
       ${isC?`<div class="p2-qr"><div style="font-size:44px">💵</div><div class="p2-to">Abhi kuch nahi dena<small>${R(P.after)} saman milne par cash ya UPI se</small></div></div>`
       :`<div class="p2-qr"><div class="p2-box" id="p2Box"><div class="py-spin" style="margin:80px auto"></div></div>
@@ -27688,8 +27688,8 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
         <a class="p2-op" href="${upi()}">UPI app me kholein</a></div>
         <div class="p2-pf"><h4>📸 Payment ka screenshot <small>(1-3 photo)</small></h4><div class="p2-pr" id="p2Pr"></div><input class="p2-utr" placeholder="ya UTR / Transaction ID (12 ank)" inputmode="numeric" value="${P.utr}" oninput="p2Utr(this.value)"></div>`}
       <div class="p2-hint" id="p2Hint">${isC?'':'Screenshot lagate hi aage badhne ka swipe aayega 👇'}</div><div class="p2-sw hid" id="p2Sw"></div></div>`;
-    if(!isC){ qrLib().then(q=>{ const b=$('p2Box'); if(!b) return; const g=q(0,'H'); g.addData(upi()); g.make(); b.innerHTML=g.createSvgTag({cellSize:5,margin:0,scalable:true})+`<span class="lg" style="${P.img?`background-image:url('${P.img}')`:''}">${P.img?'':P.em}</span>`; }).catch(()=>{ const b=$('p2Box'); if(b) b.innerHTML='<small style="display:block;text-align:center;color:#8a7f68;padding:70px 10px">QR ke liye net chahiye — "UPI app me kholein" dabayein</small>'; });
-      clearInterval(tmI); const end=Date.now()+300e3; tmI=setInterval(()=>{ const el=$('p2Tm'); if(!el){ clearInterval(tmI); return; } const s=Math.max(0,Math.round((end-Date.now())/1e3)); el.textContent='QR '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0')+' me expire'; },1000); proofUi(); }
+    if(!isC){ qrLib().then(q=>{ const b=$('p2Box'); if(!b) return; const g=q(0,'H'); g.addData(upi()); g.make(); b.innerHTML=g.createSvgTag({cellSize:5,margin:0,scalable:true})+`<span class="lg av"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="none" stroke="#F3E3C8" stroke-width="4"/><circle id="p2Ring" cx="30" cy="30" r="27" fill="none" stroke="#F47B20" stroke-width="4" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="0" transform="rotate(-90 30 30)"/></svg><i></i><b id="p2Ct">5:00</b></span>`; }).catch(()=>{ const b=$('p2Box'); if(b) b.innerHTML='<small style="display:block;text-align:center;color:#8a7f68;padding:70px 10px">QR ke liye net chahiye — "UPI app me kholein" dabayein</small>'; });
+      clearInterval(tmI); const end=Date.now()+300e3; tmI=setInterval(()=>{ const el=$('p2Tm'); if(!el){ clearInterval(tmI); return; } const s=Math.max(0,Math.round((end-Date.now())/1e3)); el.textContent='QR '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0')+' me expire'; const ct=$('p2Ct'), rg=$('p2Ring'); if(ct) ct.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); if(rg) rg.setAttribute('stroke-dashoffset',String(169.6*(1-s/300))); },1000); proofUi(); }
     clearInterval(capI); let ci=0, t0=Date.now(); capI=setInterval(()=>{ const cp=$('p2Cap'), pg=$('p2Pg'); if(!cp){ clearInterval(capI); return; } const e=(Date.now()-t0)%9000; if(pg) pg.style.width=(e/90)+'%'; const n=Math.floor(e/3000); if(n!==ci){ ci=n; cp.style.opacity=0; setTimeout(()=>{ cp.textContent=caps()[n]; cp.style.opacity=1; },250); } },250);
     const sw=koSwipe({cls:'pay',k:'₹',tapGo:false,l:{t:'Wapas',s:'cart par',fn:()=>closeSm('pwInfo')},r:{t:isC?'Order bhejein':'Payment ho gaya',s:isC?R(P.after)+' delivery par':'dukaan verify karegi',fn:p2Submit}});
     $('p2Sw').appendChild(sw); gate(); }
@@ -27706,8 +27706,8 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
     clearInterval(tmI); clearInterval(capI); try{ speechSynthesis.cancel(); }catch(e){}
     const m=P.mode, items=CART.map(x=>x.name+' ×'+x.qty).join(', ');
     const o={id:'#O-'+(2300+Math.floor(Math.random()*600)),si,shop:(SHOPS[si]||[''])[0],items,em:P.em,img:P.img,mode:m,amt:amtOf(m),tot:m==='full'?P.full:P.after,proofs:P.proofs.slice(),utr:P.utr,auto:!!P.c.auto,st:m==='cod'?1:0,cd:60,t:Date.now(),log:[]};
-    log(o,m==='cod'?'Order bheja · Cash on delivery':`${R(o.amt)} ka payment proof bheja`);
-    try{ SD_ORD.unshift({id:o.id,c:'Aap (customer)',it:items+' · '+MODES[m].t+(o.proofs.length?' · 📸 '+o.proofs.length+' screenshot':o.utr?' · UTR '+o.utr:''),amt:o.tot,ad:'Bara Hindu Rao',tm:'abhi',st:'new'}); }catch(e){}
+    o.pin=String(1000+Math.floor(Math.random()*9000)); log(o,m==='cod'?'Order bheja · Cash on delivery':`${R(o.amt)} ka payment proof bheja`);
+    try{ SD_ORD.unshift({id:o.id,c:'Aap (customer)',it:items+' · '+MODES[m].t+(o.proofs.length?' · 📸 '+o.proofs.length+' screenshot':o.utr?' · UTR '+o.utr:'')+' · 🔑 PIN '+o.pin,amt:o.tot,ad:'Bara Hindu Rao',tm:'abhi',st:'new'}); }catch(e){}
     OTS.unshift(o); save(); closeSm('pwInfo'); try{ ctPay=m==='full'?'full':'half'; ctCheckout(); }catch(e){}
     setTimeout(()=>{ try{ if(m==='cod'&&REQS[0]) REQS[0].kind='💵 Cash on delivery'; }catch(e){} },300);
     setTimeout(()=>o2Open(o.id),1700); }
@@ -27717,13 +27717,18 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   const SS=[['💳','Verify'],['✓','Accept'],['📦','Packing'],['🛵','Delivery'],['⭐','Review']];
   const MAP={new:0,acc:2,pack:2,out:3,done:4};
   function sync(o){ try{ const v=SD_ORD.find(x=>x.id===o.id); if(!v) return; if(v.st==='rej'&&o.st>=0){ o.st=-1; log(o,'Dukaan ne order reject kiya'); } else if(MAP[v.st]!=null&&MAP[v.st]>o.st){ o.st=MAP[v.st]; o.cd=60; } }catch(e){} }
+  const due=o=>o.mode==='full'?0:o.mode==='half'?(o.tot-o.amt):o.tot;
+  window.o2Cash=()=>{ const o=find(CUR); if(!o) return; o.dueOk='cash'; o.dueT=0; o.cd=60; log(o,R(due(o))+' cash me diye'); save(); paint(); };
+  window.o2DueQr=()=>{ const o=find(CUR); if(!o) return; o.dueQr=!o.dueQr; paint(); };
+  window.o2DueAdd=inp=>{ const o=find(CUR); const f=inp.files&&inp.files[0]; if(!o||!f) return; const r=new FileReader(); r.onload=()=>{ o.duePf=r.result; koUtr(r.result,v=>{ o.dueUtr=v; toast('✓ UTR mil gaya: '+v); paint(); }); paint(); }; r.readAsDataURL(f); };
+  window.o2DuePaid=()=>{ const o=find(CUR); if(!o) return; if(!o.duePf&&!o.dueUtr){ toast('📸 Screenshot lagayein'); return; } o.dueOk='upi'; o.dueT=0; o.cd=60; log(o,R(due(o))+' UPI se diye'+(o.dueUtr?' · UTR '+o.dueUtr:'')); save(); paint(); };
   function setSD(o,st){ try{ const v=SD_ORD.find(x=>x.id===o.id); if(v) v.st=st; }catch(e){} }
   const RIDERS=[['Ramesh','DL 4S AB 2231'],['Salman','DL 9C Q 7812'],['Vikas','DL 3S BK 4410']];
   setInterval(()=>{ let ch=false; OTS.forEach(o=>{ if(!live(o)) return; sync(o); o.cd=Math.max(0,(o.cd||60)-1); const s0=o.st;
       if(o.st===0&&o.cd<=56){ o.st=1; o.cd=60; log(o,'Dukaan ne payment verify ki ✓'); }
       else if(o.st===1&&(o.auto?o.cd<=55:o.cd<=0)){ o.st=2; o.cd=60; setSD(o,'acc'); log(o,o.auto?'Order auto-accept hua':'Dukaan ne order accept kiya'); }
       else if(o.st===2&&o.cd<=48){ o.st=3; o.cd=60; setSD(o,'out'); o.rider=RIDERS[Math.floor(Math.random()*3)]; log(o,'Packing poori · delivery partner '+o.rider[0]+' nikla'); }
-      else if(o.st===3&&o.cd<=46){ o.st=4; o.cd=60; setSD(o,'done'); log(o,'Delivered ✓'); }
+      else if(o.st===3&&((due(o)<=0&&o.cd<=46)||(o.dueOk&&o.cd<=56))){ o.st=4; o.cd=60; setSD(o,'done'); log(o,'🔑 PIN '+o.pin+' match ✓ · Delivered'); }
       if(o.rf&&o.rf.st<4&&o.st>=4){ o.rf.cd=(o.rf.cd||0)+1; if(o.rf.cd%6===0){ o.rf.st++; log(o,['','Return request bheji','Dukaan ne return approve kiya','Pickup ho gaya','Refund '+R(o.rf.amt)+' '+(o.rf.to==='wallet'?'wallet me':'UPI par')+' bheja ✓'][o.rf.st]); if(o.rf.st>=4) o.end=1; } }
       if(o.st!==s0) ch=true; }); if(ch) save(); paintAll(); },1000);
   /* ---------- tracker sheet ---------- */
@@ -27736,20 +27741,28 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   window.o2Cancel=()=>{ const o=find(CUR); if(!o) return; if(o.st>=2){ toast('Packing shuru ho chuki — ab cancel nahi, delivery ke baad return kar sakte hain'); return; } o.st=-1; o.end=1; setSD(o,'rej'); log(o,'Aapne order cancel kiya · '+(o.mode==='cod'?'koi paisa nahi kata':R(o.amt)+' 3-5 din me wapas')); save(); toast('Order cancel ho gaya'); menu=false; paint(); bub(); };
   window.o2Rate=n=>{ const o=find(CUR); if(o){ o.rate=n; save(); paint(); } };
   window.o2Done=()=>{ const o=find(CUR); if(o){ if(o.rate) toast('Shukriya! '+o.rate+'⭐ review bheja'); if(!o.rf) o.end=1; save(); } o2Min(); };
+  function dueCard(o){ const d=due(o); if(d<=0) return ''; if(o.dueOk) return `<div class="o2-due ok">✓ ${R(d)} ${o.dueOk==='cash'?'cash me diye':'UPI se diye'} — PIN batate hi delivery poori</div>`;
+    const c=payCfg(o.si); const link=`upi://pay?pa=${encodeURIComponent((c.upi||'').trim()||'karoonline.demo@upi')}&pn=${encodeURIComponent(c.name||o.shop)}&am=${d}&cu=INR&tn=${encodeURIComponent('Order '+o.id)}`;
+    if(o.dueQr) setTimeout(()=>{ const b=$('o2Qr'); if(!b||b._ok) return; qrLib().then(q=>{ const g=q(0,'H'); g.addData(link); g.make(); b.innerHTML=g.createSvgTag({cellSize:4,margin:0,scalable:true})+'<span class="lg av"><i></i></span>'; b._ok=1; }).catch(()=>{ b.innerHTML='<small>QR ke liye net chahiye</small>'; }); },30);
+    return `<div class="o2-due"><b>💰 Baaki ${R(d)} dena hai</b><small>${o.mode==='cod'?'Cash on delivery':'Half payment ka baaki hissa'} · ${c.name||o.shop}</small>
+      <div class="bt"><button onclick="o2DueQr()">▦ QR se pay</button><button onclick="o2Cash()">💵 Cash diya</button></div>
+      ${o.dueQr?`<div class="p2-qr" style="margin-top:10px"><div class="p2-box" id="o2Qr" style="width:180px;height:180px"><div class="py-spin" style="margin:65px auto"></div></div><div class="p2-apps"><span style="background:#1A73E8">UPI</span><span style="background:#34A853">GPay</span><span style="background:#5F259F">PhonePe</span><span style="background:#00BAF2">Paytm</span></div><a class="p2-op" href="${link}">UPI app me kholein · ${R(d)}</a></div>
+        <div class="p2-pr" style="margin-top:10px">${o.duePf?`<span class="th" style="background-image:url('${o.duePf}')"></span>`:''}<label>🖼️ Gallery<input type="file" accept="image/*" hidden onchange="o2DueAdd(this)"></label><label>📷 Camera<input type="file" accept="image/*" capture="environment" hidden onchange="o2DueAdd(this)"></label></div>${o.dueUtr?`<small style="display:block;margin-top:6px;color:#065F46;font-weight:800">UTR ${o.dueUtr} ✓</small>`:''}
+        ${o.duePf||o.dueUtr?`<button class="ot-go" style="margin-top:10px" onclick="o2DuePaid()">✓ Payment ho gaya</button>`:''}`:''}</div>`; }
   function paint(){ const o=find(CUR); const S=$('o2S'); if(!o||!S||!ov.classList.contains('open')) return; const s=o.st;
     const T=s<0?['Order cancel / reject','Paisa wapas ki jaankari neeche']:s===0?['Payment verify ho rahi hai…','Dukaan aapke screenshot dekh rahi hai']:s===1?[o.auto?'Dukaan accept kar rahi hai…':'Dukaan ke jawab ka intezaar…',`Jawab <b style="color:#C9450A">00:${String(o.auto?Math.max(0,o.cd-55):o.cd).padStart(2,'0')}</b> sec me`]:s===2?['Order accept! Packing ho rahi hai','Dukaan aapka saman taiyaar kar rahi hai']:s===3?['Raste me hai 🛵',(o.rider?o.rider[0]:'Partner')+' aapki taraf aa raha hai']:o.rf?['Return / Refund chal raha hai','Neeche status dekhein']:['Delivered! 🎉','Kaisa laga? Rating dein'];
-    const step=(x,i)=>{ const k=i+1; const cls=s<0?'':(k<=s||(s>=4&&k===5&&o.rate)?'ok':(k===s+1?'now':'')); return `<div class="${cls}"><i>${cls==='ok'?'✓':x[0]}</i>${x[1]}</div>`; };
+    const SSx=o.mode==='cod'?[['🛒','Order'],SS[1],SS[2],SS[3],SS[4]]:SS; const step=(x,i)=>{ const k=i+1; const cls=s<0?'':(k<=s||(s>=4&&k===5&&o.rate)?'ok':(k===s+1?'now':'')); return `<div class="${cls}"><i>${cls==='ok'?'✓':x[0]}</i>${x[1]}</div>`; };
     const vs=[[0,'8%','30%'],[1,'72%','18%'],[2,'78%','66%'],[3,'14%','72%']].map(v=>`<span class="v" style="left:${v[1]};top:${v[2]};background-image:var(--avatar);animation-delay:${v[0]*.4}s"></span>`).join('');
     const S0=SHOPS[o.si]||['Dukaan','🏪'];
     const comm=s<0?`<div class="o2-cm"><div class="hd"><div class="av">↩️</div><div><b>${o.mode==='cod'?'Koi paisa nahi kata':R(o.amt)+' wapas aayega'}</b><small>${o.mode==='cod'?'COD order tha':'Original UPI par 3-5 kaam ke din me'}</small></div></div></div>`
       :s===0?`<div class="o2-cm"><div class="hd"><div class="av">🧾</div><div><b>${MODES[o.mode].t} · ${R(o.amt)}</b><small>${o.proofs&&o.proofs.length?o.proofs.length+' screenshot dukaan ko gaye':o.utr?'UTR '+o.utr:''}</small></div></div>${o.proofs&&o.proofs.length?`<div class="o2-ths">${o.proofs.map(u=>`<span style="background-image:url('${u}')"></span>`).join('')}</div>`:''}</div>`
       :s<=2?`<div class="o2-cm"><div class="hd"><div class="av" style="background-image:var(--avatar)"></div><div><b>${o.shop}</b><small>${s===1?'Request dekh rahe hain':'Aapka order pack kar rahe hain'}</small></div></div><div class="bt"><a href="tel:+919876543210">📞 Call</a><a href="https://wa.me/919876543210?text=${encodeURIComponent('Order '+o.id+' ke baare me')}">💬 Chat</a></div></div>`
-      :s===3?`<div class="o2-cm"><div class="hd"><div class="av">🛵</div><div><b>${o.rider?o.rider[0]:'Delivery partner'} · ${o.rider?o.rider[1]:''}</b><small>Lagbhag ${Math.max(2,Math.round(o.cd/5))} min me · ${o.mode==='half'?'Delivery par '+R(o.tot-o.amt)+' dein':o.mode==='cod'?'Delivery par '+R(o.tot)+' dein':'Paid ✓'}</small></div></div><div class="bt"><a class="pri" href="tel:+919876543210">📞 Rider ko call</a><a href="https://wa.me/919876543210">💬 Chat</a></div></div>`
+      :s===3?`<div class="o2-pin"><small>Delivery PIN — saman lekar rider ko batayein</small><b>${(o.pin||'0000').split('').map(x=>`<i>${x}</i>`).join('')}</b></div>${dueCard(o)}<div class="o2-cm"><div class="hd"><div class="av">🛵</div><div><b>${o.rider?o.rider[0]:'Delivery partner'} · ${o.rider?o.rider[1]:''}</b><small>Lagbhag ${Math.max(2,Math.round(o.cd/5))} min me · ${due(o)>0?(o.dueOk?'Baaki paisa diya ✓':'Delivery par '+R(due(o))+' dena hai'):'Paid ✓'}</small></div></div><div class="bt"><a class="pri" href="tel:+919876543210">📞 Rider ko call</a><a href="https://wa.me/919876543210">💬 Chat</a></div></div>`
       :o.rf?`<div class="o2-rf"><b>↩️ Return · ${o.rf.why}</b><div class="stp">${[1,2,3,4].map(k=>`<span class="${o.rf.st>=k?'ok':''}"></span>`).join('')}</div><small>${['','Request bheji — dukaan dekh rahi hai','Approve ✓ — pickup jaldi aayega','Pickup ho gaya — refund process me','Refund '+R(o.rf.amt)+' '+(o.rf.to==='wallet'?'Karo Wallet me aa gaya':'UPI par bheja')+' ✓'][o.rf.st]}</small></div>`
       :`<div class="ot-rv">${[1,2,3,4,5].map(n=>`<button class="${(o.rate||0)>=n?'on':''}" onclick="o2Rate(${n})">⭐</button>`).join('')}</div><button class="ot-go" onclick="o2Done()">${o.rate?'Review bhejein ✓':'Baad me'}</button>`;
     S.innerHTML=`<div class="o2-hd"><div><b>${T[0]}</b><small>Order ${o.id} · ${o.shop} · ${R(o.tot||o.amt)}</small></div><button onclick="o2Menu()" aria-label="Aur">⋮</button><button onclick="o2Min()" aria-label="Chhota karein">⌄</button></div>
       <div class="o2-mn ${menu?'on':''}"><button class="${s>=2||s<0?'dis':''}" onclick="o2Cancel()">✕ Order cancel karein</button><button class="${s>=4&&!o.rf?'':'dis'}" onclick="${s>=4&&!o.rf?'rfOpen()':"toast('Delivery ke baad return kar sakte hain')"}">↩️ Return / Refund</button><button onclick="o2Menu();location.href='https://wa.me/919876543210?text=${encodeURIComponent('Help: order '+o.id)}'">💬 Help / Support</button><button onclick="o2Menu();toast('Bill: ${o.items.replace(/'/g,'')} · ${R(o.tot)}')">🧾 Bill dekhein</button></div>
-      <div class="ot-st">${SS.map(step).join('')}</div>
+      <div class="ot-st">${SSx.map(step).join('')}</div>
       <div class="ot-rd ${s>=4||s<0?'done':''}"><div class="r"></div><div class="r r2"></div><div class="r r3"></div><div class="sw"></div>${vs}<div class="c" style="${o.img?`background-image:url('${o.img}')`:''}">${o.img?'':o.em}</div></div>
       <div class="ot-tx"><b>${T[0]}</b><small>${T[1]}</small></div>${comm}
       <div class="o2-lg">${(o.log||[]).slice(0,5).map(l=>`<div><i>${l[0]}</i>${l[1]}</div>`).join('')}</div>`; }
@@ -27773,16 +27786,55 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   function bub(){ const L=OTS.filter(live); const on=L.length&&!ov.classList.contains('open')&&!lo.classList.contains('open'); if(bb.classList.contains('on')!==!!on) bb.classList.toggle('on',!!on); if(!L.length) return;
     const o=L[0]; const pct=Math.min(1,Math.max(0,o.st)/4); const rg=$('o2Rg'); if(rg) rg.setAttribute('stroke-dashoffset',String(182.2*(1-pct)));
     bb.querySelector('.em').textContent=o.rf?'↩️':SS[Math.max(0,Math.min(4,o.st))][0]; bb.querySelector('u').textContent=L.length>1?L.length:''; bb.querySelector('u').style.display=L.length>1?'':'none'; bb.querySelector('small').textContent=L.length>1?L.length+' order live':lab(o); }
-  function list(){ const L=OTS.filter(live); if(L.length===1) return o2Open(L[0].id);
-    $('olB').innerHTML=`<div class="pc-h">🛵 Aapke live orders</div><div class="pc-s">${L.length} order chal rahe hain — kisi par dabayein, radar khulega</div>`+L.map(o=>`<div class="ol-c" onclick="o2Open('${o.id}')"><div class="im" style="${o.img?`background-image:url('${o.img}')`:''}">${o.img?'':o.em}</div><div><b>${o.shop}</b><small>${o.id} · ${R(o.tot)} · ${MODES[o.mode].t}</small><div class="bar"><i style="width:${Math.max(8,Math.min(100,o.st/4*100))}%"></i></div></div><em>${lab(o)}</em></div>`).join('');
-    openSm('olOv'); setTimeout(bub,50); }
-  function paintAll(){ paint(); bub(); if(lo.classList.contains('open')){ /* list live update */ } }
+  function list(){ const L=OTS.filter(live); if(!L.length) return;
+    $('olB').innerHTML=`<div class="pc-h">🛵 Aapke live orders</div><div class="pc-s">${L.length} order chal rahe hain — kisi par dabayein, radar khulega</div>`+L.map(o=>`<div class="ol-c" onclick="o2Open('${o.id}')"><div class="im" style="${o.img?`background-image:url('${o.img}')`:''}">${o.img?'':o.em}</div><div><b>${o.shop}</b><small>${o.id} · ${R(o.tot)} · ${MODES[o.mode].t}</small><div class="ol-st">${SS.map((x,k)=>`<span class="${o.st<0?'':k<o.st||(o.st>=4)?'ok':k===o.st?'now':''}">${k<o.st||o.st>=4?'✓':x[0]}</span>`).join('<i></i>')}</div></div><em>${lab(o)}</em></div>`).join('');
+    if(!list.quiet){ openSm('olOv'); setTimeout(bub,50); } }
+  function paintAll(){ paint(); bub(); if(lo.classList.contains('open')) listR(); }
+  function listR(){ const L=OTS.filter(live); if(!L.length){ closeSm('olOv'); return; } const sc=$('olB').scrollTop; list.quiet=1; list(); list.quiet=0; $('olB').scrollTop=sc; }
   let BP=null; try{ BP=JSON.parse(localStorage.getItem('ko_o2b')||'null'); }catch(e){}
   const put=()=>{ const W=innerWidth,H=innerHeight; const p=BP||{x:W-72,y:H*0.34}; p.x=Math.max(8,Math.min(W-66,p.x)); p.y=Math.max(60,Math.min(H-150,p.y)); bb.style.left=p.x+'px'; bb.style.top=p.y+'px'; }; put(); addEventListener('resize',put);
   let st0=null,mv=false; bb.addEventListener('pointerdown',e=>{ st0={x:e.clientX,y:e.clientY,l:bb.offsetLeft,t:bb.offsetTop}; mv=false; bb.setPointerCapture(e.pointerId); });
-  bb.addEventListener('pointermove',e=>{ if(!st0) return; const dx=e.clientX-st0.x, dy=e.clientY-st0.y; if(Math.abs(dx)+Math.abs(dy)>6) mv=true; if(mv){ BP={x:st0.l+dx,y:st0.t+dy}; put(); } });
+  bb.addEventListener('pointermove',e=>{ if(!st0) return; const dx=e.clientX-st0.x, dy=e.clientY-st0.y; if(Math.abs(dx)+Math.abs(dy)>12) mv=true; if(mv){ BP={x:st0.l+dx,y:st0.t+dy}; put(); } });
+  bb.addEventListener('pointercancel',()=>{ st0=null; });
   bb.addEventListener('pointerup',()=>{ if(!st0) return; st0=null; if(mv){ BP.x=BP.x+29<innerWidth/2?10:innerWidth-68; put(); try{ localStorage.setItem('ko_o2b',JSON.stringify(BP)); }catch(e){} } else list(); });
   new MutationObserver(()=>bub()).observe(lo,{attributes:true,attributeFilter:['class']}); new MutationObserver(()=>bub()).observe(ov,{attributes:true,attributeFilter:['class']});
   bub();
+})();
+</script>
+<style id="v267-css">
+#pwInfo .sm-sheet,#o2Ov .sm-sheet,#olOv .sm-sheet,#rfOv .sm-sheet{display:block!important}
+.ot-rd,.ot-st,.o2-cm,.o2-pin,.o2-due{flex:none!important}
+.p2-v,.p2-b{flex:none!important}
+.p2-v{height:132px!important}
+.p2-v .cap b{font-size:15px!important;min-height:38px!important}
+.p2-it{display:flex;align-items:center;gap:10px;background:#fff;border:1.4px solid #EFE3CB;border-radius:14px;padding:8px 10px;margin-bottom:10px}
+.p2-it span{width:44px;height:44px;border-radius:10px;background:#FFF5E6 center/cover;flex:none;display:flex;align-items:center;justify-content:center;font-size:22px}
+.p2-it div{flex:1;min-width:0}.p2-it b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.p2-it small{font-size:11px;color:#8a7f68}.p2-it em{font-style:normal;font-weight:900;font-size:14px}
+.p2-box .lg.av{width:62px!important;height:62px!important;margin:-31px 0 0 -31px!important;border-radius:50%!important;background:#fff!important;box-shadow:0 0 0 4px #fff!important;padding:0}
+.p2-box .lg.av svg{position:absolute;inset:0;width:100%;height:100%}
+.p2-box .lg.av i{position:absolute;inset:6px;border-radius:50%;background:#FFF5E6 var(--avatar) center/cover no-repeat}
+.p2-box .lg.av b{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);background:#17130F;color:#F5D58A;font-size:9.5px;font-weight:900;border-radius:99px;padding:1px 6px;line-height:14px}
+.p2-utr.ocr{border-color:#0FA968!important;background:#ECFDF5!important}
+.p2-ocr{font-size:11.5px;font-weight:800;color:#B4621A;margin-top:6px}
+.o2-pin{margin-top:12px;background:#17130F;color:#fff;border-radius:18px;padding:12px;text-align:center}
+.o2-pin small{display:block;font-size:11.5px;color:#C9BBA0;font-weight:700}.o2-pin b{display:flex;justify-content:center;gap:8px;margin-top:8px}
+.o2-pin b i{font-style:normal;width:42px;height:48px;border-radius:12px;background:#2A2118;border:1.5px solid #F5D58A;color:#F5D58A;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.o2-due{margin-top:12px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:18px;padding:12px}
+.o2-due b{font-size:15px;display:block}.o2-due small{font-size:11.5px;color:#8a7f68}
+.o2-due .bt{display:flex;gap:8px;margin-top:10px}.o2-due .bt button{flex:1;border:1.5px solid #FDBA74;background:#fff;border-radius:12px;padding:10px;font:inherit;font-size:13px;font-weight:900;cursor:pointer}
+.o2-due.ok{background:#ECFDF5;border-color:#A7F3D0;color:#065F46;font-size:13px;font-weight:800}
+.ol-st{display:flex;align-items:center;margin-top:7px}.ol-st span{width:20px;height:20px;border-radius:50%;background:#EFE8D8;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.ol-st span.ok{background:#0FA968;color:#fff}.ol-st span.now{background:#F47B20;color:#fff;animation:ktp 1.4s infinite}.ol-st i{flex:1;height:2px;background:#E8E1D0}
+</style>
+<script id="v267-js">
+(function(){
+  /* screenshot se UTR padhna (OCR) */
+  let TL=null; const tess=()=>TL||(TL=new Promise((ok,no)=>{ if(window.Tesseract) return ok(window.Tesseract); const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js'; s.onload=()=>ok(window.Tesseract); s.onerror=()=>{ TL=null; no(); }; document.head.appendChild(s); }));
+  window.koUtr=function(src,cb){ const hint=()=>{ const u=document.querySelector('#pwInfo .p2-utr'); if(u&&!document.querySelector('#pwInfo .p2-ocr')) u.insertAdjacentHTML('afterend','<div class="p2-ocr">🔍 Screenshot se UTR padh rahe hain…</div>'); };
+    const done=()=>{ const h=document.querySelector('#pwInfo .p2-ocr'); if(h) h.remove(); };
+    hint(); tess().then(T=>T.recognize(src,'eng')).then(r=>{ done(); const tx=((r&&r.data&&r.data.text)||'').replace(/[Oo](?=\d)/g,'0');
+      const m=tx.match(/(?:UTR|UPI\s*(?:Ref|Reference|transaction)[^\d]{0,4}(?:No|ID|number)?|Transaction\s*ID|Ref\.?\s*No)[^\d]{0,20}(\d[\d\s]{10,16}\d)/i); let v=m?m[1].replace(/\s/g,''):'';
+      if(!/^\d{12}$/.test(v)){ const all=(tx.match(/\b\d{12}\b/g)||[]); v=all[0]||''; }
+      if(v) cb(v); else { const u=document.querySelector('#pwInfo .p2-utr'); if(u) u.placeholder='UTR nahi mila — khud likhein (12 ank)'; } }).catch(()=>done()); };
 })();
 </script>

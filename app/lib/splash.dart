@@ -21,10 +21,10 @@ class _KoSplashState extends State<KoSplash> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 2000), () {
+    Future.delayed(const Duration(milliseconds: 3000), () {
       if (mounted) setState(() => _orange = true);
     });
-    Future.delayed(const Duration(milliseconds: 3600), () {
+    Future.delayed(const Duration(milliseconds: 4600), () {
       if (!mounted) return;
       _minOver = true;
       _check();
@@ -104,15 +104,15 @@ class _KoSplashState extends State<KoSplash> with TickerProviderStateMixin {
                 const SizedBox(height: 18),
                 const Text('Karo Online',
                     style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: .3)),
-                const SizedBox(height: 10),
+                const SizedBox(height: 14),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                   decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: .18),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white60)),
-                  child: const Text('BETA VERSION',
-                      style: TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: 1.8)),
+                  child: const Text('BETA VERSION · v${String.fromEnvironment('APP_VER', defaultValue: 'dev')}',
+                      style: TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: 1.4)),
                 ),
                 const SizedBox(height: 28),
                 const SizedBox(

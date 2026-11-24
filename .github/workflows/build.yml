@@ -150,7 +150,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE 2>&1 | tee /tmp/build.log
+          flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE --dart-define=APP_VER=1.0.$VERSION_CODE 2>&1 | tee /tmp/build.log
       - name: Signing key jaancho (galat key par release nahi)
         shell: bash
         run: |
@@ -185,7 +185,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then echo "Key nahi di — sirf test APK"; exit 0; fi
-          flutter build appbundle --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE
+          flutter build appbundle --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE --dart-define=APP_VER=1.0.$VERSION_CODE
           AAB=build/app/outputs/bundle/release/app-release.aab
           echo "$KEYSTORE_BASE64" | base64 -d > upload.jks
           zip -d "$AAB" 'META-INF/*' || true
