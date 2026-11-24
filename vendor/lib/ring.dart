@@ -119,7 +119,7 @@ Future<void> bgMain(ServiceInstance service) async {
   }
 
   await tick();
-  Timer.periodic(const Duration(seconds: 7), (_) => tick());
+  Timer.periodic(const Duration(seconds: 4), (_) => tick());
 }
 
 class Ring {
