@@ -151,7 +151,37 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
     _c = c;
     // tez khulne ke liye cache wala page; naya version aate hi page ke andar
     // "Update" button aata hai (version.json) — ek tap me taaza screens
-    c.loadRequest(Uri.parse(kLiveUrl));
+    _startLoad(c);
+  }
+
+  // dukaan ka link (karoonline://shop/N?ref=..) → seedha wahi dukaan, poori screen
+  static const _link = MethodChannel('ko/link');
+  String? _shopUrl(String? s) {
+    if (s == null) return null;
+    final u = Uri.tryParse(s);
+    if (u == null) return null;
+    String? n;
+    if (u.scheme == 'karoonline' && u.pathSegments.isNotEmpty) n = u.pathSegments.first;
+    final m = RegExp(r'/s/(\d+)\.html').firstMatch(u.path);
+    if (m != null) n = m.group(1);
+    if (n == null || int.tryParse(n) == null) return null;
+    final ref = u.queryParameters['ref'];
+    return '$kLiveUrl?shop=$n${ref != null ? '&ref=${Uri.encodeComponent(ref)}' : ''}';
+  }
+
+  Future<void> _startLoad(WebViewController c) async {
+    String? first;
+    try {
+      first = _shopUrl(await _link.invokeMethod<String>('initial'));
+    } catch (_) {}
+    c.loadRequest(Uri.parse(first ?? kLiveUrl));
+    _link.setMethodCallHandler((call) async {
+      if (call.method == 'link') {
+        final u = _shopUrl(call.arguments as String?);
+        if (u != null) _c.loadRequest(Uri.parse(u));
+      }
+      return null;
+    });
   }
 
   // QR scanner (camera) aur voice search (mic) ke liye phone se permission maang kar WebView ko dena

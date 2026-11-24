@@ -43,7 +43,7 @@ for o in d:
 <meta property="og:title" content="{t}"><meta property="og:description" content="{desc}">
 <meta property="og:image" content="{BASE}s/{i}.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:url" content="{BASE}s/{i}.html"><meta name="twitter:card" content="summary_large_image">
-<script>location.replace('../?shop={i}'+(location.hash||''));</script>
+<script>(function(){{var n={i},q=location.search.replace(/^\?/,''),w='../?shop='+n+(q?'&'+q:'')+(location.hash||'');var go=function(){{location.replace(w)}};if(/Android/i.test(navigator.userAgent)&&!window.KaroApp&&!sessionStorage.getItem('ko_ai'+n)){{sessionStorage.setItem('ko_ai'+n,1);var fb=new URL(w,location.href).href;location.href='intent://shop/'+n+(q?'?'+q:'')+'#Intent;scheme=karoonline;package=com.filipra.karoonline;S.browser_fallback_url='+encodeURIComponent(fb)+';end';setTimeout(function(){{if(!document.hidden)go()}},1600);document.addEventListener('visibilitychange',function(){{if(!document.hidden)setTimeout(go,300)}})}}else go()}})();</script>
 <style>body{{font-family:system-ui;background:#FDFAF3;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;color:#1d1810}}a{{color:#F47B20;font-weight:800}}</style></head>
 <body><p>{t} khul rahi hai… <a href="../?shop={i}">yahan tap karein</a></p></body></html>'''
     open(f'{OUT}/{i}.html','w').write(page)
