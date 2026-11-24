@@ -1,3 +1,3 @@
-Intro: 3 second kaali screen, phir narangi
-BETA VERSION ke saath version number
-Teer ki chamak saaf, koi kata hissa nahi
+Auto-update: naya APK apne-aap download, bubble me % dikhega
+Update card ko upar-neeche khiskayein, ✕ se bubble
+Bubble dabayein = dekhein kya badla

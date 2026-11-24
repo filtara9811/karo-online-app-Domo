@@ -172,8 +172,24 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
     }
   }
 
+  bool _auto = true; // naya APK aate hi apne-aap download
+  Future<File> _autoFile() async => File('${(await getApplicationSupportDirectory()).path}/auto_update');
+  Future<void> _loadAuto() async {
+    try {
+      final f = await _autoFile();
+      if (await f.exists()) _auto = (await f.readAsString()).trim() != '0';
+    } catch (_) {}
+  }
+  Future<void> _setAuto(bool v) async {
+    setState(() => _auto = v);
+    try {
+      await (await _autoFile()).writeAsString(v ? '1' : '0');
+    } catch (_) {}
+  }
+
   Future<void> _checkUpdate() async {
     if (_prog != null) return;
+    await _loadAuto();
     try {
       final info = await PackageInfo.fromPlatform();
       final cur = int.tryParse(info.buildNumber) ?? 0;
@@ -188,12 +204,16 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
           _newBuild = nb;
           _newName = '${j['name'] ?? ''}';
           _newNotes = '${j['notes'] ?? ''}';
+          if (_auto) _updMini = true; // chupchap bubble me download
         });
+        if (_auto) _startUpdate();
       }
     } catch (_) {}
   }
 
+  int _got = 0;
   Future<void> _startUpdate() async {
+    if (_prog != null) return;
     setState(() {
       _prog = 0;
       _updMsg = 'Download ho raha hai…';
@@ -211,6 +231,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
       await for (final chunk in resp.stream) {
         sink.add(chunk);
         got += chunk.length;
+        if (total <= 0 && mounted && got - _got > 400000) setState(() => _got = got);
         if (total > 0 && mounted) {
           final p = (got * 100 ~/ total).clamp(0, 100).toInt();
           if (p != _prog) setState(() => _prog = p);
@@ -251,29 +272,40 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
   // X ke baad: chhota sa bubble — tap = seedha update
   Widget _updateBubble() {
     final sz = MediaQuery.of(context).size;
-    final pos = _bub ?? Offset(sz.width - 58, sz.height - 210);
+    final pos = _bub ?? Offset(sz.width - 64, sz.height * .3);
     return Positioned(
       left: pos.dx,
       top: pos.dy,
       child: GestureDetector(
-        onTap: _startUpdate,
+        onTap: () => setState(() => _updMini = false), // khol kar dekhein kya badla
         onLongPress: () => setState(() => _updMini = false),
         // ungli se uthakar kahin bhi rakhein — chhodne par kinare se chipak jata hai
         onPanUpdate: (d) => setState(() => _bub = Offset(
-            (pos.dx + d.delta.dx).clamp(6.0, sz.width - 50),
+            (pos.dx + d.delta.dx).clamp(6.0, sz.width - 56),
             (pos.dy + d.delta.dy).clamp(40.0, sz.height - 110))),
-        onPanEnd: (_) => setState(() => _bub = Offset(pos.dx + 22 < sz.width / 2 ? 10 : sz.width - 54, pos.dy)),
+        onPanEnd: (_) => setState(() => _bub = Offset(pos.dx + 25 < sz.width / 2 ? 10 : sz.width - 60, pos.dy)),
         child: Container(
-          width: 44,
-          height: 44,
+          width: 50,
+          height: 50,
           decoration: BoxDecoration(
-            color: const Color(0xFFF47B20),
+            color: _prog != null ? const Color(0xFF17130F) : const Color(0xFFF47B20),
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
             boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 12, offset: Offset(0, 4))],
           ),
           child: Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
-            const Icon(Icons.system_update_rounded, color: Colors.white, size: 22),
+            if (_prog != null) ...[
+              SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: CircularProgressIndicator(
+                      value: (_prog ?? 0) > 0 ? _prog! / 100 : null,
+                      strokeWidth: 3.5,
+                      color: const Color(0xFFF47B20),
+                      backgroundColor: Colors.white12)),
+              Text('${_prog ?? 0}%', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900)),
+            ] else
+              const Icon(Icons.system_update_rounded, color: Colors.white, size: 22),
             Positioned(
                 right: -2,
                 top: -2,
@@ -288,14 +320,19 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
     );
   }
 
+  double? _cardY;
   Widget _updateCard() {
     final busy = _prog != null;
+    final sz = MediaQuery.of(context).size;
+    final y = _cardY ?? sz.height - 150 - MediaQuery.of(context).padding.bottom;
     return Positioned(
       left: 12,
       right: 12,
-      bottom: 12 + MediaQuery.of(context).padding.bottom,
+      top: y,
       child: GestureDetector(
-       onLongPress: busy ? null : () => setState(() => _updMini = true),
+       onLongPress: () => setState(() => _updMini = true),
+       // ungli se upar-neeche khiskayein
+       onVerticalDragUpdate: (d) => setState(() => _cardY = (y + d.delta.dy).clamp(40.0, sz.height - 140)),
        child: Material(
         elevation: 12,
         borderRadius: BorderRadius.circular(22),
@@ -324,12 +361,13 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
             const SizedBox(width: 12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                Text(busy ? 'Update ho raha hai' : 'Naya update aaya hai · $_newName',
+                Text(busy ? 'Update ho raha hai · $_newName' : 'Naya update aaya hai · $_newName',
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14)),
                 const SizedBox(height: 2),
                 if (_updMsg.isNotEmpty)
-                  Text(_updMsg, style: const TextStyle(color: Color(0xFFE9D8AE), fontSize: 11.5))
-                else
+                  Text(busy && (_prog ?? 0) == 0 && _got > 0 ? '${(_got / 1048576).toStringAsFixed(1)} MB aa gaya…' : _updMsg,
+                      style: const TextStyle(color: Color(0xFFE9D8AE), fontSize: 11.5)),
+                if (_updMsg.isEmpty || busy)
                   GestureDetector(
                     onTap: () => setState(() => _updOpenNotes = !_updOpenNotes),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -348,6 +386,17 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
                         const Text('aur dekhein ▾', style: TextStyle(color: Color(0xFFF5A35C), fontSize: 11, fontWeight: FontWeight.w700)),
                     ]),
                   ),
+                const SizedBox(height: 6),
+                GestureDetector(
+                  onTap: () => _setAuto(!_auto),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(_auto ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+                        color: _auto ? const Color(0xFF34D399) : Colors.white38, size: 26),
+                    const SizedBox(width: 4),
+                    Text(_auto ? 'Auto-update ON' : 'Auto-update OFF',
+                        style: TextStyle(color: _auto ? const Color(0xFF34D399) : Colors.white54, fontSize: 11.5, fontWeight: FontWeight.w800)),
+                  ]),
+                ),
               ]),
             ),
             if (!busy) ...[
@@ -357,11 +406,11 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                   onPressed: _startUpdate,
                   child: const Text('Update', style: TextStyle(fontWeight: FontWeight.w800))),
-              IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () => setState(() => _updMini = true),
-                  icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20)),
             ],
+            IconButton(
+                visualDensity: VisualDensity.compact,
+                onPressed: () => setState(() => _updMini = true),
+                icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20)),
           ]),
         ),
        ),
@@ -475,7 +524,7 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
           bottom: false,
           child: Stack(children: [
             WebViewWidget(controller: _c),
-            if (_newBuild != null && !_updHidden && _splashDone) (_updMini && _prog == null ? _updateBubble() : _updateCard()),
+            if (_newBuild != null && !_updHidden && _splashDone) (_updMini ? _updateBubble() : _updateCard()),
             if (!_splashDone)
               Positioned.fill(
                 child: KoSplash(ready: !_loading, onDone: () => setState(() => _splashDone = true)),
