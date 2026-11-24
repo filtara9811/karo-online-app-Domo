@@ -8,3 +8,8 @@ language sql immutable as $$
     or exists (select 1 from unnest(v.cats) c where lower(c) = lower(coalesce(l.category,'')) or lower(c) = lower(l.service))
 $$;
 -- ko_lead_create: p.kind='order' -> coins 0 (dekhein migration ko_order_kind)
+
+-- v277: dukaan par visit (link / QR) → dukaandar ko suchna
+create table if not exists public.ko_visits (id bigserial primary key, shop text not null, shop_idx int, visitor_name text, visitor_phone text, src text, created_at timestamptz not null default now());
+alter table public.ko_visits enable row level security;
+-- functions: ko_visit(p jsonb), ko_visits_new(p_vendor uuid, p_after bigint) — dekhein migration "ko_visits"

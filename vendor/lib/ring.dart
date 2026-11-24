@@ -56,6 +56,12 @@ Future<void> createChannels(FlutterLocalNotificationsPlugin fln) async {
     audioAttributesUsage: AudioAttributesUsage.alarm,
   ));
   await a?.createNotificationChannel(const AndroidNotificationChannel(
+    'ko_visit',
+    'Dukaan par visit',
+    description: 'Koi grahak aapki dukaan ka link / QR khole to batayein',
+    importance: Importance.high,
+  ));
+  await a?.createNotificationChannel(const AndroidNotificationChannel(
     kOnlineChannel,
     'Online status',
     description: 'Aap online hain — requests aati rahengi',
@@ -77,6 +83,7 @@ Future<void> bgMain(ServiceInstance service) async {
   service.on('stop').listen((_) => service.stopSelf());
 
   bool first = true;
+  int vt = 0;
   Future<void> tick() async {
     try {
       final p = await SharedPreferences.getInstance();
@@ -107,6 +114,27 @@ Future<void> bgMain(ServiceInstance service) async {
           }
           service.invoke('lead', {'id': fresh.first['id']});
         }
+      }
+      // koi grahak dukaan ka link / QR khole → "visit" suchna
+      if (++vt % 4 == 1) {
+        try {
+          final last = p.getInt('lastVisit') ?? -1;
+          final vs = await Api.rpc('ko_visits_new', {'p_vendor': vid, 'p_after': last < 0 ? 0 : last}) as List;
+          int mx = last;
+          for (final v in vs) {
+            final id = (v['id'] as num).toInt();
+            if (id > mx) mx = id;
+            if (last >= 0) {
+              await fln.show(
+                200000 + id,
+                '👀 ${v['name']} ne aapki dukaan dekhi',
+                '${v['shop']} · ${v['src'] == 'qr' ? 'QR scan' : 'Link'} se aaye',
+                const NotificationDetails(android: AndroidNotificationDetails('ko_visit', 'Dukaan par visit', importance: Importance.high, priority: Priority.high)),
+              );
+            }
+          }
+          if (mx != last) await p.setInt('lastVisit', mx < 0 ? 0 : mx);
+        } catch (_) {}
       }
       first = false;
       if (service is AndroidServiceInstance) {

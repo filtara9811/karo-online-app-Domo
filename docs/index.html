@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=276;
+window.KO_V=277;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -28196,14 +28196,22 @@ function cloneCss(){ if($('kvc-css-clone')) return; let out=''; for(const sh of 
 const ov=document.createElement('div'); ov.className='sm-ov top2'; ov.id='kvcOv'; ov.setAttribute('onclick',"if(event.target.id==='kvcOv')closeSm('kvcOv')");
 ov.innerHTML='<div class="sm-sheet ac-sheet" style="height:93vh"><div class="cat-sheet-handle"></div><div class="ac-corner"><button onclick="koVcShare()" aria-label="Share"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button><button onclick="closeSm(\'kvcOv\')" aria-label="Band karein"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="ac-scroll" id="kvcScroll"></div></div>';
 document.body.appendChild(ov);
-let VI=0, kvcMan=false;
+let VI=0, kvcMan=false, KVM=false;
+/* grahak apni details (naam, mobile, email) */
+window.koCustEdit=function(){ let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){} let o=document.getElementById('kcuEd'); if(!o){ o=document.createElement('div'); o.id='kcuEd'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); }
+  o.innerHTML=`<div class="c"><h4>👤 Meri details</h4><p>Dukaan ke card par aapki taraf dikhegi — dukaandar aapse jaldi baat kar payega.</p>
+   <label>NAAM</label><input id="kcuN" value="${E(c.name||'')}" placeholder="Pura naam"><label>MOBILE</label><input id="kcuP" inputmode="numeric" maxlength="10" value="${E(c.phone||'')}" placeholder="10 ank"><label>EMAIL</label><input id="kcuE" type="email" value="${E(c.email||'')}" placeholder="naam@gmail.com"><label>SHEHAR</label><input id="kcuC" value="${E(c.city||'Delhi')}">
+   <button onclick="koCustSave()">✓ Save karein</button></div>`; o.classList.add('on'); };
+window.koCustSave=function(){ const g=id=>document.getElementById(id).value.trim(); const n=g('kcuN'), ph=g('kcuP').replace(/\D/g,''), em=g('kcuE');
+  if(n.length<2){ toast('⚠️ Naam daaliye'); return; } if(ph&&!/^[6-9]\d{9}$/.test(ph)){ toast('⚠️ Sahi 10 ank ka mobile'); return; } if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ toast('⚠️ Sahi email'); return; }
+  try{ localStorage.setItem('ko_cust',JSON.stringify({name:n,phone:ph,email:em,city:g('kcuC')})); }catch(e){} document.getElementById('kcuEd').classList.remove('on'); toast('✅ Details save ho gayi'); kvcOpen(VI,1); };
 function kvcUpd(){ const pc=$('kvcPc'); if(!pc) return; const st=$('kvcScroll').scrollTop; const a=Math.max(Math.min(180,st/120*180),kvcMan?180:0); pc.style.transform='rotateY('+a+'deg)'; }
 window.kvcFlip=function(){ kvcMan=!kvcMan; kvcUpd(); };
 window.kvcOrient=function(){ const w=$('kvcWrap'); w.classList.add('swap'); setTimeout(()=>w.classList.toggle('vert'),180); setTimeout(()=>w.classList.remove('swap'),520); };
 $('kvcScroll').addEventListener('scroll',kvcUpd,{passive:true});
 const setTx=(el,t)=>{ if(!el) return; const n=[...el.childNodes].reverse().find(x=>x.nodeType===3&&x.textContent.trim()); if(n) n.textContent=t; else el.appendChild(document.createTextNode(t)); };
 
-window.kvcOpen=function(i){ VI=i; cloneCss(); const S=SHOPS[i]; if(!S) return; const A=koShopArt(i); const on=owner(i); const k=(typeof SHOP_KIND==='function')?SHOP_KIND(i):'Verified';
+window.kvcOpen=function(i,me){ VI=i; cloneCss(); const S=SHOPS[i]; if(!S) return; const A=koShopArt(i); const on=owner(i); const k=(typeof SHOP_KIND==='function')?SHOP_KIND(i):'Verified';
   const ph=(typeof bcPhone==='function'?bcPhone(i):'+91 98765 00000').replace(/\d{5}$/,'•••••');
   const av=A.prof||iniAv(i); const bk=A.prof||A.cover||av;
   const sc=$('kvcScroll'); sc.innerHTML=TPL;
@@ -28223,7 +28231,17 @@ window.kvcOpen=function(i){ VI=i; cloneCss(); const S=SHOPS[i]; if(!S) return; c
   const tx=w.querySelector('.pcb-tx'); if(tx){ tx.querySelector('b').textContent=on; tx.querySelector('.bz').textContent=S[0];
     const dt=tx.querySelector('.dt'); if(dt){ const z=dt.querySelectorAll('svg'); dt.innerHTML=(z[0]?z[0].outerHTML:'')+'<span class="zi-t">📞 </span>'+E(ph)+' 🔒<br>'+(z[1]?z[1].outerHTML:'')+'<span class="zi-t">📍 </span>Sadar Bazar, Delhi'; }
     const sm=tx.querySelector(':scope>small'); if(sm) sm.textContent='Scan karke meri dukaan kholein'; }
-  qrInto(w,koShopLink(i,myRef()));
+  if(me){ let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){}
+    const nm=c.name||'Aapka naam'; const ini=(c.name||'?').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+    const cv=document.createElement('canvas'); cv.width=cv.height=240; const x=cv.getContext('2d'); const g=x.createLinearGradient(0,0,240,240); g.addColorStop(0,'#F7B733'); g.addColorStop(1,'#E0850C'); x.fillStyle=g; x.fillRect(0,0,240,240); x.fillStyle='#fff'; x.font='800 96px Poppins,system-ui,sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(ini,120,128);
+    const pav=w.querySelector('.pc-front .pc-av'); if(pav) pav.style.cssText+=`;background-image:url("${c.photo||cv.toDataURL()}")!important`;
+    w.querySelector('.pc-t1').textContent='MERA | CARD'; w.querySelector('.pc-t2').textContent=nm; if(t2b) t2b.textContent=nm;
+    setTx(L[0],nm); setTx(L[1],c.phone?'+91 '+c.phone:'Mobile number daalein'); setTx(L[2],c.email||'Email daalein'); setTx(L[3],(c.city||'Delhi')+' · grahak');
+    if(cap) cap.textContent='SCAN · '+S[0].toUpperCase().slice(0,22);
+    const bb=w.querySelector('.pc-btns'); if(bb&&!bb.querySelector('.kvc-ed')) bb.insertAdjacentHTML('beforeend','<button class="kvc-ed" onclick="event.stopPropagation();koCustEdit()" aria-label="Apni details"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></button>');
+    if(!c.name) setTimeout(()=>{ try{ toast('✏️ Pencil dabakar apni details daalein — palatne par dukaan ki details'); }catch(e){} },700); }
+  KVM=!!me;
+  qrInto(w,koShopLink(i,myRef())+'&src=qr');
   /* wallet → referral */
   const wl=sc.querySelector('.ac-wallet'); if(wl){ const ic=wl.querySelector('.aw-ic'); if(ic) ic.innerHTML='<span style="font-size:22px">🎁</span>';
     const d=wl.querySelector('div'); d.innerHTML='<small>REFER &amp; PROMOTE</small><b style="font-size:15px;line-height:1.25">Dost ko bhejein<br><span style="font-size:11px;font-weight:600;color:#8a6a2a">naye grahak par reward</span></b>';
@@ -28472,6 +28490,64 @@ html.dark #ksf,html.dark #ksfNav,html.dark #ksfMn,html.dark #ksfSt,html.dark #ks
 html.dark #ksfCs .kf-c,html.dark #ksfEd .kf-c{background:#1c1711;color:#f6ecd8}
 html.dark #ksfEd .kf-fi,html.dark #ksfEd input,html.dark #ksfEd select{background:#241d14;color:#f6ecd8;border-color:#3a2f1f}
 html.dark #ksfNav .kf-c i{border-color:#1a1510}
+
+/* ===== v277 ===== */
+#ksf .kf-kh:before{display:none}
+#ksf .kf-kt{background:var(--bg);padding:calc(8px + var(--sat,0px)) 12px 8px;height:auto}
+#ksf .kf-kt-l{color:var(--tx);text-shadow:none}
+#ksf .kf-kt-l small{color:var(--mu);opacity:1}
+#ksf .kf-kt-l em{color:#E08A0B}
+#ksf .kf-kh-s{top:calc(60px + var(--sat,0px))}
+#ksf .kf-kh-s img{object-position:center 12%}
+#ksf .kf-kt-b{width:36px;height:36px;background:#FFF3D6;box-shadow:none;border:1.5px solid #F1DDA8}
+#ksf .kf-kt-b.kf-wa{background:#E8F9EF;border-color:#BFEBD1}
+#ksf .kf-kt-b svg{width:18px;height:18px}
+#ksf .ksnd{top:calc(72px + var(--sat,0px))}
+#ksf .kf-ki h2{font-size:24px}
+#ksf .kf-ki .kf-pr b{font-size:28px}
+#ksf .kf-kd{gap:5px;margin:8px 0 10px}
+#ksf .kf-kd i{width:7px;height:7px;border-radius:4px}
+#ksf .kf-kd i.on{width:20px}
+#ksf .ksw2{height:56px}
+#ksf .ksw2 .kf-kn{width:44px;height:44px;margin-left:-22px;top:6px}
+#ksf .kf-sc{background:#1d1408!important;color:#F5C451;border-color:#1d1408!important;cursor:pointer}
+#ksf .kf-pen{position:absolute;z-index:4;left:12px;top:calc(72px + var(--sat,0px));width:40px;height:40px;border-radius:50%;border:none;background:#1d1408;color:#fff;font-size:17px;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer}
+#ksfNav{height:calc(62px + env(safe-area-inset-bottom,0px))}
+#ksfNav>button{font-size:12px}
+#ksfNav>button svg{width:21px;height:21px}
+#ksfNav .kf-c{height:62px}
+#ksfNav .kf-c i{width:56px;height:56px;margin-left:-28px;top:-20px;border-width:3px}
+#ksfNav .kf-c i svg{width:24px;height:24px}
+#ksfNav .kf-c b{bottom:6px;font-size:10.5px;padding:3px 9px}
+#ksfNav .kf-sh i{width:30px;height:30px;box-shadow:0 0 0 1.5px #E9B43E}
+#ksfNav .kf-sh span{font-size:8.5px;padding:1px 6px;opacity:.9}
+#ksfMn .kf-ow{border-top:0;margin-top:0}
+#ksfOs{position:fixed;inset:0;z-index:9740;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif}
+#ksfOs.on{display:flex}
+#ksfOs .kf-c{width:100%;max-width:430px;max-height:84vh;overflow:auto;background:#FFFBF2;color:#231a0e;border-radius:26px 26px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom,0px));animation:ksfUp .3s both}
+#ksfOs .kf-gr{width:44px;height:5px;border-radius:3px;background:#E5D6B5;margin:0 auto 10px}
+#ksfOs h3{margin:0;font:800 22px Poppins,system-ui}
+#ksfOs .kf-s{margin:2px 0 12px;color:#8a7a5a;font-size:13px}
+#ksfOs .kf-g{border:1.5px solid #F0E3C6;border-radius:22px;overflow:hidden;background:#fff;padding-bottom:6px}
+#ksfOs .kf-cv{height:84px;background:#F4ECDC center 30%/cover}
+#ksfOs .kf-hd{display:flex;align-items:flex-end;gap:10px;padding:0 12px;margin-top:-26px}
+#ksfOs .kf-hd span{width:56px;height:56px;border-radius:50%;border:3px solid #fff;background:center/cover;box-shadow:0 4px 10px rgba(0,0,0,.15);display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+#ksfOs .kf-hd b{display:block;font-size:16px}#ksfOs .kf-hd small{color:#8a7a5a;font-size:12px}
+#ksfOs .kf-o{display:flex;align-items:center;gap:10px;margin:10px 10px 0;padding:10px;border:1.5px solid #F0E3C6;border-radius:18px;cursor:pointer}
+#ksfOs .kf-o i{width:58px;height:66px;border-radius:12px;border:2px solid #F5B98A;background:#F4ECDC center/cover;display:grid;place-items:center;font-size:24px;font-style:normal;flex:none}
+#ksfOs .kf-o div{flex:1;min-width:0}#ksfOs .kf-o b{display:block;font-size:14px;line-height:1.25}#ksfOs .kf-o small{display:block;color:#8a7a5a;font-size:11.5px;margin-top:2px}
+#ksfOs .kf-st{display:flex;gap:5px;margin-top:6px}
+#ksfOs .kf-st i{width:16px;height:16px;border:none;border-radius:50%;background:#EDE3CF;font-size:9px;color:#fff;font-weight:900}
+#ksfOs .kf-st i.ok{background:#0FA968}#ksfOs .kf-st i.now{background:#F47B20;box-shadow:0 0 0 3px rgba(244,123,32,.25)}
+#ksfOs em{font-style:normal;font-size:12px;font-weight:800;color:#0FA968;white-space:nowrap}#ksfOs em.kf-live{color:#E35D0A}
+#kcuEd{position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif}
+#kcuEd.on{display:flex}
+#kcuEd .c{width:100%;max-width:430px;background:#FFFBF2;color:#231a0e;border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+#kcuEd h4{margin:0 0 4px;font:800 18px Poppins,system-ui}#kcuEd p{margin:0 0 8px;font-size:12.5px;color:#8a7a5a}
+#kcuEd label{display:block;font-size:11px;font-weight:800;color:#8a6a2a;margin:10px 0 4px;letter-spacing:.06em}
+#kcuEd input{width:100%;box-sizing:border-box;border:1.5px solid #EBDDBF;border-radius:14px;padding:11px 12px;font:600 15px Poppins,system-ui;background:#fff;color:#231a0e}
+#kcuEd button{width:100%;margin-top:14px;border:none;border-radius:16px;padding:14px;background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff;font:800 15px Poppins,system-ui}
+html.dark #ksfOs,html.dark #kcuEd{filter:invert(.92) hue-rotate(180deg)}
 </style>
 <script id="v275">
 (function(){
@@ -28479,7 +28555,8 @@ const $=id=>document.getElementById(id);
 const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=s=>+String(s||'').replace(/[^\d.]/g,'')||0;
 const R=n=>'₹'+Math.round(n).toLocaleString('en-IN');
-const IC={moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 119.5 4a7 7 0 0010.5 10.5z"/></svg>',
+const IC={wa:'<svg viewBox="0 0 24 24" fill="#25D366"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.2-.7-2.7-1.1-4.4-3.8-4.6-4-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.1.1.3 0 .5l-.7.9c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg>',
+ shop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1.2-5h13.6L20 9"/><path d="M4 9a2.67 2.67 0 005.33 0 2.67 2.67 0 005.34 0A2.67 2.67 0 0020 9"/><path d="M5.5 11.5V20h13v-8.5M10 20v-4.5h4V20"/></svg>',moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 119.5 4a7 7 0 0010.5 10.5z"/></svg>',
  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
  cart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM5.2 4l.4 2H20a1 1 0 011 1.2l-1.4 6.6a2 2 0 01-2 1.6H8.4l.4 2H18v1.6H8a1.6 1.6 0 01-1.6-1.3L4.2 5.6H2V4h3.2z"/></svg>',
  dots:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>',
@@ -28516,7 +28593,9 @@ window.ksfOpen=function(i){ if(!SHOPS[i]) return; K.i=i; K.tmp=[]; const S=SHOPS
   K.P=(PROD[S[2]]||PROD.Salon||[]).slice(); K.cat='all'; K.q=''; K.sort=0;
   buildSl();
   render(); root.classList.add('on'); nav.classList.add('on'); document.body.classList.add('ksf-on'); root.scrollTop=0; go(0,true);
-  try{ document.title=S[0]+' — Karo Online'; }catch(e){} };
+  try{ document.title=S[0]+' — Karo Online'; }catch(e){}
+  try{ const k='ko_vis_'+i; if(!sessionStorage.getItem(k)){ sessionStorage.setItem(k,1); let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){}
+    const src=new URLSearchParams(location.search).get('src')||(window._ksfSrc||'link'); window.koRpc&&koRpc('ko_visit',{p:{shop:S[0],shop_idx:String(i),name:c.name||'',phone:c.phone||'',src}}); } }catch(e){} };
 /* upar wala hissa: dukaandar ne jo feature kiya (video → product, ya product) */
 const FK=i=>'ko_feat_'+i;
 function featGet(i){ let F=null; try{ F=JSON.parse(localStorage.getItem(FK(i))||'null'); }catch(e){} if(F&&F.length) return F;
@@ -28528,13 +28607,14 @@ function render(){ const i=K.i, S=SHOPS[i], A=art(i), dark=document.documentElem
   root.innerHTML=`<div class="kf-kh" id="ksfH">
     ${K.sl.map((s,k)=>`<div class="kf-kh-s" data-k="${k}">${s.v?`<video muted playsinline preload="metadata" poster="${E(s.p)}" src="${E(s.v)}"></video>`:s.im?`<img src="${E(s.im)}" alt="">`:`<div style="width:100%;height:100%;background:${A.bg}"></div>`}</div>`).join('')}
     <div class="kf-kt"><div class="kf-kt-l" onclick="kvcOpen(${i})"><b><i>📍</i>${E(S[0])} <span style="font-size:11px;opacity:.85">▾</span></b><small>Sadar Bazar, Delhi · ${E(S[3])}</small><em>⚡ 9 AM – 9 PM · Open</em></div>
-      <button class="kf-kt-b" onclick="ksfTheme()" aria-label="Light / dark">${dark?IC.sun:IC.moon}</button>
-      <button class="kf-kt-b" onclick="ksfMenu()" aria-label="Aur">${IC.dots}</button></div>
+      <button class="kf-kt-b kf-wa" onclick="shopShare(${i})" aria-label="WhatsApp par share">${IC.wa}</button>
+      <button class="kf-kt-b" onclick="ksfMk()" aria-label="Poori market">${IC.shop}</button></div>
+    ${isOwner()?`<button class="kf-pen" onclick="ksfMenu()" aria-label="Dukaan edit">✏️</button>`:''}
     <button class="ksnd" id="ksfSnd" onclick="ksfSnd()" aria-label="Awaaz">${IC.snd}</button>
     ${K.sl.length>1?`<button class="kf-ka kf-l" onclick="ksfGo(-1)" aria-label="Pichla">${IC.l}</button><button class="kf-ka kf-r" onclick="ksfGo(1)" aria-label="Agla">${IC.r}</button>`:''}
     <div class="kf-ki" id="ksfI"></div></div>
   <div class="kf-kb">
-    <div class="kf-kc"><span>😊 ${Math.round(num(S[4])*19)}% khush grahak</span><span>⚡ 2–3 din delivery</span><span>🛍️ Aaj ${7+i%9} orders</span><span>✔ ${kind(i)}</span></div>
+    <div class="kf-kc"><span>😊 ${Math.round(num(S[4])*19)}% khush grahak</span><span>⚡ 2–3 din delivery</span><span>🛍️ Aaj ${7+i%9} orders</span><span>✔ ${kind(i)}</span><span class="kf-sc" onclick="ksfStory(0)">▶ Stories (${stories(i).length})</span></div>
     <div class="kf-ks"><input id="ksfQ" placeholder="Search ‘${E((K.P[0]||['',''])[1].split(/[\s–-]/)[0]||'Kurti')}’" oninput="ksfFind(this.value)"><button class="kf-mic" onclick="ksfMic()" aria-label="Bol kar dhundhein">${IC.mic}</button><button class="kf-flt" onclick="ksfSort()" aria-label="Sort">${IC.flt}</button></div>
     <div class="kf-kbn"><h3>${E(S[0])} — ab Karo Online par</h3><p>⚡ Ghar baithe order · 2–3 din</p><button onclick="document.getElementById('ksfG').scrollIntoView({behavior:'smooth',block:'start'})">Shop now ›</button><div class="kf-im" style="background-image:url('${E(imgOf(1)||imgOf(0)||avOf(i))}')"></div></div>
     <div class="kf-kh3"><b>Kya chahiye aaj? 😋</b><small>Category chunein</small></div>
@@ -28543,7 +28623,7 @@ function render(){ const i=K.i, S=SHOPS[i], A=art(i), dark=document.documentElem
     <div class="kf-kg" id="ksfGrid"></div>
     <div class="kf-kpw">POWERED BY <b>Filipra Private Limited</b></div></div>`;
   const k=kind(i), av=avOf(i);
-  nav.innerHTML=`<button onclick="ksfOrders()">${IC.bag}<span>My Orders</span></button><div class="kf-c" id="ksfCb" onclick="ksfCart()"><i>${IC.cart}<u id="ksfCn"></u></i><b id="ksfCt">Cart</b></div><button class="kf-sh" onclick="kvcOpen(${i})"><i style="background-image:url('${E(av)}');${av?'':'background:'+A.bg}"></i><span class="${k}">✔ ${k}</span></button>`;
+  nav.innerHTML=`<button onclick="ksfOrders()">${IC.bag}<span>My Orders</span></button><div class="kf-c" id="ksfCb" onclick="ksfCart()"><i>${IC.cart}<u id="ksfCn"></u></i><b id="ksfCt">Cart</b></div><button class="kf-sh" onclick="kvcOpen(${i},1)"><i style="background-image:url('${E(av)}');${av?'':'background:'+A.bg}"></i><span class="${k}">✔ ${k}</span></button>`;
   cats(); grid(); cartN(); }
 /* ---- hero ---- */
 function info(){ const s=K.sl[K.cur], p=K.P[s.j]||['🛍️',SHOPS[K.i][0],'']; const el=$('ksfI'); if(!el) return; const pr=num(p[2]), m=mrp(p), off=pr?Math.round((1-pr/m)*100):0, im=imgOf(s.j);
@@ -28607,23 +28687,20 @@ window.ksfSort=()=>{ K.sort=(K.sort+1)%3; grid(); toast(['↕ Pehle jaisa','💸
 window.ksfMic=function(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ toast('🎤 Is browser me bol kar search nahi'); return; } try{ const r=new SR(); r.lang='hi-IN'; r.onresult=e=>{ const t=e.results[0][0].transcript; $('ksfQ').value=t; ksfFind(t); }; r.start(); toast('🎤 Boliye…'); }catch(e){} };
 /* ---- top / nav ---- */
 window.ksfTheme=function(){ try{ toggleTheme(); }catch(e){ document.documentElement.classList.toggle('dark'); } const b=root.querySelector('.kf-kt-b'); if(b) b.innerHTML=document.documentElement.classList.contains('dark')?IC.sun:IC.moon; };
-window.ksfOrders=function(){ const nm=SHOPS[K.i][0]; const b=$('o2B');
-  if(b&&b.classList.contains('on')){ b.click(); setTimeout(()=>{ const G=[...document.querySelectorAll('#olB .ol-g')]; let n=0; G.forEach(g=>{ const t=(g.querySelector('.hd b')||{}).textContent||''; const me=t.trim()===nm; g.style.display=me?'':'none'; if(me) n+=g.querySelectorAll('.ol-c').length; });
-      const h=document.querySelector('#olB .pc-s'); if(n&&h) h.textContent=n+' order · '+nm+' — order par dabayein, radar khulega';
-      if(!n){ try{ closeSm('olOv'); }catch(e){} old(); } },90); return; }
-  old();
-  function old(){ try{ openOrders(); openSm('ordersOv'); toast('📦 '+nm+' ke orders'); }catch(e){} } };
+const os=document.createElement('div'); os.id='ksfOs'; os.onclick=e=>{ if(e.target===os) os.classList.remove('on'); }; document.body.appendChild(os);
+window.ksfOrders=function(){ const i=K.i, S=SHOPS[i], A=art(i); let L=[];
+  try{ const O=JSON.parse(localStorage.getItem('ko_ots')||'[]'); O.filter(o=>o.si===i).forEach(o=>L.push({id:o.id,t:o.items||S[0],im:o.img||'',amt:o.tot||o.amt||0,pay:o.mode==='full'?'Full payment':o.mode==='half'?'Half payment':'Cash on delivery',st:o.st,go:()=>o2Open(o.id)})); }catch(e){}
+  try{ ORDERS.filter(o=>o[2]===S[0]).forEach(o=>L.push({id:'#'+String(o[0]).slice(0,3).toUpperCase()+'-'+(1000+L.length),t:o[0],im:'',em:o[1],amt:num(o[4]),pay:o[3],st:o[5]?2:4})); }catch(e){}
+  if(!L.length) K.P.slice(0,3).forEach((p,j)=>L.push({id:'#O-'+(2100+i*7+j),t:p[1]+' ×1',im:imgOf(j),em:p[0],amt:num(p[2]),pay:['18 Oct','09 Oct','27 Sep'][j]+' · Full payment',st:j===0?2:4}));
+  const lab=st=>st<0?'Cancel':['Verify…','Accept…','Packing','Raste me','Delivered'][Math.min(4,Math.max(0,st))];
+  const step=st=>[0,1,2,3,4].map(k=>`<i class="${st>=4||k<st?'ok':k===st?'now':''}">${st>=4||k<st?'✓':''}</i>`).join('');
+  os.innerHTML=`<div class="kf-c"><div class="kf-gr"></div><h3>🛵 Aapke orders</h3><p class="kf-s">${L.length} order · ${E(S[0])} — order par dabayein</p>
+   <div class="kf-g"><div class="kf-cv" style="background-image:url('${E(A.cover||imgOf(0))}')"></div><div class="kf-hd"><span style="${A.prof?`background-image:url('${E(A.prof)}')`:`background:${A.bg}`}">${A.prof?'':A.ini}</span><div><b>${E(S[0])}</b><small>☆ ${E(S[4])} · ${L.length} order</small></div></div>
+   ${L.map((o,n)=>`<div class="kf-o" onclick="ksfOg(${n})"><i style="${o.im?`background-image:url('${E(o.im)}')`:''}">${o.im?'':(o.em||'🛍️')}</i><div><b>${E(o.t)}</b><small>${E(o.id)} · ${o.amt?R(o.amt)+' · ':''}${E(o.pay)}</small><div class="kf-st">${step(o.st)}</div></div><em class="${o.st>=4?'':'kf-live'}">${lab(o.st)}</em></div>`).join('')}</div></div>`;
+  K.OL=L; os.classList.add('on'); };
+window.ksfOg=n=>{ const o=(K.OL||[])[n]; if(o&&o.go){ os.classList.remove('on'); try{ o.go(); }catch(e){} } else toast('📦 '+(o?o.id:'')+' — '+(o&&o.st>=4?'Delivered':'Chal raha hai')); };
 window.ksfProfile=function(){ try{ openAccount(); }catch(e){} };
-window.ksfMenu=function(){ const i=K.i; mn.innerHTML=`<div class="kf-m">
-  <button onclick="ksfMk()">🏬 Poori Karo Online market</button>
-  <button onclick="mnX();kvcOpen(${i})">🪪 Dukaan card / QR</button>
-  <button onclick="mnX();shopShare(${i})">💬 WhatsApp par share</button>
-  <button onclick="mnX();kvcOpen(${i});setTimeout(koVcRefer,300)">🎁 Refer karein</button>
-  <button onclick="mnX();ksfFull()">🗂️ Dukaan ka poora page</button>
-  <button onclick="mnX();ksfStory(0)">📽️ Dukaan ki stories <u class="kf-n">${stories(i).length}</u></button>
-  <button onclick="mnX();ksfTheme()">🌓 Light / Dark mode</button>
-  <button onclick="mnX();ksfProfile()">👤 Mera profile</button>
-  ${isOwner()?`<div class="kf-ow">DUKAANDAR KE LIYE</div><button onclick="mnX();ksfFeat()">⭐ Upar kya dikhe (Feature)</button><button onclick="mnX();ksfStAdd()">🎬 Story / video daalein</button>`:''}</div>`; mn.classList.add('on'); };
+window.ksfMenu=function(){ mn.innerHTML=`<div class="kf-m"><div class="kf-ow">DUKAANDAR KE LIYE</div><button onclick="mnX();ksfFeat()">⭐ Upar kya dikhe (Feature)</button><button onclick="mnX();ksfStAdd()">🎬 Story / video daalein</button><button onclick="mnX();ksfFull()">🗂️ Dukaan edit (poora page)</button></div>`; mn.classList.add('on'); };
 window.mnX=()=>mn.classList.remove('on');
 window.ksfMk=function(){ mnX(); ksfClose(); try{ closeSm('shopOv'); }catch(e){} toast('🏬 Poori Karo Online market'); };
 window.ksfFull=function(){ window._ksfDeep=null; try{ window._shzSkip=1; openShop(K.i); setTimeout(()=>window._shzSkip=0,800); }catch(e){} };
@@ -28681,7 +28758,7 @@ window.ksfFs=function(){ K.ftmp=FD.filter(f=>f.tmp); const keep=FD.filter(f=>!f.
   ed.classList.remove('on'); buildSl(); render(); go(0); toast('⭐ Upar wala hissa save ho gaya'); };
 /* ---- link se aaye to: purani full-screen dukaan ki jagah ye storefront ---- */
 const q=new URLSearchParams(location.search).get('shop');
-if(q!==null&&!isNaN(+q)) window._ksfDeep=+q;
+if(q!==null&&!isNaN(+q)){ window._ksfDeep=+q; window._ksfSrc=new URLSearchParams(location.search).get('src')||'link'; }
 try{ const _o=openShop; window.openShop=openShop=function(i){ if(window._ksfDeep===i){ window._ksfDeep=null; ksfOpen(i); return; } return _o.apply(this,arguments); }; }catch(e){}
 /* cart badalne par count */
 new MutationObserver(()=>{ if(root.classList.contains('on')) cartN(); }).observe(document.body,{childList:true});
