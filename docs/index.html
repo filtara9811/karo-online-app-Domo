@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=279;
+window.KO_V=280;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -27765,6 +27765,7 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   window.o2Menu=()=>{ menu=!menu; paint(); };
   window.o2Cancel=()=>{ const o=find(CUR); if(!o) return; if(o.st>=2){ toast('Packing shuru ho chuki — ab cancel nahi, delivery ke baad return kar sakte hain'); return; } o.st=-1; o.end=1; setSD(o,'rej'); log(o,'Aapne order cancel kiya · '+(o.mode==='cod'?'koi paisa nahi kata':R(o.amt)+' 3-5 din me wapas')); save(); toast('Order cancel ho gaya'); menu=false; paint(); bub(); };
   window.o2Rate=n=>{ const o=find(CUR); if(o){ o.rate=n; save(); paint(); } };
+  window.o2ForceCancel=id=>{ const o=find(id); if(!o) return; o.st=-1; log(o,'Grahak ne order cancel kiya'); save(); try{ paint(); bub(); }catch(e){} };
   window.o2Done=()=>{ const o=find(CUR); if(o){ if(o.rate) toast('Shukriya! '+o.rate+'⭐ review bheja'); if(!o.rf) o.end=1; save(); } o2Min(); };
   function dueCard(o){ const d=due(o); if(d<=0) return ''; if(o.dueOk) return `<div class="o2-due ok">✓ ${R(d)} ${o.dueOk==='cash'?'cash me diye':'UPI se diye'} — PIN batate hi delivery poori</div>`;
     const c=payCfg(o.si); const link=`upi://pay?pa=${encodeURIComponent((c.upi||'').trim()||'karoonline.demo@upi')}&pn=${encodeURIComponent(c.name||o.shop)}&am=${d}&cu=INR&tn=${encodeURIComponent('Order '+o.id)}`;
@@ -28670,10 +28671,43 @@ body.ko-cust #shopOv #vbEd,body.ko-cust #shopOv .vb9-m button[onclick^="vbPos"],
 #ksfWl .kf-ok{width:100%;margin-top:14px;border:none;border-radius:16px;padding:14px;background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff;font:800 15px Poppins,system-ui;cursor:pointer}
 #ksfWl .kf-sk{border:none;background:none;color:#8a7a5a;font-weight:700;padding:10px;cursor:pointer}
 #ksfWl .kf-pv{font-size:11px!important;margin:0!important}
+
+/* ===== v280 ===== */
+#ksf .kf-kt-b{position:relative}
+#ksf .kf-kt-b .kf-own{position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#F47B20;border:1.5px solid #fff}
+#shopOv.ko-hero .vb9 .vb9-m .kf-mk2{font-weight:800}
+#ksfOs .kf-dot{width:26px;height:26px;border-width:2px;font-size:11px}
+#ksfOs .kf-js:before{left:12px;top:26px;width:2px}
+#ksfOs .kf-av{width:38px;height:38px;font-size:15px}
+#ksfOs .kf-jst:before{top:11px;height:2px}
+#ksfOs .kf-jst i{width:22px;height:22px;font-size:11px;margin-bottom:3px}
+#ksfOs .kf-jst i svg,#ksfOs .kf-jst i .zi{width:12px!important;height:12px!important}
+#ksfOs .kf-jst div.ok i{background:#16A34A;color:#fff}
+#ksfOs .kf-jst div.ok i svg,#ksfOs .kf-jst div.ok i img{filter:brightness(0) invert(1)}
+#ksfOs .kf-jst div.ok i .zi{color:#fff!important;fill:#fff;stroke:#fff}
+#ksfOs .kf-jst b{font-size:11px}#ksfOs .kf-jst small{font-size:10px}
+#ksfOs .kf-dot svg{width:13px;height:13px}
+#ksfOs .kf-cxb{width:100%;margin:0 0 8px;border:1.5px solid #FCA5A5;background:#FEF2F2;color:#B91C1C;font:800 13.5px Poppins,system-ui;border-radius:16px;padding:11px;cursor:pointer}
+#ksfOs .kf-cxb.sure{background:#DC2626;color:#fff;border-color:#DC2626}
+#ksfLf{position:fixed;z-index:156;right:14px;bottom:calc(196px + env(safe-area-inset-bottom,0px));width:62px;height:62px;border-radius:50%;border:none;background:#1d1408;display:none;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.35);padding:0}
+#ksfLf.on{display:block;animation:ksfUp .4s both}
+#ksfLf svg{position:absolute;inset:0;width:100%;height:100%}
+#ksfLf i{position:absolute;inset:9px;border-radius:50%;background:#fff center/cover}
+#ksfLf u{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:#EF4444;color:#fff;font:900 11px Poppins,system-ui;text-decoration:none;display:grid;place-items:center;border:2px solid #fff}
+#ksfLf small{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);white-space:nowrap;background:#F47B20;color:#fff;font:800 10px Poppins,system-ui;border-radius:99px;padding:2px 8px}
+html.dark #ksfLf{filter:invert(.92) hue-rotate(180deg)}
 </style>
 <script id="v279-own">
 /* dukaan ka malik kaun? — sirf malik ke number se login (ya dukaandar ऐप) par Edit / POS / Payment */
-window.koIsOwner=function(){ try{ if(/[?&]vendor=1/.test(location.search)) return true; const s=JSON.parse(localStorage.getItem('1qr_session')||'null'); const n=String((s&&s.n)||'').replace(/\D/g,'').slice(-10); return n==='9540068380'; }catch(e){ return false; } };
+window.KO_OWNER_PH=['9540068380'];
+window.koIsOwner=function(){ try{ if(/[?&]vendor=1/.test(location.search)) return true;
+    const d=x=>String(x||'').replace(/\D/g,'').slice(-10);
+    const s=JSON.parse(localStorage.getItem('1qr_session')||'null'), c=JSON.parse(localStorage.getItem('ko_cust')||'{}'), a=JSON.parse(localStorage.getItem('ko_myapp')||'null');
+    const ph=[d(s&&s.n),d(c.phone),d(a&&a.ph)].filter(x=>x.length===10);
+    if(ph.some(x=>KO_OWNER_PH.includes(x))) return true;
+    if(localStorage.getItem('1qr_vendor')==='1') return true;   /* is phone par dukaan judi hai (Vendor) */
+    if(!ph.length&&!/[?&]shop=\d/.test(location.search)) return true; /* ऐप khud khola, kisi grahak ka number nahi */
+    return false; }catch(e){ return true; } };
 (function(){ const f=()=>document.body&&document.body.classList.toggle('ko-cust',!window.koIsOwner()); f(); addEventListener('storage',f); setInterval(f,4000); })();
 </script>
 <script id="v275">
@@ -28721,7 +28755,7 @@ window.ksfOpen=function(i){ if(!SHOPS[i]) return; K.i=i; K.tmp=[]; const S=SHOPS
   buildSl(); K.hero=true; window._ksfDeep=null;
   const ov=$('shopOv'); if(ov) ov.classList.add('ko-full','ko-hero');
   try{ window._shzSkip=1; (window._ksfOrig||openShop)(i); }catch(e){} setTimeout(()=>{ window._shzSkip=0; },900);
-  render(); mount(); root.classList.add('on'); nav.classList.add('on'); document.body.classList.add('ksf-on'); try{ $('shopBody').scrollTop=0; }catch(e){} go(0,true);
+  render(); mount(); setTimeout(liveFab,300); root.classList.add('on'); nav.classList.add('on'); document.body.classList.add('ksf-on'); try{ $('shopBody').scrollTop=0; }catch(e){} go(0,true);
   try{ document.title=S[0]+' — Karo Online'; }catch(e){}
   try{ const k='ko_vis_'+i; if(!sessionStorage.getItem(k)&&!isOwner()){ sessionStorage.setItem(k,1); let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){}
     if(c.phone){ ping(c); setTimeout(()=>{ try{ toast('🙏 Swagat hai '+(c.name||'')+' — '+S[0]+' me'); }catch(e){} },1200); } else setTimeout(welcome,1600); } }catch(e){} };
@@ -28753,14 +28787,14 @@ function featGet(i){ let F=null; try{ F=JSON.parse(localStorage.getItem(FK(i))||
   const v=window.shVidOf?shVidOf(i):null; F=[]; if(v) F.push({v:v.m,p:v.p,j:0}); K.P.forEach((p,j)=>{ if(imgOf(j)&&F.length<7) F.push({j}); }); return F; }
 function buildSl(){ const F=featGet(K.i).concat(K.ftmp||[]); K.sl=F.filter(f=>K.P[f.j]||f.v).map(f=>f.v?{v:f.v,p:f.p||'',j:f.j||0}:{im:imgOf(f.j),j:f.j}); if(!K.sl.length) K.sl.push({im:imgOf(0),j:0}); }
 function mount(){ const b=$('shopBody'); if(!K.hero||!b) return; if(root.parentNode!==b||b.firstChild!==root) b.insertBefore(root,b.firstChild); }
-window.ksfClose=function(){ K.hero=false; const ov=$('shopOv'); if(ov) ov.classList.remove('ko-hero'); try{ root.remove(); }catch(e){} document.body.classList.remove('ksf-on'); root.classList.remove('on'); nav.classList.remove('on'); mn.classList.remove('on'); clearTimeout(K.t); root.querySelectorAll('video').forEach(v=>v.pause()); };
+window.ksfClose=function(){ K.hero=false; try{ lf.classList.remove('on'); }catch(e){} const ov=$('shopOv'); if(ov) ov.classList.remove('ko-hero'); try{ root.remove(); }catch(e){} document.body.classList.remove('ksf-on'); root.classList.remove('on'); nav.classList.remove('on'); mn.classList.remove('on'); clearTimeout(K.t); root.querySelectorAll('video').forEach(v=>v.pause()); };
 function render(){ const i=K.i, S=SHOPS[i], A=art(i), dark=document.documentElement.classList.contains('dark');
   const st=stories(i); let seen={}; try{ seen=JSON.parse(sessionStorage.getItem('ko_st_seen')||'{}'); }catch(e){}
   root.innerHTML=`<div class="kf-kh" id="ksfH">
     ${K.sl.map((s,k)=>`<div class="kf-kh-s${s.v?' kf-isv':''}" data-k="${k}">${s.v?`<video muted playsinline preload="metadata" poster="${E(s.p)}" src="${E(s.v)}"></video>`:s.im?`<div class="kf-bk" style="background-image:url('${E(s.im)}')"></div><img src="${E(s.im)}" alt="">`:`<div style="width:100%;height:100%;background:${A.bg}"></div>`}</div>`).join('')}
     <div class="kf-kt"><div class="kf-kt-l" onclick="kvcOpen(${i})"><b><i>📍</i>${E(S[0])} <span style="font-size:11px;opacity:.85">▾</span></b><small>Sadar Bazar, Delhi · ${E(S[3])}</small><em>⚡ 9 AM – 9 PM · Open</em></div>
       <button class="kf-kt-b kf-wa" onclick="shopShare(${i})" aria-label="WhatsApp par share">${IC.wa}</button>
-      <button class="kf-kt-b" onclick="ksfMk()" aria-label="Poori market">${IC.shop}</button>${isOwner()?`<button class="kf-kt-b" onclick="ksfOwn(event)" aria-label="Dukaan options">${IC.dots}</button>`:''}</div>
+      <button class="kf-kt-b" onclick="ksfOwn(event)" aria-label="Aur options">${IC.dots}${isOwner()?'<u class="kf-own"></u>':''}</button></div>
 
     <button class="ksnd" id="ksfSnd" onclick="ksfSnd()" aria-label="Awaaz">${IC.snd}</button>
     ${K.sl.length>1?`<button class="kf-ka kf-l" onclick="ksfGo(-1)" aria-label="Pichla">${IC.l}</button><button class="kf-ka kf-r" onclick="ksfGo(1)" aria-label="Agla">${IC.r}</button>`:''}
@@ -28845,6 +28879,7 @@ function ordersOf(i){ const S=SHOPS[i], L=[];
   const now=Date.now(), H=3600e3; const plan=[[2,4,1],[5,4,2],[26,-1,1],[28,4,1],[50,4,3],[53,2,1],[75,4,2]];
   plan.forEach(([h,st,n],k)=>{ if(!K.P.length) return; const its=[]; for(let x=0;x<n;x++){ const j=(i*3+k*2+x)%K.P.length; its.push({n:K.P[j][1],q:1+(x===0&&k%3===1?1:0),j,im:imgOf(j),pr:num(K.P[j][2])}); }
     L.push({id:'#KO-'+((i*977+k*131)%9000+1000).toString(16).toUpperCase(),t:now-h*H-k*731e3,its,amt:its.reduce((a,x)=>a+x.pr*x.q,0)+(k%2?40:0),pay:k%3?'Online (poora)':'Cash on delivery',st}); });
+  try{ const x=JSON.parse(localStorage.getItem('ko_cx')||'{}'); L.forEach(o=>{ if(x[o.id]) o.st=-1; }); }catch(e){}
   return L.sort((a,b)=>b.t-a.t); }
 const OF={d:'all',c:'all',x:{}};
 window.ksfOrders=function(){ OF.d='all'; OF.c='all'; OF.x={}; K.OL=ordersOf(K.i); osR(); os.classList.add('on'); };
@@ -28878,14 +28913,26 @@ function jour(o){ const S=SHOPS[K.i], A=art(K.i); let c={}; try{ c=JSON.parse(lo
    ${sec([`<span class="kf-av" style="background:#2b2b2b">🛵</span>`,'🛵'],'Delivery partner',`Imran · ★ 4.8${o.pin&&st<4&&st>=0?' · PIN '+o.pin:''}`,step(st>=3,'📍','Pickup',12)+step(st>=3,'🛵','On the way',14)+step(st>=4,'🏠','Delivered',31),`<div class="kf-map"><svg viewBox="0 0 300 110" preserveAspectRatio="none"><path d="M0 30h300M0 80h300M60 0v110M190 0v110M250 0v110" stroke="#E4DDD0" stroke-width="10"/><path d="M60 80 Q120 80 140 50 T250 30" fill="none" stroke="${st>=3?'#0FA968':'#C9BFAE'}" stroke-width="4" stroke-dasharray="${st>=4?'0':'8 6'}"/></svg><span class="kf-mk" style="left:20%;top:72%;background:#F47B20">Dukaan</span><span class="kf-mk" style="left:83%;top:27%;background:#16A34A">Ghar</span>${st===3?'<span class="kf-bk2" style="left:46%;top:42%"></span>':''}</div>`)}
    <div class="kf-its"><h5>🛍️ Saaman (${o.its.length})</h5>${o.its.map(x=>`<div class="kf-ii" onclick="${x.j>=0?`ksfPd(${x.j})`:''}"><i style="${x.im?`background-image:url('${E(x.im)}')`:''}"></i><div><b>${E(x.n)}</b><small>Free size · ${x.q} pc · ${R(x.pr)} / pc</small><small class="kf-dl">${x.j>=0?E(K.P[x.j][2])+' · Details dekhein ›':''}</small></div><strong>${R(x.pr*x.q)}</strong></div>`).join('')}<div class="kf-bill"><span>Saaman</span><b>${R(o.its.reduce((a,x)=>a+x.pr*x.q,0))}</b></div><div class="kf-bill"><span>Delivery</span><b>${o.amt>o.its.reduce((a,x)=>a+x.pr*x.q,0)?R(o.amt-o.its.reduce((a,x)=>a+x.pr*x.q,0)):'FREE'}</b></div><div class="kf-bill kf-tot"><span>Kul (${E(o.pay)})</span><b>${R(o.amt)}</b></div></div>
    ${st===4?`<div class="kf-rt"><span>☆ Aapki rating</span><span>${[1,2,3,4,5].map(n=>`<button onclick="ksfRate('${o.id}',${n})" class="${(OF.r=OF.r||JSON.parse(localStorage.getItem('ko_rate')||'{}'))[o.id]>=n?'on':''}">★</button>`).join('')}</span></div>`:''}
+   ${st>=0&&st<4?`<button class="kf-cxb" onclick="ksfCx('${o.id}',this)">✕ Order cancel karein</button>`:''}
    <div class="kf-ab"><button onclick="ksfRet('${o.id}')">↩️ Return / refund</button><button class="kf-g" onclick="ksfAgain('${o.id}')">🔁 Order again</button><button onclick="ksfBill('${o.id}')">🧾 Bill</button><button onclick="ksfJour('${o.id}')">🗺️ Full journey</button></div></div>`; }
 const fo=id=>(K.OL||[]).find(o=>o.id===id);
+window.ksfCx=function(id,b){ if(b&&!b.dataset.sure){ b.dataset.sure=1; b.textContent='Pakka cancel? Dobara dabayein'; b.classList.add('sure'); setTimeout(()=>{ if(b.isConnected){ delete b.dataset.sure; b.textContent='✕ Order cancel karein'; b.classList.remove('sure'); } },3500); return; }
+  const o=fo(id); if(!o) return; if(o.real){ try{ window.o2ForceCancel&&o2ForceCancel(id); }catch(e){} } else { try{ const x=JSON.parse(localStorage.getItem('ko_cx')||'{}'); x[id]=1; localStorage.setItem('ko_cx',JSON.stringify(x)); }catch(e){} }
+  o.st=-1; toast('✕ Order '+id+' cancel — paisa 2–3 din me wapas'); osR(); liveFab(); render(); go(K.cur); };
+/* chal rahe order ka floating button (dukaan ke andar) */
+const lf=document.createElement('button'); lf.id='ksfLf'; lf.onclick=()=>ksfLive(); document.body.appendChild(lf);
+function liveFab(){ if(!K.hero){ lf.classList.remove('on'); return; } const L=ordersOf(K.i).filter(o=>o.st>=0&&o.st<4); if(!L.length){ lf.classList.remove('on'); return; }
+  const o=L[0]; const pct=Math.max(.12,(o.st+1)/5);
+  lf.innerHTML=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="4"/><circle cx="32" cy="32" r="28" fill="none" stroke="#F47B20" stroke-width="4" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="${176*(1-pct)}" transform="rotate(-90 32 32)"/></svg><i style="${o.its[0]&&o.its[0].im?`background-image:url('${o.its[0].im}')`:''}"></i>${L.length>1?`<u>${L.length}</u>`:''}<small>${['Verify…','Accept…','Packing','Raste me'][o.st]||'Live'}</small>`;
+  lf.classList.add('on'); }
+setInterval(liveFab,5000);
 window.ksfOd=d=>{ OF.d=d==='all'?'all':+d; OF.c='all'; osR(); };
 window.ksfOc=c=>{ OF.c=c; osR(); };
 window.ksfOx=id=>{ OF.x[id]=!OF.x[id]; osR(); };
 window.ksfRate=(id,n)=>{ try{ const r=JSON.parse(localStorage.getItem('ko_rate')||'{}'); r[id]=n; localStorage.setItem('ko_rate',JSON.stringify(r)); OF.r=r; }catch(e){} osR(); toast('⭐ Shukriya — '+n+' star'); };
 window.ksfPd=j=>{ os.classList.remove('on'); ksfShow(j); };
-window.ksfLive=()=>{ const o=(K.OL||[]).find(x=>x.real&&x.st>=0&&x.st<4); if(o){ os.classList.remove('on'); try{ o2Open(o.id); }catch(e){} } else toast('🛵 Abhi is dukaan ka koi order raste me nahi'); };
+window.ksfLive=()=>{ K.OL=ordersOf(K.i); const L=K.OL.filter(x=>x.st>=0&&x.st<4); if(!L.length){ toast('🛵 Abhi koi order chal nahi raha — sab My Orders me'); return; }
+  OF.d='all'; OF.c='p'; OF.x={}; L.forEach(o=>OF.x[o.id]=true); osR(); os.classList.add('on'); };
 window.ksfRet=id=>{ const o=fo(id); if(o&&o.real){ os.classList.remove('on'); try{ o2Open(id); }catch(e){} toast('⋮ menu me Return / Refund chunein'); } else toast(o&&o.st===4?'↩️ Return request bhej di — dukaandar 24 ghante me jawab dega':'Delivery ke baad return kar sakte hain'); };
 window.ksfAgain=id=>{ const o=fo(id); if(!o) return; o.its.forEach(x=>{ if(x.j>=0) for(let q=0;q<x.q;q++) add(x.j); }); os.classList.remove('on'); ksfCart(); };
 window.ksfJour=id=>{ const o=fo(id); if(o&&o.real){ os.classList.remove('on'); try{ o2Open(id); }catch(e){} } else { OF.x[id]=true; osR(); } };
@@ -28893,7 +28940,7 @@ window.ksfBill=id=>{ const o=fo(id); if(!o) return; const S=SHOPS[K.i]; const w=
   w.document.write(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bill ${E(o.id)}</title><body style="font-family:system-ui;max-width:420px;margin:20px auto;padding:0 16px;color:#222"><h2 style="margin:0">${E(S[0])}</h2><p style="color:#777;margin:4px 0 14px">Sadar Bazar, Delhi · Karo Online</p><p><b>Bill ${E(o.id)}</b><br>${dt(o.t)}, ${tm(o.t)} · ${E(o.pay)}</p><table style="width:100%;border-collapse:collapse">${o.its.map(x=>`<tr><td style="padding:6px 0;border-bottom:1px dashed #ccc">${E(x.n)} × ${x.q}</td><td style="text-align:right;border-bottom:1px dashed #ccc">${R(x.pr*x.q)}</td></tr>`).join('')}<tr><td style="padding:8px 0"><b>Kul</b></td><td style="text-align:right"><b>${R(o.amt)}</b></td></tr></table><p style="color:#999;font-size:12px;margin-top:24px">Powered by Filipra Private Limited</p><button onclick="print()" style="padding:10px 16px;border-radius:10px;border:0;background:#F47B20;color:#fff;font-weight:700">Print / PDF</button></body>`); w.document.close(); };
 window.ksfProfile=function(){ try{ openAccount(); }catch(e){} };
 window.ksfOwn=function(e){ e&&e.stopPropagation(); const v=document.querySelector('#shopBody .vb9'); if(!v){ ksfMenu(); return; } const m=v.querySelector('.vb9-m');
-  if(m&&!m.querySelector('.kf-keep')) m.insertAdjacentHTML('beforeend','<button class="kf-keep" onclick="ksfFeat()"><i>⭐</i>Upar kya dikhe (Feature)</button><button class="kf-keep" onclick="ksfStAdd()"><i>🎬</i>Story / video daalein</button>');
+  if(m&&!m.querySelector('.kf-keep')){ m.insertAdjacentHTML('afterbegin','<button class="kf-keep kf-mk2" onclick="ksfMk()"><i>🏪</i>Poori market</button>'); if(isOwner()) m.insertAdjacentHTML('beforeend','<button class="kf-keep" onclick="ksfFeat()"><i>⭐</i>Upar kya dikhe (Feature)</button><button class="kf-keep" onclick="ksfStAdd()"><i>🎬</i>Story / video daalein</button>'); }
   v.classList.toggle('op'); };
 /* Edit / POS / Payment: hero hata kar poora marketplace wala page (edit mode) */
 document.addEventListener('click',e=>{ if(!K.hero) return; const b=e.target.closest&&e.target.closest('#shopBody .vb9-m button'); if(!b||b.classList.contains('vd')||b.classList.contains('kf-keep')) return; ksfClose(); },true);
