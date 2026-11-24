@@ -13,3 +13,8 @@ $$;
 create table if not exists public.ko_visits (id bigserial primary key, shop text not null, shop_idx int, visitor_name text, visitor_phone text, src text, created_at timestamptz not null default now());
 alter table public.ko_visits enable row level security;
 -- functions: ko_visit(p jsonb), ko_visits_new(p_vendor uuid, p_after bigint) — dekhein migration "ko_visits"
+
+-- v279: grahak (bina OTP) — pehli baar naam+mobile, doosri baar pehchaan
+create table if not exists public.ko_customers (phone text primary key, name text, visits int not null default 0, created_at timestamptz not null default now(), last_seen timestamptz not null default now());
+alter table public.ko_customers enable row level security;
+-- functions: ko_customer_get(p_phone), ko_customer_save(p jsonb); ko_visit ab phone se naam bharta hai; ko_visits_new phone bhi deta hai (migration "ko_customers")
