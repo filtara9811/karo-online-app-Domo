@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=286;
+window.KO_V=287;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -29796,7 +29796,7 @@ body.ko-one #shopsOv .ko-micc .r{border-color:rgba(15,118,110,.45)}
   const VT={new:x=>x.status==='requested',run:x=>['accepted','pickup','received'].includes(x.status),done:x=>['refunded','exchanged','rejected','closed'].includes(x.status)};
   function badge(){ const n=VL.filter(VT.new).length; let f=$('krFab'); if(!f){ f=document.createElement('button'); f.id='krFab'; f.onclick=()=>krV(); document.body.appendChild(f); }
     const vo=$('sdOv'); const show=n>0&&vo&&vo.classList.contains('open')&&!(window.koIsOwner&&!koIsOwner()); f.classList.toggle('on',!!show); f.textContent='↩ '+n+' Return request';
-    if(seen!==null&&n>seen){ T('↩ Nayi return request aayi'); try{ navigator.vibrate&&navigator.vibrate([60,40,60]); }catch(e){} } seen=n; ent(); }
+    if(seen!==null&&n>seen){ T('↩ Nayi return request aayi'); try{ koChime('note'); }catch(e){} try{ navigator.vibrate&&navigator.vibrate([60,40,60]); }catch(e){} } seen=n; ent(); }
   window.krV=function(){ if(window.koIsOwner&&!koIsOwner()){ try{ koGate(); }catch(e){} return; } VL=VL.length?VL:rets().filter(x=>x.shop===myShop()); krVR(); sheet('krV').classList.add('on'); vLoad(true); };
   let VX=null; // khula hua card
   window.krVR=function(){ const o=sheet('krV'); const L=VL.filter(VT[VF.t]);
@@ -29900,4 +29900,110 @@ body.ko-one #shopsOv .ko-micc .r{border-color:rgba(15,118,110,.45)}
   window.AP=AP;
 })();
 </script>
+<style id="v287-css">
+/* Digital Dukaan: upar Chrome-tab jaisi patti (Digital Dukaan | My Shop) */
+#kddBar{position:fixed;left:0;right:0;top:0;z-index:2147482500;display:none;max-width:520px;margin:0 auto;padding-top:env(safe-area-inset-top,0px);background:linear-gradient(135deg,#4a3c26,#1f1a12)}
+body.kdd-on #kddBar{display:block}
+#kddBar .w{position:relative;display:flex;height:52px}
+#kddBar .ind{position:absolute;left:0;top:0;bottom:0;width:calc(52% - 40px);background:#FAF6EC}
+#kddBar .ind:after{content:'';position:absolute;top:0;bottom:0;right:-40px;width:41px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 56' preserveAspectRatio='none'><path d='M0 0 C26 0 18 56 46 56 L0 56 Z' fill='%23FAF6EC'/></svg>") 0 0/100% 100%}
+#kddBar button{position:relative;z-index:1;flex:none;width:50%;height:52px;border:0;background:none;display:flex;align-items:center;gap:7px;padding:0 12px;white-space:nowrap;font:800 14px Poppins,system-ui;color:#E9C97E;cursor:pointer}
+#kddBar button.on{color:#2a2418}
+#kddBar button.r{justify-content:flex-end}
+#kddBar button em{font-style:normal;font-size:10px;font-weight:800;background:#16A34A;color:#fff;border-radius:99px;padding:2px 7px}
+body.kdd-on #ksf{top:calc(52px + env(safe-area-inset-top,0px))!important}
+body.kdd-on #shopOv{top:calc(52px + env(safe-area-inset-top,0px))!important}
+/* edit toolbar */
+#kddTools{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:2147482400;display:none;gap:6px;padding:6px;border-radius:99px;background:rgba(29,20,8,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 10px 28px rgba(0,0,0,.35);max-width:calc(100vw - 20px)}
+body.kdd-on #kddTools{display:flex}
+body.kdd-on.kdd-pv #kddTools{opacity:.0;pointer-events:none}
+#kddTools{overflow-x:auto;scrollbar-width:none}#kddTools::-webkit-scrollbar{display:none}body.kdd-busy #kddTools,body.kdd-busy #kddPv{display:none!important}
+#sdOv #sdSeg2 button{white-space:nowrap}body.kv-shop #sdOv #sdSeg2.ctab button#sdC0{font-size:14px!important;padding:0 12px!important}
+#kddTools button{border:0;border-radius:99px;padding:9px 10px;background:none;color:#F5E6C8;font:700 12px Poppins,system-ui;white-space:nowrap;cursor:pointer}
+#kddTools button.p{background:linear-gradient(135deg,#F7B733,#E0850C);color:#1d1408}
+#kddPv{position:fixed;right:12px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:2147482401;display:none;border:0;border-radius:99px;padding:8px 12px;background:#1d1408;color:#F5C451;font:800 12px Poppins,system-ui;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+body.kdd-on.kdd-pv #kddPv{display:block}
+/* Digital Dukaan tab label */
+#sdOv #sdSeg2 button .kv-l{display:inline}
+/* shop-mode: Lead Bazar heading chhupao */
+body.kv-shop #sdOv .sd-mh,body.kv-shop #sdOv .sd-lbz,body.kv-shop #sdOv #sdMapCards{display:none!important}
+/* admin: badlav ho gaya popup */
+#koAdPop{position:fixed;left:50%;top:50%;z-index:2147483600;transform:translate(-50%,-50%) scale(.85);opacity:0;pointer-events:none;transition:transform .25s cubic-bezier(.22,1.4,.36,1),opacity .2s;background:#fff;border-radius:22px;padding:18px 22px;min-width:220px;max-width:80vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.28);font-family:Poppins,system-ui}
+#koAdPop.on{transform:translate(-50%,-50%) scale(1);opacity:1}
+#koAdPop i{display:grid;place-items:center;width:54px;height:54px;margin:0 auto 8px;border-radius:50%;background:#E8F7EF;color:#16A34A;font-style:normal;font-size:28px;font-weight:900;animation:koPopI .5s ease}
+#koAdPop b{display:block;font-size:15px;color:#111}
+#koAdPop small{display:block;margin-top:3px;font-size:12px;color:#6b7280}
+@keyframes koPopI{0%{transform:scale(.3)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+</style>
+<script id="v287">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const CFG=()=>window.KO_CFG||{};
+
+  /* ================= 1) Halki awaaz (chime) ================= */
+  let AC=null; const sndOn=()=>{ try{ return localStorage.getItem('ko_snd')!=='0'; }catch(e){ return true; } };
+  const NOTES={note:[[784,0,.10],[1047,.13,.09]],ok:[[880,0,.08],[1319,.09,.07]],open:[[523,0,.07],[659,.09,.07],[784,.18,.08]],close:[[523,0,.06],[392,.1,.06]],tick:[[1200,0,.04]]};
+  window.koChime=function(k){ if(!sndOn()) return; try{ const C=window.AudioContext||window.webkitAudioContext; if(!C) return; AC=AC||new C(); if(AC.state==='suspended') AC.resume();
+      (NOTES[k]||NOTES.ok).forEach(([f,d,v])=>{ const o=AC.createOscillator(), g=AC.createGain(); o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(AC.destination); const t=AC.currentTime+d; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+.015); g.gain.exponentialRampToValueAtTime(.0001,t+.38); o.start(t); o.stop(t+.4); }); }catch(e){} };
+  /* dukaan OPEN / CLOSED */
+  try{ const _h=window.h6Shop; if(_h) window.h6Shop=function(v){ koChime(v?'open':'close'); return _h.apply(this,arguments); }; }catch(e){}
+  document.addEventListener('change',e=>{ const t=e.target; if(t&&t.matches&&t.matches('.sd-sw input')) koChime(t.checked?'open':'close'); },true);
+  /* koi dukaan khule → halki tick */
+  try{ const _o=window.openShop; window.openShop=openShop=function(i){ koChime('tick'); return _o.apply(this,arguments); }; }catch(e){}
+
+  /* ================= 2) Admin: badlav hote hi popup + awaaz ================= */
+  function pop(msg){ let p=$('koAdPop'); if(!p){ p=document.createElement('div'); p.id='koAdPop'; document.body.appendChild(p); }
+    const m=String(msg).replace(/^[✅✓\s]+/,''); p.innerHTML=`<i>✓</i><b>${E(m)}</b><small>Badlav save ho gaya</small>`; p.classList.add('on'); koChime('ok'); try{ navigator.vibrate&&navigator.vibrate(20); }catch(e){}
+    clearTimeout(pop.t); pop.t=setTimeout(()=>p.classList.remove('on'),1500); }
+  window.koAdPop=pop;
+  try{ const _t=toast; window.toast=toast=function(msg){ const s=String(msg||''); const ad=$('adOv'); const inAd=ad&&ad.classList.contains('on');
+      if(inAd&&!/❌|galat|nahi hua|daalein|kam se kam|alag hain|chahiye/i.test(s)&&/✅|✓|save|lag gaya|badal gaya|ho gaya|\bON\b|OFF|publish|bhej/i.test(s)){ pop(s); return; }
+      if(/^🔔|Nayi return|request aayi|naya grahak|grahak aaya/i.test(s)) koChime('note');
+      return _t.apply(this,arguments); }; }catch(e){}
+  /* admin ke toggle / segment dabate hi halki tick */
+  document.addEventListener('click',e=>{ const a=$('adOv'); if(!a||!a.classList.contains('on')) return; const b=e.target.closest&&e.target.closest('.ad-tg,.ad-seg button'); if(b) koChime('tick'); },true);
+
+  /* ================= 3) Admin: Dukaandar app me kya dikhe ================= */
+  const vmode=()=>{ const c=CFG(); if(c.vmode) return c.vmode; const m=c.mode||'both'; return m==='shops'?'shop':m==='quick'?'leads':'both'; };
+  window.koVMode=vmode;
+  try{ const _s=window.adS_set; if(_s) window.adS_set=adS_set=function(){ let h=_s.apply(this,arguments); const v=vmode();
+      const row=`<div style="display:block;margin-top:14px"><span>Dukaandar app me kya dikhe<small>Upar ki patti — "My Shop" hamesha rahega · doosri taraf Leads ya Digital Dukaan</small></span><div class="ad-seg">${[['leads','⚡ Sirf Leads'],['shop','🏬 Sirf Digital Dukaan'],['both','✨ Dono']].map(([k,l])=>`<button class="${v===k?'on':''}" onclick="koCfgSet('vmode','${k}',this);koVPrev('${k}')">${l}</button>`).join('')}</div><div class="ko-live" id="koVTag"><i></i>${vt(v)}</div></div>`;
+      return h.replace(/(<div style="display:(?:block|none)" id="koHomeRow">)/,row+'$1'); }; }catch(e){}
+  function vt(v){ return {leads:'Dukaandar: ⚡ Leads | My Shop',shop:'Dukaandar: 🏬 Digital Dukaan | My Shop',both:'Dukaandar: ⚡ Leads | My Shop + ✏️ se Digital Dukaan'}[v]; }
+  window.koVPrev=v=>{ const t=$('koVTag'); if(t) t.innerHTML='<i></i>'+vt(v)+' — "Sab par lagayein" dabayein'; };
+
+  /* ================= 4) Dukaandar app: tab badlein ================= */
+  function applyV(){ const v=vmode(); document.body.classList.toggle('kv-shop',v==='shop'); document.body.classList.toggle('kv-leads',v==='leads'); document.body.classList.toggle('kv-both',v==='both');
+    const b0=$('sdC0'); if(!b0) return; if(!b0._orig){ const tn=[...b0.childNodes].find(n=>n.nodeType===3&&/Leads/.test(n.textContent)); b0._orig=tn||null; b0._svg=b0.querySelector('svg')?b0.querySelector('svg').outerHTML:''; }
+    const tn=b0._orig; const want=v==='shop'?' Digital Dukaan':' Leads';
+    if(tn&&tn.textContent!==want) tn.textContent=want;
+    const sv=b0.querySelector('svg'); if(sv){ if(v==='shop'&&!sv.dataset.kd){ const n=document.createElement('span'); n.innerHTML='<svg data-kd="1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 9l1.2-5h13.6L20 9"/><path d="M4 9a2.67 2.67 0 005.33 0 2.67 2.67 0 005.34 0A2.67 2.67 0 0020 9"/><path d="M5.5 11.5V20h13v-8.5"/></svg>'; sv.replaceWith(n.firstChild); } else if(v!=='shop'&&sv.dataset.kd&&b0._svg){ const n=document.createElement('span'); n.innerHTML=b0._svg; sv.replaceWith(n.firstChild); } }
+    if(v==='shop'){ const sh=$('sdT1'); if(sh&&!sh.classList.contains('on')&&!document.body.classList.contains('kdd-on')){ try{ _sdTab(1); }catch(e){} } } }
+  window.koApplyV=applyV;
+  let _sdTab=window.sdTab;
+  let uTap=0; document.addEventListener('click',e=>{ if(e.target&&e.target.closest&&e.target.closest('#sdC0')) uTap=Date.now(); },true);
+  try{ window.sdTab=sdTab=function(n){ if(n===0&&vmode()==='shop'){ if(Date.now()-uTap<800){ uTap=0; kddOpen(); return; } return _sdTab.call(this,1); } return _sdTab.apply(this,arguments); }; }catch(e){}
+  try{ const _od=window.openSellerDash; if(_od){ window.openSellerDash=openSellerDash=function(){ const r=_od.apply(this,arguments); setTimeout(applyV,60); return r; }; } }catch(e){}
+  setInterval(applyV,1500); setTimeout(applyV,500);
+  /* My Shop card par dukaan ka icon / ✏️ → Digital Dukaan */
+  document.addEventListener('click',e=>{ const t=e.target; if(!t||!t.closest) return; const so=$('sdOv'); if(!so||!so.classList.contains('open')) return; if(vmode()==='leads') return;
+    if(t.closest('.h6-av, .h6-nm, .hs-s .ic')){ e.stopPropagation(); e.preventDefault(); kddOpen(); } },true);
+
+  /* ================= 5) Digital Dukaan — poora preview + edit yahin ================= */
+  function bar(){ let b=$('kddBar'); if(!b){ b=document.createElement('div'); b.id='kddBar'; b.innerHTML=`<div class="w"><i class="ind"></i><button class="on" onclick="koChime('tick')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 9l1.2-5h13.6L20 9"/><path d="M4 9a2.67 2.67 0 005.33 0 2.67 2.67 0 005.34 0A2.67 2.67 0 0020 9"/><path d="M5.5 11.5V20h13v-8.5"/></svg> Digital Dukaan <em>LIVE</em></button><button class="r" onclick="kddBack()">My Shop <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 7h16l-1 13H5z"/><path d="M9 7a3 3 0 016 0"/></svg></button></div>`; document.body.appendChild(b); }
+    let t=$('kddTools'); if(!t){ t=document.createElement('div'); t.id='kddTools'; t.innerHTML=`<button class="p" onclick="kddAdd()">＋ Product</button><button onclick="kddEdit(event)">✏️ Edit</button><button onclick="try{ksfFeat()}catch(e){}">🎬 Video</button><button onclick="kddPv(1)">👁 Grahak view</button>`; document.body.appendChild(t); }
+    let p=$('kddPv'); if(!p){ p=document.createElement('button'); p.id='kddPv'; p.textContent='✏️ Edit mode'; p.onclick=()=>kddPv(0); document.body.appendChild(p); } }
+  window.kddOpen=function(){ if(window.koIsOwner&&!koIsOwner()){ try{ koGate(); }catch(e){} return; } bar(); document.body.classList.remove('kdd-pv'); document.body.classList.add('kdd-on');
+    try{ ksfOpen(MY_SHOP); }catch(e){} koChime('open'); try{ const w=$('ksfWl'); if(w) w.classList.remove('on'); }catch(e){} };
+  window.kddBack=function(){ document.body.classList.remove('kdd-on','kdd-pv'); try{ ksfClose(); }catch(e){} try{ closeSm('shopOv'); }catch(e){} koChime('tick'); try{ _sdTab(1); }catch(e){} };
+  window.kddPv=on=>{ document.body.classList.toggle('kdd-pv',!!on); try{ toast(on?'👁 Grahak ko aisa dikhega':'✏️ Edit mode'); }catch(e){} };
+  window.kddEdit=function(e){ try{ ksfOwn(e); }catch(_){ try{ posSettings(); }catch(__){} } };
+  window.kddAdd=function(){ try{ a9Open(); }catch(e){ try{ toast('Add product'); }catch(_){} } };
+  setInterval(()=>{ if(document.body.classList.contains('kdd-on')) document.body.classList.toggle('kdd-busy',!!(document.getElementById('a9Ov')||document.querySelector('.kr-ov.on,#ksfWl.on,#kvcOv.on'))); },400);
+  /* agar dukaan kisi aur raaste band hui to patti bhi hatao */
+  setInterval(()=>{ if(document.body.classList.contains('kdd-on')&&!document.body.classList.contains('ksf-on')){ document.body.classList.remove('kdd-on','kdd-pv'); } },800);
+})();
+</script>
+
 
