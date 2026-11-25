@@ -30302,7 +30302,7 @@ body.kdd-ed #shopBody .se-bar button{padding:8px 11px;font-size:12.5px;margin-le
   window.kjGps=function(){ if(!navigator.geolocation){ T('Location nahi mili'); return; } T('📍 Jagah dhoondh rahe hain…'); navigator.geolocation.getCurrentPosition(p=>{ KJ.f.lat=p.coords.latitude; KJ.f.lng=p.coords.longitude; if(!KJ.f.area) KJ.f.area='Sadar Bazar'; T('✓ Jagah mil gayi'); kjR(); },()=>T('Location ki ijazat dein'),{timeout:8000}); };
   function save(phone,pin,shop){ const S={phone,pin,shop,t:Date.now()}; try{ localStorage.setItem(SK,JSON.stringify(S)); }catch(e){} applySess(S); return S; }
   window.kjLogin=async function(){ const pin=KJ.pin.join(''); if(pin.length!==4){ T('4 ank ka PIN'); return; } KJ.busy=1; kjR();
-    try{ const s=await rpc('ko_shop_login',{p_phone:KJ.ph,p_pin:pin}); save(KJ.ph,pin,s); T('✅ Swagat hai — '+s.shop_name); try{ koChime('open'); }catch(e){} go(); }
+    try{ const s=await rpc('ko_shop_login',{p_phone:KJ.ph,p_pin:pin}); if(!s||s.error) throw new Error((s&&s.error)||'galat PIN'); save(KJ.ph,pin,s); T('✅ Swagat hai — '+s.shop_name); try{ koChime('open'); }catch(e){} go(); }
     catch(e){ KJ.busy=0; KJ.pin=['','','','']; kjR(); T('❌ '+(msg(e)||'galat PIN')); setTimeout(()=>{ const i=$('kjN0'); if(i) i.focus(); },200); } };
   window.kjReg=async function(){ const pin=KJ.pin.join(''); if(!/^\d{4}$/.test(pin)){ T('4 ank ka PIN chunein'); return; } const f=KJ.f; KJ.busy=1; kjR();
     try{ const s=await rpc('ko_shop_register',{p:Object.assign({phone:KJ.ph,pin},f,{icon:f.icon||(CATS.find(c=>c[0]===f.cat)||[])[1]})}); save(KJ.ph,pin,s); KJ.done=s; KJ.st=4; KJ.busy=0; kjR(); try{ koChime('open'); }catch(e){} liveAdd([s]); }
