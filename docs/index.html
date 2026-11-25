@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=282;
+window.KO_V=283;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -29121,17 +29121,17 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.quer
   function loadFeed(){ if(Date.now()-HC.fat<20000||!window.koRpc) return; HC.fat=Date.now();
     koRpc('ko_visits_feed',{p_shop:shopName(),p_limit:300}).then(r=>{ if(Array.isArray(r)){ HC.feed=r; if(HC.k===1) paint(); } }).catch(()=>{}); }
   const dts=t=>{ const d=new Date(t); return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+', '+d.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}).toLowerCase(); };
-  function qrView(){ const G=people(), q=HC.q.toLowerCase(), day=Date.now()-864e5;
+  function qrView(){ const G=people(), q=HC.q.toLowerCase(), day=Date.now()-864e5; const LK=window.koVisLock?koVisLock(G):null;
     const T={all:G,v:G.filter(g=>g.v),o:G.filter(g=>g.o.length),w:G.filter(g=>g.w),nw:G.filter(g=>g.newToday)};
     const V=(T[HC.f]||G).filter(g=>!q||(g.n+' '+g.ph+' '+g.ar).toLowerCase().includes(q));
     const lastTxt=g=>{ const e=g.last; return e.typ==='o'?`🛒 Order · ${E(e.it)}`:e.typ==='w'?'▶ Video dekhi':`${e.src==='qr'?'📷 QR scan':'🔗 Link'}${g.ar?' · 📍 '+E(g.ar):''}`; };
     const evTxt=e=>e.typ==='o'?`🛒 Order — ${E(e.it)}${e.amt?' · '+R(e.amt):''}`:e.typ==='w'?'▶ Video / story dekhi':`${e.src==='qr'?'📷 QR scan karke aaye':'🔗 Link se aaye'}`;
     const todayV=G.filter(g=>g.ev.some(e=>e.t>day)).length;
     return `<div class="hc-h"><b>Dukaan par kaun aaya</b><small>● ${todayV} aaj</small></div>
-     <div class="hc-sum"><div><b>${todayV}</b><small>AAJ AAYE</small></div><div><b>${G.length}</b><small>KUL GRAHAK</small></div><div><b>${T.o.length}</b><small>ORDER KIYA</small></div><div><b>${T.w.length}</b><small>VIDEO DEKHI</small></div></div>
+     ${window.koVisBar?koVisBar():''}<div class="hc-sum"><div><b>${todayV}</b><small>AAJ AAYE</small></div><div><b>${G.length}</b><small>KUL GRAHAK</small></div><div><b>${T.o.length}</b><small>ORDER KIYA</small></div><div><b>${T.w.length}</b><small>VIDEO DEKHI</small></div></div>
      <div class="hc-ch">${[['all','Sab',G.length],['nw','✨ Naye',T.nw.length],['v','👀 Visit',T.v.length],['o','🛒 Order',T.o.length],['w','▶ Dekha',T.w.length]].map(([k,t,n])=>`<button class="${HC.f===k?'on':''}" onclick="hcF('${k}')">${t}<u>${n}</u></button>`).join('')}</div>
      <div class="hc-sr">🔍<input placeholder="Naam, number ya ilaka khojein" value="${E(HC.q)}" oninput="hcQ(this.value)"></div>
-     <div class="hc-l">${V.length?V.slice(0,80).map(g=>{ const op=HC.x===g.key, tp=g.last.typ, full=g.ph&&!/•/.test(g.ph); return `<div class="hc-r" onclick="hcX('${E(g.key)}')"><span class="hc-av" style="background:${col(g.n)}">${E(ini(g.n))}<i class="${tp}">${{v:'👀',o:'🛒',w:'▶'}[tp]}</i></span><div class="hc-m"><div class="t"><b>${E(g.n)}</b><time class="${Date.now()-g.t<36e5?'nw':''}">${ago(g.t)}</time></div><div class="s"><span>${lastTxt(g)}</span>${g.ev.length>1?`<em title="Kul ${g.ev.length} baar">${g.ev.length}</em>`:''}</div></div></div>${op?`<div class="hc-hx"><div class="hc-pf">${g.ph?`<span>📞 ${E(g.ph)}</span>`:''}${g.ar?`<span>📍 ${E(g.ar)}</span>`:''}<span>👀 ${g.v} visit</span><span>🛒 ${g.o.length} order</span>${g.w?`<span>▶ ${g.w} video</span>`:''}</div>
+     <div class="hc-l">${V.length?V.slice(0,80).map(g=>{ if(LK&&LK.has(g.key)) return koVisRow(g); const op=HC.x===g.key, tp=g.last.typ, full=g.ph&&!/•/.test(g.ph); return `<div class="hc-r" onclick="hcX('${E(g.key)}')"><span class="hc-av" style="background:${col(g.n)}">${E(ini(g.n))}<i class="${tp}">${{v:'👀',o:'🛒',w:'▶'}[tp]}</i></span><div class="hc-m"><div class="t"><b>${E(g.n)}</b><time class="${Date.now()-g.t<36e5?'nw':''}">${ago(g.t)}</time></div><div class="s"><span>${lastTxt(g)}</span>${g.ev.length>1?`<em title="Kul ${g.ev.length} baar">${g.ev.length}</em>`:''}</div></div></div>${op?`<div class="hc-hx"><div class="hc-pf">${g.ph?`<span>📞 ${E(g.ph)}</span>`:''}${g.ar?`<span>📍 ${E(g.ar)}</span>`:''}<span>👀 ${g.v} visit</span><span>🛒 ${g.o.length} order</span>${g.w?`<span>▶ ${g.w} video</span>`:''}</div>
        <div class="hc-tl">${g.ev.slice(0,12).map(e=>`<div><i class="${e.typ}"></i><b>${evTxt(e)}</b><small>${dts(e.t)}</small></div>`).join('')}</div>
        <div class="hc-x">${full?`<a class="cl" href="tel:${E(g.ph)}">📞 Call</a><a class="wa" href="https://wa.me/91${E(g.ph)}" target="_blank" rel="noopener">💬 WhatsApp</a>`:`<button onclick="toast('📱 Poora number aur Call — Karo Business ऐप me')">📞 ${g.ph?'Number chhupa':'Number nahi diya'}</button>`}${g.o.length?`<button onclick="sdOrdersSheet&&sdOrdersSheet()">🧾 Orders</button>`:''}</div></div>`:''}`; }).join(''):'<div class="hc-e">Koi nahi mila</div>'}</div>
      <p class="hc-nt">Ek grahak = ek line. Dobara aaye to nayi line nahi banti — wahi upar aa jati hai aur history me jud jata hai.</p>`; }
@@ -29194,5 +29194,127 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.quer
   ['vendorEnter','sdOpen','vbPos','vbEdit','posOpen'].forEach(wrap);
   /* agar pehle se panel khula ho aur malik nahi — band */
   setInterval(()=>{ const so=document.getElementById('sdOv'); if(so&&so.classList.contains('on')&&!window.koIsOwner()){ try{ sdClose(); }catch(e){ so.classList.remove('on'); } gate(); } },3000);
+})();
+</script>
+<style id="v283-css">
+/* ===== v283: plans (POS / Khata ₹599) + pay-as-you-go coins + admin app settings ===== */
+#sdT1.ko-lk-pos>:not(#sdTgHost1):not(#koLkPos){display:none!important}
+#sdOv.ko-lk-posv #sdCart{display:none!important}
+#koLkPos{display:none}
+#sdT1.ko-lk-pos #koLkPos{display:block}
+.ko-lk{margin:6px 0 10px;border-radius:22px;padding:18px 16px;background:linear-gradient(135deg,#1d1408,#3b2a14);color:#fff;font-family:Poppins,system-ui,sans-serif;position:relative;overflow:hidden}
+.ko-lk:after{content:'🔒';position:absolute;right:-6px;top:-10px;font-size:90px;opacity:.08}
+.ko-lk h4{margin:0;font:900 18px Poppins,system-ui}.ko-lk p{margin:4px 0 10px;font-size:12.5px;color:#e8dcc4}
+.ko-lk ul{margin:0 0 12px;padding:0;list-style:none;display:grid;gap:5px;font-size:12.5px;font-weight:600}
+.ko-lk .kl-pr{display:flex;align-items:baseline;gap:6px;margin-bottom:10px}.ko-lk .kl-pr b{font:900 26px Poppins,system-ui;color:#F5C451}.ko-lk .kl-pr small{color:#cdbf9f}
+.ko-lk button{width:100%;border:none;border-radius:14px;padding:13px;font:800 14.5px Poppins,system-ui;cursor:pointer;background:linear-gradient(180deg,#F8D77A,#E0A21B);color:#231a0e}
+.ko-tr{display:flex;align-items:center;gap:8px;margin:4px 0 8px;padding:9px 12px;border-radius:14px;background:#FFF4D6;border:1.5px solid #F5D78A;font:700 12.5px Poppins,system-ui;color:#7a5a12}
+.ko-tr b{flex:1}.ko-tr button{border:none;background:#231a0e;color:#fff;border-radius:99px;padding:6px 10px;font:800 11.5px Poppins,system-ui}
+#koPlan{position:fixed;inset:0;z-index:99960;background:rgba(20,14,6,.55);display:none;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif}
+#koPlan.on{display:flex}
+#koPlan .kp-c{width:100%;max-width:430px;background:#FFFBF2;color:#231a0e;border-radius:26px 26px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));animation:hcIn .35s both}
+#koPlan h4{margin:0;font:900 20px Poppins,system-ui}#koPlan .kp-sb{margin:2px 0 12px;color:#8a7a5a;font-size:13px}
+#koPlan .kp-pc{display:flex;align-items:baseline;gap:6px;margin:4px 0 12px}#koPlan .kp-pc b{font:900 32px Poppins,system-ui;color:#B7791F}#koPlan .kp-pc small{color:#8a7a5a;font-weight:700}
+#koPlan ul{margin:0 0 14px;padding:12px 14px;list-style:none;background:#fff;border:1.5px solid #F0E3C6;border-radius:16px;display:grid;gap:7px;font-size:13px;font-weight:600}
+#koPlan button{display:block;width:100%;border:none;border-radius:16px;padding:14px;font:800 15px Poppins,system-ui;cursor:pointer;margin-top:8px}
+#koPlan .kp-a{background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff}#koPlan .kp-b{background:#231a0e;color:#F5C451}#koPlan .kp-b:disabled{opacity:.45}#koPlan .kp-x{background:none;color:#8a7a5a;padding:8px}
+#koPlan .kp-nt{font-size:11.5px;color:#8a7a5a;text-align:center;margin-top:6px}
+#hsCtx .ko-vb{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:9px 12px;border-radius:14px;background:#231a0e;color:#F5E6C8;font:600 11.5px Poppins,system-ui}
+#hsCtx .ko-vb b{color:#F5C451}#hsCtx .ko-vb span{flex:1;line-height:1.35}
+#hsCtx .ko-vb button{border:none;border-radius:99px;padding:6px 10px;font:800 11px Poppins,system-ui;background:#3b2a14;color:#cdbf9f;cursor:pointer}
+#hsCtx .ko-vb button.on{background:#16A34A;color:#fff}
+#hsCtx .hc-r.lk .hc-av{filter:blur(3px)}
+#hsCtx .hc-r.lk .hc-m b{filter:blur(4px);user-select:none}
+#hsCtx .hc-r.lk .hc-m .s span{color:#B7791F;font-weight:700}
+#hsCtx .hc-r.lk .un{flex:none;border:none;border-radius:99px;padding:6px 10px;background:#F5C451;color:#231a0e;font:800 11px Poppins,system-ui;cursor:pointer}
+.ad-seg{display:flex;gap:6px;background:#F1F2F6;border-radius:12px;padding:4px}
+.ad-seg button{flex:1;border:none;border-radius:9px;padding:9px 6px;font:700 12.5px inherit;background:none;cursor:pointer;color:#4b5563}
+.ad-seg button.on{background:#fff;color:#111;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+body.ko-noquick #shopsOv .nf-back{display:none!important}
+</style>
+<script id="v283">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const DEF={home:'quick',quick:true,pos_price:599,khata_price:599,order_coin:1,visitors_per_coin:5,trial_days:7,welcome_coins:20};
+  let CFG=Object.assign({},DEF); try{ Object.assign(CFG,JSON.parse(localStorage.getItem('ko_cfg')||'{}')); }catch(e){}
+  window.KO_CFG=CFG;
+  /* ================= 1) Customer app: pehle kya khule (admin ki setting) ================= */
+  const deep=/[?&]shop=/.test(location.search);
+  function applyCfg(start){ document.body.classList.toggle('ko-noquick',!CFG.quick);
+    if(start&&!deep&&(CFG.home==='shops'||!CFG.quick)){ let n=0; const t=setInterval(()=>{ n++; const busy=document.body.classList.contains('splashing')||($('loginScr')&&$('loginScr').classList.contains('on'))||document.querySelector('.sm-ov.open');
+        if(!busy){ clearInterval(t); try{ renderShops('All'); openSm('shopsOv'); }catch(e){} } else if(n>60) clearInterval(t); },250); } }
+  try{ const _c=closeSm; window.closeSm=closeSm=function(id){ if(id==='shopsOv'&&!CFG.quick&&!window._koLeave){ return; } return _c.apply(this,arguments); }; }catch(e){}
+  try{ const _m=window.ksfMk; if(_m) window.ksfMk=function(){ window._koLeave=1; try{ return _m.apply(this,arguments); }finally{ setTimeout(()=>{ window._koLeave=0; },400); } }; }catch(e){}
+  applyCfg(true);
+  function loadCfg(){ if(!window.koRpc) return; koRpc('ko_settings_get',{}).then(v=>{ if(v&&typeof v==='object'){ const before=JSON.stringify(CFG); Object.assign(CFG,v); try{ localStorage.setItem('ko_cfg',JSON.stringify(CFG)); }catch(e){} if(JSON.stringify(CFG)!==before) applyCfg(false); } }).catch(()=>{}); }
+  setTimeout(loadCfg,800); setInterval(loadCfg,120000);
+
+  /* ================= 2) Dukaandar: plans + coins ================= */
+  const BK='ko_bill';
+  function B(){ let b=null; try{ b=JSON.parse(localStorage.getItem(BK)||'null'); }catch(e){} if(!b){ b={t0:Date.now(),pos:0,khata:0,unl:{},paid:{},vc:0,auto:true,log:[],wel:0}; save(b); } return b; }
+  function save(b){ try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(e){} }
+  const bal=()=>{ try{ return vwBal(); }catch(e){ return 0; } };
+  const setBal=n=>{ const c=$('sdCoin'); if(c) c.textContent=Math.max(0,n); try{ vmPaint&&vmPaint(); }catch(e){} };
+  function trialLeft(){ const b=B(); return Math.max(0,Math.ceil((b.t0+CFG.trial_days*864e5-Date.now())/864e5)); }
+  window.koFeatOn=f=>{ const b=B(); return (b[f]||0)>Date.now()||trialLeft()>0; };
+  function welcome(){ const b=B(); if(!b.wel&&$('sdCoin')){ b.wel=1; save(b); setBal(bal()+CFG.welcome_coins); try{ toast('🎁 '+CFG.welcome_coins+' coins free — naye dukaandar ka tohfa'); }catch(e){} } }
+  const FEAT={pos:['🧾 POS billing','pos_price',['Naya bill 2 second me — scan / search','UPI, cash, udhaar — sab ek jagah','GST bill, WhatsApp par bhejein','Stock apne-aap ghate, roz ki report']],
+              khata:['📒 Khata Book','khata_price',['Udhaar — kisse lena, kisko dena','Supplier, staff, kharcha ka hisaab','WhatsApp par yaad dilayein (reminder)','Roz / mahine ka net hisaab']]};
+  window.koPlanOpen=function(f){ const F=FEAT[f], pr=CFG[F[1]], coins=Math.ceil(pr/10); let o=$('koPlan'); if(!o){ o=document.createElement('div'); o.id='koPlan'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); }
+    const on=koFeatOn(f), b=B(), tl=trialLeft();
+    o.innerHTML=`<div class="kp-c"><h4>${F[0]}</h4><div class="kp-sb">${(b[f]||0)>Date.now()?'✅ Chalu hai — '+new Date(b[f]).toLocaleDateString('en-IN')+' tak':tl?'🎁 Free trial — '+tl+' din baaki':'🔒 Trial khatam — chalu karne ke liye plan lein'}</div>
+     <div class="kp-pc"><b>₹${pr}</b><small>/ mahina</small></div><ul>${F[2].map(x=>`<li>✓ ${x}</li>`).join('')}</ul>
+     <button class="kp-a" onclick="koPlanPay('${f}','upi')">💳 UPI se ₹${pr} — chalu karein</button>
+     <button class="kp-b" ${bal()<coins?'disabled':''} onclick="koPlanPay('${f}','coin')">🪙 Wallet se ${coins} coins ${bal()<coins?'(kam hain)':''}</button>
+     <button class="kp-x" onclick="document.getElementById('koPlan').classList.remove('on')">Baad mein</button><div class="kp-nt">30 din ke liye · kabhi bhi band karein · auto-renew nahi</div></div>`; o.classList.add('on'); };
+  window.koPlanPay=function(f,how){ const F=FEAT[f], pr=CFG[F[1]], coins=Math.ceil(pr/10), b=B();
+    const done=()=>{ b[f]=Math.max(Date.now(),b[f]||0)+30*864e5; b.log.unshift({t:Date.now(),w:F[0]+' 30 din',c:how==='coin'?coins:0,r:how==='upi'?pr:0}); save(b); $('koPlan').classList.remove('on'); try{ toast('✅ '+F[0]+' chalu — 30 din'); }catch(e){} lockUi(); };
+    if(how==='coin'){ if(bal()<coins){ try{ xrOpen(); }catch(e){} return; } setBal(bal()-coins); done(); }
+    else { const bt=document.querySelector('#koPlan .kp-a'); if(bt){ bt.textContent='Payment ho rahi hai…'; bt.disabled=true; } setTimeout(done,1200); } };
+  /* POS lock card */
+  function lockUi(){ const t1=$('sdT1'), host=$('sdTgHost1'); if(!t1||!host) return; welcome();
+    let lk=$('koLkPos'); if(!lk){ lk=document.createElement('div'); lk.id='koLkPos'; host.insertAdjacentElement('afterend',lk); }
+    const on=koFeatOn('pos'), tl=trialLeft(), paid=(B().pos||0)>Date.now();
+    lk.innerHTML=`<div class="ko-lk"><h4>🔒 POS billing band hai</h4><p>Aapka ${CFG.trial_days} din ka free trial khatam ho gaya. Bill banane, stock aur roz ki report ke liye POS chalu karein.</p><div class="kl-pr"><b>₹${CFG.pos_price}</b><small>/ mahina</small></div><button onclick="koPlanOpen('pos')">POS chalu karein ›</button></div>`;
+    t1.classList.toggle('ko-lk-pos',!on); const so=$('sdOv'); if(so) so.classList.toggle('ko-lk-posv',!on);
+    let tr=$('koTrial'); if(!paid&&tl>0){ if(!tr){ tr=document.createElement('div'); tr.id='koTrial'; tr.className='ko-tr'; lk.insertAdjacentElement('afterend',tr); } tr.innerHTML=`🎁 <b>Free trial: POS + Khata — ${tl} din baaki</b><button onclick="koPlanOpen('pos')">Plan dekhein</button>`; } else if(tr) tr.remove(); }
+  setInterval(lockUi,4000); setTimeout(lockUi,1500);
+  /* Khata lock */
+  try{ const _k=khOpen; window.khOpen=khOpen=function(){ if(!koFeatOn('khata')){ koPlanOpen('khata'); return; } return _k.apply(this,arguments); }; }catch(e){}
+  try{ const _p=window.vbPos; if(_p) window.vbPos=function(){ if(!koFeatOn('pos')){ koPlanOpen('pos'); return; } return _p.apply(this,arguments); }; }catch(e){}
+  /* Visitors: 1 order/enquiry = 1 coin, 5 naye visitor = 1 coin (pay as you go) */
+  window.koVisLock=function(G){ const b=B(), L=new Set(); let bl=bal(), spent=0;
+    const ord=[...G].sort((a,c)=>a.ev[a.ev.length-1].t-c.ev[c.ev.length-1].t);
+    ord.forEach(g=>{ const os=g.o||[]; let ok=true;
+      os.forEach(e=>{ const id=g.key+'|'+e.t; if(b.ua&&b.ua[g.key]) b.paid[id]=1; if(b.paid[id]) return; if(b.auto&&bl>=CFG.order_coin){ bl-=CFG.order_coin; spent+=CFG.order_coin; b.paid[id]=1; } else ok=false; });
+      if(!b.unl[g.key]){ if(os.length&&ok){ b.unl[g.key]=1; }
+        else if(!os.length){ if(b.vc>0&&b.auto){ b.vc--; b.unl[g.key]=1; } else if(b.auto&&bl>=1){ bl--; spent++; b.vc=CFG.visitors_per_coin-1; b.unl[g.key]=1; } } }
+      if(b.ua) delete b.ua[g.key]; if(!b.unl[g.key]||!ok) L.add(g.key); });
+    if(spent){ setBal(bal()-spent); b.log.unshift({t:Date.now(),w:'Grahak / order dekhe',c:spent}); b.log=b.log.slice(0,50); }
+    save(b); window._koLocked=L.size; return L; };
+  window.koVisBar=function(){ const b=B(), today=b.log.filter(x=>x.c&&Date.now()-x.t<864e5&&/Grahak/.test(x.w)).reduce((a,x)=>a+x.c,0);
+    return `<div class="ko-vb"><span>🪙 <b>Pay-as-you-go:</b> 1 order = ${CFG.order_coin} coin · ${CFG.visitors_per_coin} naye grahak = 1 coin · dobara aaye to free<br>Aaj kate: <b>${today} coin</b>${window._koLocked?` · 🔒 ${window._koLocked} band`:''}</span><button class="${b.auto?'on':''}" onclick="koAuto()">${b.auto?'Auto ✓':'Auto off'}</button></div>`; };
+  window.koAuto=()=>{ const b=B(); b.auto=!b.auto; save(b); try{ toast(b.auto?'✅ Naye grahak apne-aap khulenge (coin katega)':'⏸ Auto band — har grahak khud kholein'); }catch(e){} try{ shHeroRender(); }catch(e){} };
+  const mask=s=>String(s||'').split(/\s+/).map(w=>w[0]+'•••').join(' ');
+  window.koVisRow=function(g){ const hasO=(g.o||[]).length; return `<div class="hc-r lk" onclick="koUnl('${E(g.key)}',${hasO?CFG.order_coin*hasO:1})"><span class="hc-av" style="background:#8a7a5a">••</span><div class="hc-m"><div class="t"><b>${E(mask(g.n))}</b><time>${(()=>{ const m=Math.round((Date.now()-g.t)/6e4); return m<60?m+' min':Math.round(m/60)+' ghante'; })()}</time></div><div class="s"><span>🔒 ${hasO?'Naya order · '+hasO*CFG.order_coin+' coin me dekhein':'Naya grahak · 1 coin me '+CFG.visitors_per_coin+' grahak'}</span></div></div><button class="un">Kholein</button></div>`; };
+  window.koUnl=function(key,c){ const b=B(); if(bal()<c){ try{ toast('🪙 Coins kam hain — recharge karein'); xrOpen(); }catch(e){} return; }
+    setBal(bal()-c); b.unl[key]=1; b.ua=b.ua||{}; b.ua[key]=1; if(c===1&&!b.vc) b.vc=CFG.visitors_per_coin-1; b.log.unshift({t:Date.now(),w:'Grahak / order dekhe',c}); save(b);
+    try{ toast('🔓 Khul gaya · '+c+' coin'); }catch(e){} try{ shHeroRender(); }catch(e){} };
+  /* ================= 3) Admin panel: settings (PIN ke saath) ================= */
+  try{ const _a=adOpen; window.adOpen=adOpen=function(){ if(window.koIsOwner&&!koIsOwner()){ try{ koGate(); }catch(e){} return; } return _a.apply(this,arguments); }; }catch(e){}
+  try{ const _s=adS_set; window.adS_set=adS_set=function(){ const seg=(k,opts)=>`<div class="ad-seg">${opts.map(([v,l])=>`<button class="${String(CFG[k])===String(v)?'on':''}" onclick="koCfgSet('${k}',${JSON.stringify(v).replace(/"/g,'&quot;')},this)">${l}</button>`).join('')}</div>`;
+      const N=(k,l,sub)=>`<div><span>${l}<small>${sub}</small></span><input id="koc_${k}" inputmode="numeric" value="${CFG[k]}" style="max-width:90px"></div>`;
+      return _s.apply(this,arguments)+`<div class="ad-g" style="margin-top:14px"><div class="ad-cd"><h4>📱 Customer app — pehle kya khule</h4><div class="ad-set">
+        <div style="display:block"><span>Home screen<small>App kholte hi grahak ko kya dikhe</small></span>${seg('home',[['shops','🏬 All Shops'],['quick','⚡ Quick Service']])}</div>
+        <div><span>⚡ Quick Service<small>Band karein to sirf All Shops chalega</small></span><button class="ad-tg ${CFG.quick?'on':''}" onclick="this.classList.toggle('on');koCfgSet('quick',this.classList.contains('on'))"></button></div></div></div>
+       <div class="ad-cd"><h4>💰 Plan aur coin ke niyam</h4><div class="ad-set">${N('pos_price','🧾 POS / mahina','₹')}${N('khata_price','📒 Khata / mahina','₹')}${N('order_coin','🛒 1 order / enquiry','coin')}${N('visitors_per_coin','👀 Kitne naye grahak = 1 coin','grahak')}${N('trial_days','🎁 Free trial','din')}${N('welcome_coins','🪙 Naye dukaandar ko free','coins')}</div>
+        <div style="display:flex;gap:8px;margin-top:12px"><input id="koPin" type="password" inputmode="numeric" placeholder="Admin PIN" value="${E(sessionStorage.getItem('ko_pin')||'')}" style="flex:1;border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><button class="ad-btn dk" onclick="koCfgSave()">💾 Sab par lagayein</button></div>
+        <small style="display:block;margin-top:6px;color:#6b7280">Save hote hi har grahak / dukaandar ke app me apne-aap lag jayega</small></div></div>`; }; }catch(e){}
+  window.koCfgSet=(k,v,btn)=>{ CFG[k]=v; if(btn){ btn.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===btn)); } window._koDirty=1; try{ toast('Badla — "Sab par lagayein" dabayein'); }catch(e){} };
+  window.koCfgSave=async function(){ const pin=($('koPin')||{}).value||''; ['pos_price','khata_price','order_coin','visitors_per_coin','trial_days','welcome_coins'].forEach(k=>{ const i=$('koc_'+k); if(i&&+i.value>=0) CFG[k]=+i.value; });
+    if(pin.length<4){ try{ toast('🔑 Admin PIN daalein'); }catch(e){} return; }
+    try{ const v=await koRpc('ko_settings_set',{p_pin:pin,p_v:CFG}); Object.assign(CFG,v||{}); localStorage.setItem('ko_cfg',JSON.stringify(CFG)); sessionStorage.setItem('ko_pin',pin); toast('✅ Sab par lag gaya'); applyCfg(false); lockUi(); }
+    catch(e){ try{ toast('❌ '+(/PIN/i.test(String(e&&e.message||e))?'Galat PIN':'Save nahi hua — net check karein')); }catch(_){} } };
 })();
 </script>

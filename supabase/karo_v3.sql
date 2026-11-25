@@ -28,3 +28,8 @@ alter table public.ko_customers add column if not exists area text;
 alter table public.ko_visits add column if not exists dev text;
 create index if not exists ko_visits_shop_idx on public.ko_visits(shop, id desc);
 -- ko_visits_new ab 'n' (kitni baar aaya) deta hai; ko_visits_feed 'key' deta hai — migration "ko_visits_dedupe"
+
+-- v283: ko_settings (app ke niyam: home All Shops / Quick Service, plan ki keemat, coin ke niyam) — admin PIN se hi badle
+create table if not exists public.ko_settings (k text primary key, v jsonb not null, updated_at timestamptz not null default now());
+alter table public.ko_settings enable row level security;
+-- functions: ko_settings_get(), ko_settings_set(p_pin, p_v), ko_admin_pin_change(p_old, p_new) — migration "ko_settings"
