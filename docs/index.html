@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=280;
+window.KO_V=281;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -28760,25 +28760,28 @@ window.ksfOpen=function(i){ if(!SHOPS[i]) return; K.i=i; K.tmp=[]; const S=SHOPS
   try{ const k='ko_vis_'+i; if(!sessionStorage.getItem(k)&&!isOwner()){ sessionStorage.setItem(k,1); let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){}
     if(c.phone){ ping(c); setTimeout(()=>{ try{ toast('🙏 Swagat hai '+(c.name||'')+' — '+S[0]+' me'); }catch(e){} },1200); } else setTimeout(welcome,1600); } }catch(e){} };
 const src=()=>new URLSearchParams(location.search).get('src')||(window._ksfSrc||'link');
-function ping(c){ try{ window.koRpc&&koRpc('ko_visit',{p:{shop:SHOPS[K.i][0],shop_idx:String(K.i),name:c.name||'',phone:c.phone||'',src:src()}}); }catch(e){} }
+function ping(c,s2){ try{ window.koRpc&&koRpc('ko_visit',{p:{shop:SHOPS[K.i][0],shop_idx:String(K.i),name:c.name||'',phone:c.phone||'',area:c.area||c.city||'',src:s2||src()}}); }catch(e){} }
+/* video dekhi → dukaandar ko "watch" */
+function watched(){ if(!K.hero||isOwner()) return; const k='ko_wt_'+K.i; try{ if(sessionStorage.getItem(k)) return; sessionStorage.setItem(k,1); }catch(e){} let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){} ping(c,'watch'); }
 /* pehli baar aaye grahak se naam + mobile (OTP nahi) — doosri baar seedha */
 const wl=document.createElement('div'); wl.id='ksfWl'; document.body.appendChild(wl);
 function welcome(){ if(!K.hero) return; const S=SHOPS[K.i], A=art(K.i);
   wl.innerHTML=`<div class="kf-c"><span class="kf-av" style="${A.prof?`background-image:url('${E(A.prof)}')`:`background:${A.bg}`}">${A.prof?'':A.ini}</span><h4>Swagat hai! 🙏</h4><p>${E(S[0])} me aapka swagat. Naam aur mobile batayein — offer aur order ki jaankari isi par milegi.</p>
    <label>MOBILE NUMBER</label><div class="kf-ph"><span>+91</span><input id="kwP" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="Tap karke number chunein"></div><small id="kwS"></small>
    <label>AAPKA NAAM</label><input id="kwN" autocomplete="name" placeholder="Pura naam">
+   <label>AAPKA ILAKA <span style="font-weight:600;letter-spacing:0;text-transform:none">(optional)</span></label><input id="kwA" autocomplete="address-level3" placeholder="jaise: Bara Hindu Rao">
    <button class="kf-ok" onclick="ksfWlSave()">Aage badhein</button><button class="kf-sk" onclick="ksfWlSkip()">Baad mein</button><p class="kf-pv">🔒 Koi OTP nahi · number sirf ${E(S[0])} aur Karo Online ke paas</p></div>`;
   wl.classList.add('on'); const P=$('kwP');
   const ask=()=>{ if(window.KoAuth&&!P.value){ window._kwAsk=1; try{ KoAuth.postMessage('phone'); }catch(e){} } };
   P.addEventListener('focus',ask,{once:true}); P.addEventListener('click',ask);
   P.addEventListener('input',()=>{ P.value=P.value.replace(/\D/g,'').slice(-10); if(P.value.length===10) look(P.value); }); }
 async function look(ph){ const st=$('kwS'); if(st) st.textContent='Dekh rahe hain…';
-  try{ const r=await koRpc('ko_customer_get',{p_phone:ph}); if(r&&r.name){ const n=$('kwN'); if(n&&!n.value) n.value=r.name; if(st){ st.textContent='✓ Aap pehle se jude hain — '+r.name; st.className='ok'; } } else if(st){ st.textContent='Naye grahak — sirf naam likhein'; st.className=''; } }catch(e){ if(st) st.textContent=''; } }
+  try{ const r=await koRpc('ko_customer_get',{p_phone:ph}); if(r&&r.name){ const n=$('kwN'); if(n&&!n.value) n.value=r.name; const a=$('kwA'); if(a&&!a.value&&r.area) a.value=r.area; if(st){ st.textContent='✓ Aap pehle se jude hain — '+r.name; st.className='ok'; } } else if(st){ st.textContent='Naye grahak — sirf naam likhein'; st.className=''; } }catch(e){ if(st) st.textContent=''; } }
 window.ksfWlSave=async function(){ const ph=($('kwP').value||'').replace(/\D/g,''), n=($('kwN').value||'').trim();
   if(!/^[6-9]\d{9}$/.test(ph)){ toast('⚠️ Sahi 10 ank ka mobile'); return; } if(n.length<2){ toast('⚠️ Naam likhein'); return; }
-  const c=Object.assign((()=>{ try{ return JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){ return {}; } })(),{name:n,phone:ph});
+  const ar=($('kwA').value||'').trim(); const c=Object.assign((()=>{ try{ return JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){ return {}; } })(),{name:n,phone:ph},ar?{area:ar}:{});
   try{ localStorage.setItem('ko_cust',JSON.stringify(c)); }catch(e){} wl.classList.remove('on');
-  try{ await koRpc('ko_customer_save',{p:{phone:ph,name:n}}); }catch(e){} ping(c); toast('🙏 Shukriya '+n+'!'); };
+  try{ await koRpc('ko_customer_save',{p:{phone:ph,name:n,area:ar}}); }catch(e){} ping(c); toast('🙏 Shukriya '+n+'!'); };
 window.ksfWlSkip=()=>{ wl.classList.remove('on'); ping({}); };
 try{ const _cb=window.koAuthCb; window.koAuthCb=function(k,v){ if(k==='phone'&&wl.classList.contains('on')){ const d=String(v).replace(/\D/g,'').slice(-10); const P=$('kwP'); if(P&&d.length===10){ P.value=d; look(d); setTimeout(()=>{ const n=$('kwN'); if(n&&!n.value) n.focus(); },300); } return; } return _cb&&_cb.apply(this,arguments); }; }catch(e){}
 /* upar wala hissa: dukaandar ne jo feature kiya (video → product, ya product) */
@@ -28812,7 +28815,7 @@ function info(){ const s=K.sl[K.cur], p=K.P[s.j]||['🛍️',SHOPS[K.i][0],'']; 
    <div class="ksw2 hint" id="ksfSw"><div class="kf-fl"></div><div class="kf-fr"></div><div class="kf-lb"><span>${IC.chat}ENQUIRY</span><span>ORDER${IC.cart}</span></div><div class="kf-kn" style="${im?`background-image:url('${E(im)}')`:''}">${im?'':p[0]}</div></div>`;
   swipe($('ksfSw')); }
 function go(n,first){ const L=K.sl.length; K.cur=((n%L)+L)%L; clearTimeout(K.t);
-  root.querySelectorAll('.kf-kh-s').forEach(d=>{ const on=+d.dataset.k===K.cur; d.classList.toggle('on',on); const v=d.querySelector('video'); if(v){ if(on){ v.muted=K.mute; v.currentTime=0; v.play().catch(()=>{}); v.onended=()=>go(K.cur+1); } else v.pause(); } });
+  root.querySelectorAll('.kf-kh-s').forEach(d=>{ const on=+d.dataset.k===K.cur; d.classList.toggle('on',on); const v=d.querySelector('video'); if(v){ if(on){ v.muted=K.mute; v.currentTime=0; v.play().catch(()=>{}); v.onended=()=>go(K.cur+1); clearTimeout(K.wt); K.wt=setTimeout(()=>{ if(!v.paused) watched(); },4000); } else v.pause(); } });
   const s=K.sl[K.cur]; root.classList.toggle('kf-vid',!!s.v); const sb=$('ksfSnd'); if(sb){ sb.classList.toggle('kf-v',!!s.v); sb.innerHTML=K.mute?IC.snd:IC.snd2; }
   info(); if(!s.v) K.t=setTimeout(()=>{ if(root.classList.contains('on')) go(K.cur+1); },6000); }
 window.ksfGo=d=>go(K.cur+d);
@@ -28950,7 +28953,7 @@ window.ksfMk=function(){ mnX(); try{ closeSm('shopOv'); }catch(e){} ksfClose(); 
 window.ksfFull=function(){ try{ const b=$('shopBody'); const t=b&&b.querySelector('.sl-info'); if(t) t.scrollIntoView({behavior:'smooth'}); }catch(e){} };
 /* ---- story viewer ---- */
 let SV={k:0,t:null,L:[]};
-window.ksfStory=function(k){ SV.L=stories(K.i); SV.k=k; clearTimeout(K.t); root.querySelectorAll('video').forEach(v=>v.pause()); stv.classList.add('on'); stShow(); };
+window.ksfStory=function(k){ setTimeout(watched,3000); SV.L=stories(K.i); SV.k=k; clearTimeout(K.t); root.querySelectorAll('video').forEach(v=>v.pause()); stv.classList.add('on'); stShow(); };
 function stShow(){ clearInterval(SV.t); const s=SV.L[SV.k]; if(!s){ stX(); return; } const i=K.i;
   try{ const seen=JSON.parse(sessionStorage.getItem('ko_st_seen')||'{}'); seen[i+'_'+SV.k]=1; sessionStorage.setItem('ko_st_seen',JSON.stringify(seen)); }catch(e){}
   const lk=s.link||{}; const cta=lk.type==='p'&&K.P[lk.j]?'🛍️ '+K.P[lk.j][1].slice(0,26)+' dekhein ›':lk.type==='url'?'🔗 Kholein ›':'';
@@ -29009,5 +29012,131 @@ try{ const _o=openShop; window._ksfOrig=_o; window.openShop=openShop=function(i)
 /* cart badalne par count */
 new MutationObserver(()=>{ if(root.classList.contains('on')) cartN(); }).observe(document.body,{childList:true});
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.querySelectorAll('video').forEach(v=>v.pause()); else if(root.classList.contains('on')) go(K.cur); });
+})();
+</script>
+<style id="v281-css">
+/* ===== v281: vendor My Shop — upar ka card badle to neeche usi ki details ===== */
+.hs-alt>:not(#sdTgHost1),.hs-alt #v5w_shop{display:none!important}
+#hsCtx{display:none;margin:4px 0 0;font-family:Poppins,system-ui,sans-serif}
+.hs-alt #hsCtx{display:block;animation:hcIn .35s cubic-bezier(.22,1,.36,1)}
+@keyframes hcIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#hsCtx .hc-h{display:flex;align-items:center;gap:8px;margin:2px 2px 10px}
+#hsCtx .hc-h b{flex:1;font:800 16px Poppins,system-ui;color:#231a0e}
+#hsCtx .hc-h small{font-size:11.5px;color:#0a7a48;font-weight:800}
+#hsCtx .hc-h button{border:none;background:#231a0e;color:#fff;font:800 12px Poppins,system-ui;border-radius:99px;padding:8px 12px;cursor:pointer}
+#hsCtx .hc-ch{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 10px;padding:2px 16px}
+#hsCtx .hc-ch::-webkit-scrollbar{display:none}
+#hsCtx .hc-ch button{flex:none;border:1.5px solid #EDE2CB;background:#fff;color:#231a0e;border-radius:99px;padding:8px 13px;font:700 13px Poppins,system-ui;cursor:pointer;display:flex;align-items:center;gap:6px}
+#hsCtx .hc-ch button.on{background:#231a0e;color:#fff;border-color:#231a0e}
+#hsCtx .hc-ch u{text-decoration:none;font-size:11px;font-weight:900;border-radius:99px;padding:0 7px;background:#F1E8D6;color:#6b5122}
+#hsCtx .hc-ch button.on u{background:#F5C451;color:#231a0e}
+#hsCtx .hc-sr{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #EDE2CB;border-radius:14px;padding:0 12px;margin-bottom:10px}
+#hsCtx .hc-sr input{flex:1;border:none;outline:none;background:none;font:600 14px Poppins,system-ui;padding:10px 0;color:#231a0e}
+#hsCtx .hc-l{background:#fff;border-radius:20px;border:1.5px solid #F0E6D2;overflow:hidden}
+#hsCtx .hc-r{display:flex;align-items:center;gap:12px;padding:11px 12px;border-bottom:1px solid #F4ECDC;cursor:pointer}
+#hsCtx .hc-r:last-child{border-bottom:none}
+#hsCtx .hc-r:active{background:#FBF5E8}
+#hsCtx .hc-av{position:relative;width:48px;height:48px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font:800 17px Poppins,system-ui;background:center/cover}
+#hsCtx .hc-av i{position:absolute;right:-3px;bottom:-3px;width:20px;height:20px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;font-size:10px;font-style:normal}
+#hsCtx .hc-av i.v{background:#2563EB}#hsCtx .hc-av i.o{background:#16A34A}#hsCtx .hc-av i.w{background:#E1306C}#hsCtx .hc-av i.q{background:#231a0e}
+#hsCtx .hc-m{flex:1;min-width:0}
+#hsCtx .hc-m .t{display:flex;align-items:baseline;gap:8px}
+#hsCtx .hc-m b{flex:1;min-width:0;font-size:15px;font-weight:700;color:#1b1b1b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hsCtx .hc-m time{font-size:11.5px;color:#8a8373;flex:none}
+#hsCtx .hc-m time.nw{color:#16A34A;font-weight:800}
+#hsCtx .hc-m .s{display:flex;align-items:center;gap:6px;margin-top:2px}
+#hsCtx .hc-m .s span{flex:1;min-width:0;font-size:12.5px;color:#6b6457;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hsCtx .hc-m .s em{flex:none;min-width:20px;height:20px;border-radius:10px;background:#16A34A;color:#fff;font:800 11px Poppins,system-ui;font-style:normal;display:grid;place-items:center;padding:0 5px;box-sizing:border-box}
+#hsCtx .hc-m .s em.am{background:none;color:#231a0e;font-size:13.5px;padding:0}
+#hsCtx .hc-x{display:flex;gap:8px;padding:0 12px 12px 72px;border-bottom:1px solid #F4ECDC}
+#hsCtx .hc-x a,#hsCtx .hc-x button{flex:1;text-align:center;text-decoration:none;border:1.5px solid #EDE2CB;background:#FBF5E8;color:#6b5122;border-radius:12px;padding:9px 4px;font:800 12px Poppins,system-ui;cursor:pointer}
+#hsCtx .hc-x .wa{background:#E8F9EF;border-color:#BFEBD1;color:#0a7a48}
+#hsCtx .hc-x .cl{background:#EAF2FF;border-color:#C7DAFB;color:#1d4ed8}
+#hsCtx .hc-im{width:50px;height:60px;border-radius:12px;background:#F4ECDC center/cover;flex:none;display:grid;place-items:center;font-size:22px}
+#hsCtx .hc-bar{height:5px;border-radius:3px;background:#F1E8D6;margin-top:6px;overflow:hidden}
+#hsCtx .hc-bar i{display:block;height:100%;border-radius:3px;background:#16A34A}
+#hsCtx .hc-bar i.lo{background:#F59E0B}#hsCtx .hc-bar i.ot{background:#DC2626}
+#hsCtx .hc-tg{flex:none;font-size:10.5px;font-weight:800;border-radius:99px;padding:3px 8px}
+#hsCtx .hc-tg.p{background:#FEF3C7;color:#B45309}#hsCtx .hc-tg.d{background:#DCFCE7;color:#15803D}#hsCtx .hc-tg.u{background:#FEE2E2;color:#B91C1C}#hsCtx .hc-tg.r{background:#EDE9FE;color:#6D28D9}
+#hsCtx .hc-on{font-size:10px;font-weight:800;border-radius:6px;padding:1px 6px;background:#F1E8D6;color:#6b5122}#hsCtx .hc-on.o{background:#D1FAE5;color:#047857}
+#hsCtx .hc-e{padding:28px 16px;text-align:center;color:#8a8373;font-weight:600;font-size:13px}
+#hsCtx .hc-nt{font-size:11px;color:#8a8373;text-align:center;margin:8px 0 0}
+#hsCtx .hc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+#hsCtx .hc-sum div{background:#fff;border:1.5px solid #F0E6D2;border-radius:14px;padding:8px 4px;text-align:center}
+#hsCtx .hc-sum b{display:block;font:900 17px Poppins,system-ui;color:#231a0e}#hsCtx .hc-sum small{font-size:9.5px;font-weight:800;color:#8a7a5a;letter-spacing:.04em}
+</style>
+<script id="v281">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const R=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+  const COL=['#E35D0A','#2563EB','#0F9D58','#8A4FD6','#D93F6B','#0E7490','#B45309','#4B5563'];
+  const col=s=>COL[[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)%COL.length];
+  const ini=s=>String(s||'?').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+  const ago=t=>{ const m=Math.round((Date.now()-t)/6e4); if(m<1) return 'abhi'; if(m<60) return m+' min'; const d=new Date(t), n=new Date(); if(d.toDateString()===n.toDateString()) return d.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}).toLowerCase(); const y=new Date(n); y.setDate(n.getDate()-1); if(d.toDateString()===y.toDateString()) return 'Kal'; return d.getDate()+'/'+(d.getMonth()+1); };
+  const HC={k:0,f:'all',q:'',x:null,feed:[],fat:0};
+  function shopName(){ try{ return SHOPS[MY_SHOP][0]; }catch(e){ return 'Ashu Readymade Garments'; } }
+  function P(){ try{ return PROD.Clothing||[]; }catch(e){ return []; } }
+  const imgOf=n=>{ const p=P().find(x=>n&&String(n).toLowerCase().indexOf(String(x[1]).toLowerCase().slice(0,12))===0); return p&&p[3]?p[3]:''; };
+  /* ---------- 1) QR / visitors — WhatsApp jaisi list ---------- */
+  const AREAS=['Bara Hindu Rao','Sadar Bazar','Pul Bangash','Subzi Mandi','Kishan Ganj','Paharganj','Chandni Chowk','Karol Bagh','Daryaganj','Shastri Nagar'];
+  const NAMES=['Rahul Verma','Sana Khan','Pooja Sharma','Imran Ali','Neha Gupta','Arjun Singh','Ayesha Siddiqui','Vikas Jain','Meena Kapoor','Faisal Ahmed','Kavita Arora','Salman Qureshi','Ritu Malhotra','Deepak Yadav'];
+  function demo(){ const now=Date.now(), L=[];
+    NAMES.forEach((n,k)=>{ const t=now-(k*k*7+k*11+3)*6e4, typ=k%5===1?'o':k%4===2?'w':'v', p=P()[k%Math.max(1,P().length)];
+      L.push({n,ph:'9'+String(870000000+k*7391357).slice(0,9),ar:AREAS[k%AREAS.length],t,typ,src:k%3?'qr':'link',cnt:1+(k*7)%4,it:typ==='o'&&p?p[1]+' ×1':'',amt:typ==='o'&&p?+String(p[2]).replace(/\D/g,''):0,demo:1}); });
+    try{ SD_ORD.forEach((o,k)=>L.push({n:o.c,ph:'',ar:o.ad,t:now-(k*17+4)*6e4,typ:'o',src:'app',cnt:1,it:o.it,amt:o.amt,oid:o.id,st:o.st})); }catch(e){}
+    return L; }
+  function rows(){ const real=HC.feed.map(v=>({n:v.name,ph:v.phone,ar:v.area,t:+new Date(v.at),typ:v.src==='watch'?'w':'v',src:v.src,cnt:1,real:1}));
+    return real.concat(demo()).sort((a,b)=>b.t-a.t); }
+  function loadFeed(){ if(Date.now()-HC.fat<20000||!window.koRpc) return; HC.fat=Date.now();
+    koRpc('ko_visits_feed',{p_shop:shopName(),p_limit:60}).then(r=>{ if(Array.isArray(r)){ HC.feed=r; if(HC.k===1) paint(); } }).catch(()=>{}); }
+  function qrView(){ const L=rows(), q=HC.q.toLowerCase(), T={all:L,v:L.filter(x=>x.typ==='v'),o:L.filter(x=>x.typ==='o'),w:L.filter(x=>x.typ==='w')};
+    const V=(T[HC.f]||L).filter(x=>!q||(x.n+' '+x.ph+' '+x.ar).toLowerCase().includes(q));
+    const ic={v:'👀',o:'🛒',w:'▶'}, lab=x=>x.typ==='o'?`🛒 Order · ${E(x.it)}`:x.typ==='w'?`▶ Video dekhi${x.ar?' · 📍 '+E(x.ar):''}`:`${x.src==='qr'?'📷 QR scan':'🔗 Link'}${x.ar?' · 📍 '+E(x.ar):''}`;
+    const today=L.filter(x=>Date.now()-x.t<864e5);
+    return `<div class="hc-h"><b>Dukaan par kaun aaya</b><small>● ${today.length} aaj</small></div>
+     <div class="hc-sum"><div><b>${today.filter(x=>x.typ==='v').length}</b><small>AAJ VISIT</small></div><div><b>${new Set(L.filter(x=>x.ph).map(x=>x.ph)).size}</b><small>GRAHAK JUDE</small></div><div><b>${L.filter(x=>x.typ==='o').length}</b><small>ORDER</small></div><div><b>${L.filter(x=>x.typ==='w').length}</b><small>VIDEO DEKHI</small></div></div>
+     <div class="hc-ch">${[['all','Sab',L.length],['v','👀 Visit',T.v.length],['o','🛒 Order',T.o.length],['w','▶ Dekha',T.w.length]].map(([k,t,n])=>`<button class="${HC.f===k?'on':''}" onclick="hcF('${k}')">${t}<u>${n}</u></button>`).join('')}</div>
+     <div class="hc-sr">🔍<input placeholder="Naam, number ya ilaka khojein" value="${E(HC.q)}" oninput="hcQ(this.value)"></div>
+     <div class="hc-l">${V.length?V.slice(0,60).map((x,i)=>{ const key=x.n+'|'+x.t, op=HC.x===key; return `<div class="hc-r" onclick="hcX('${E(key)}')"><span class="hc-av" style="background:${col(x.n)}">${E(ini(x.n))}<i class="${x.typ}">${ic[x.typ]}</i></span><div class="hc-m"><div class="t"><b>${E(x.n)}</b><time class="${Date.now()-x.t<36e5?'nw':''}">${ago(x.t)}</time></div><div class="s"><span>${lab(x)}</span>${x.typ==='o'&&x.amt?`<em class="am">${R(x.amt)}</em>`:x.cnt>1?`<em>${x.cnt}</em>`:''}</div></div></div>${op?`<div class="hc-x">${x.ph&&!/•/.test(x.ph)?`<a class="cl" href="tel:${E(x.ph)}">📞 Call</a><a class="wa" href="https://wa.me/91${E(x.ph)}" target="_blank" rel="noopener">💬 WhatsApp</a>`:`<button onclick="toast('📱 Poora number Karo Business ऐप me dikhega')">📞 ${x.ph?E(x.ph):'Number nahi diya'}</button>`}${x.typ==='o'?`<button onclick="sdOrdersSheet&&sdOrdersSheet()">🧾 Order</button>`:''}</div>`:''}`; }).join(''):'<div class="hc-e">Koi nahi mila</div>'}</div>
+     <p class="hc-nt">QR / link se aaye grahak, unke order aur video dekhne wale — sab yahan</p>`; }
+  /* ---------- 2) Stock ---------- */
+  function soldToday(){ const m={}; try{ RPapi.today().forEach(b=>b.items.forEach(it=>{ const p=P().find(x=>String(it.n).indexOf(x[1])===0); if(p) m[p[1]]=(m[p[1]]||0)+(+it.q||1); })); }catch(e){} return m; }
+  function stockView(){ const S=soldToday(), L=P().map((p,j)=>{ const st=+p[4]||0; let buy=0; try{ buy=posBuy(p); }catch(e){} return {p,j,st,buy,sold:S[p[1]]||0}; });
+    const T={all:L,lo:L.filter(x=>x.st>0&&x.st<=10),ot:L.filter(x=>x.st===0),sd:L.filter(x=>x.sold>0)}, q=HC.q.toLowerCase();
+    const V=(T[HC.f]||L).filter(x=>!q||x.p[1].toLowerCase().includes(q)).sort((a,b)=>HC.f==='sd'?b.sold-a.sold:a.st-b.st);
+    const mx=Math.max(20,...L.map(x=>x.st));
+    return `<div class="hc-h"><b>Stock — har item</b><button onclick="posInv()">Poora inventory ›</button></div>
+     <div class="hc-ch">${[['all','Sab',L.length],['lo','⚠️ Kam',T.lo.length],['ot','⛔ Khatam',T.ot.length],['sd','🔥 Aaj bika',T.sd.length]].map(([k,t,n])=>`<button class="${HC.f===k?'on':''}" onclick="hcF('${k}')">${t}<u>${n}</u></button>`).join('')}</div>
+     <div class="hc-sr">🔍<input placeholder="Product khojein" value="${E(HC.q)}" oninput="hcQ(this.value)"></div>
+     <div class="hc-l">${V.length?V.map(x=>`<div class="hc-r" onclick="posInv()"><span class="hc-im" style="${x.p[3]?`background-image:url('${E(x.p[3])}')`:''}">${x.p[3]?'':x.p[0]}</span><div class="hc-m"><div class="t"><b>${E(x.p[1])}</b><time>${E(x.p[2])}</time></div><div class="s"><span>${x.st} pcs bache · value ${R(x.st*x.buy)}${x.sold?' · aaj '+x.sold+' bika':''}</span><span class="hc-tg ${x.st===0?'u':x.st<=10?'p':'d'}" style="flex:none">${x.st===0?'Khatam':x.st<=10?'Kam':'Theek'}</span></div><div class="hc-bar"><i class="${x.st===0?'ot':x.st<=10?'lo':''}" style="width:${Math.max(3,Math.round(x.st/mx*100))}%"></i></div></div></div>`).join(''):'<div class="hc-e">Is filter me koi item nahi</div>'}</div>`; }
+  /* ---------- 3) Invoices / orders ---------- */
+  function invList(){ const L=[]; for(let d=0;d>-7;d--){ try{ RPapi.day(d).forEach(b=>{ const on=RPapi.chan(b)==='On'; L.push({id:b.id,n:b.cust||'Walk-in',t:+b.ts,it:b.items.map(x=>x.n+(x.q>1?' ×'+x.q:'')).join(', '),c:b.items.length,amt:b.total,on,st:b.ret?'r':'d',im:imgOf(b.items[0]&&b.items[0].n),k:'b',d,ix:d===0?RPapi.today().indexOf(b):-1}); }); }catch(e){} }
+    try{ SD_ORD.forEach((o,k)=>L.push({id:o.id,n:o.c,t:Date.now()-(k*17+4)*6e4,it:o.it,c:String(o.it).split(',').length,amt:o.amt,on:true,st:o.st==='done'?'d':o.st==='rej'?'u':'p',sl:(SD_OS[o.st]||[''])[0],im:'',k:'o',ar:o.ad})); }catch(e){}
+    return L.sort((a,b)=>b.t-a.t); }
+  function invView(){ const L=invList(), q=HC.q.toLowerCase(), T={all:L,p:L.filter(x=>x.st==='p'),d:L.filter(x=>x.st==='d'),u:L.filter(x=>x.st==='u'),r:L.filter(x=>x.st==='r')};
+    const V=(T[HC.f]||L).filter(x=>!q||(x.n+' '+x.id+' '+x.it).toLowerCase().includes(q)); const lab={p:'Chal raha',d:'Delivered',u:'Undelivered',r:'Return'};
+    return `<div class="hc-h"><b>Saare bill aur order</b><button onclick="rpOpen('today')">Report ›</button></div>
+     <div class="hc-ch">${[['all','Sab',L.length],['p','⏳ Chal raha',T.p.length],['d','✓ Delivered',T.d.length],['u','✕ Undelivered',T.u.length],['r','↩ Return',T.r.length]].map(([k,t,n])=>`<button class="${HC.f===k?'on':''}" onclick="hcF('${k}')">${t}<u>${n}</u></button>`).join('')}</div>
+     <div class="hc-sr">🔍<input placeholder="Grahak, bill no. ya product" value="${E(HC.q)}" oninput="hcQ(this.value)"></div>
+     <div class="hc-l">${V.length?V.slice(0,80).map(x=>`<div class="hc-r" onclick="${x.k==='o'?'sdOrdersSheet&&sdOrdersSheet()':x.ix>=0?`rpOpen('today');setTimeout(()=>rpShow(${x.ix}),200)`:`rpOpen('week')`}"><span class="hc-im" style="${x.im?`background-image:url('${E(x.im)}')`:''}">${x.im?'':x.k==='o'?'🛵':'🧾'}</span><div class="hc-m"><div class="t"><b>${E(x.n)}</b><time>${ago(x.t)}</time></div><div class="s"><span>${E(x.id)} · ${x.c} itm · <i class="hc-on ${x.on?'o':''}" style="font-style:normal">${x.on?'Online':'Offline'}</i></span><em class="am">${R(x.amt)}</em></div><div class="s" style="margin-top:4px"><span>${E(x.it)}</span><i class="hc-tg ${x.st}" style="font-style:normal">${x.sl&&x.st==='p'?E(x.sl):lab[x.st]}</i></div></div></div>`).join(''):'<div class="hc-e">Is filter me kuch nahi</div>'}</div>`; }
+  /* ---------- 4) Khata ---------- */
+  function khView(){ let A=[]; try{ khSeed&&khSeed(); A=(KH.acc||[]).slice(); }catch(e){} const q=HC.q.toLowerCase();
+    const V=A.filter(a=>!q||String(a.n||a.name||'').toLowerCase().includes(q)).map(a=>({a,net:(()=>{ try{ return khNet(a); }catch(e){ return 0; } })()})).sort((x,y)=>Math.abs(y.net)-Math.abs(x.net));
+    return `<div class="hc-h"><b>Khata — kisse lena, kisko dena</b><button onclick="khOpen()">Khata kholein ›</button></div>
+     <div class="hc-sr">🔍<input placeholder="Naam khojein" value="${E(HC.q)}" oninput="hcQ(this.value)"></div>
+     <div class="hc-l">${V.length?V.map(({a,net})=>{ const n=a.n||a.name||'Khata'; return `<div class="hc-r" onclick="khOpen()"><span class="hc-av" style="background:${col(n)}">${E(ini(n))}</span><div class="hc-m"><div class="t"><b>${E(n)}</b><time>${a.type==='exp'?'Kharcha':net>=0?'Milna':'Dena'}</time></div><div class="s"><span>${(a.ent||[]).length} entry${a.ph?' · '+E(a.ph):''}</span><em class="am" style="color:${a.type==='exp'?'#6b5122':net>=0?'#15803D':'#B91C1C'}">${R(Math.abs(net))}</em></div></div></div>`; }).join(''):'<div class="hc-e">Abhi khata khali hai</div>'}</div>`; }
+  /* ---------- wiring ---------- */
+  function kind(k){ const tr=$('hsTr'); const s=tr&&tr.children[k]; if(!s) return 'main'; if(s.classList.contains('qs-sl')) return 'qr'; const t=s.textContent||''; if(/Total Stock/.test(t)) return 'stock'; if(/Recent invoices/.test(t)) return 'inv'; if(/Khata/.test(t)) return 'kh'; return 'main'; }
+  function ensure(){ const host=$('sdTgHost1'), w=host&&host.querySelector('.hs-w'); if(!w) return null; let c=$('hsCtx'); if(!c){ c=document.createElement('div'); c.id='hsCtx'; w.insertAdjacentElement('afterend',c); } return c; }
+  function paint(){ const c=ensure(); if(!c) return; const host=$('sdTgHost1'), par=host.parentNode, kd=kind(HC.k); par.classList.toggle('hs-alt',kd!=='main'); if(kd==='main'){ c.innerHTML=''; return; }
+    if(kd==='qr') loadFeed(); const y=window.scrollY; c.innerHTML=kd==='qr'?qrView():kd==='stock'?stockView():kd==='inv'?invView():khView(); }
+  window.hcF=f=>{ HC.f=f; HC.x=null; paint(); };
+  let qt; window.hcQ=v=>{ HC.q=v; clearTimeout(qt); qt=setTimeout(()=>{ const a=document.activeElement, pos=a&&a.selectionStart; paint(); const i=document.querySelector('#hsCtx .hc-sr input'); if(i){ i.focus(); try{ i.setSelectionRange(pos,pos); }catch(e){} } },250); };
+  window.hcX=k=>{ HC.x=HC.x===k?null:k; paint(); };
+  function onScroll(){ const tr=$('hsTr'); if(!tr||!tr.clientWidth) return; const k=Math.round(tr.scrollLeft/tr.clientWidth); if(k!==HC.k){ HC.k=k; HC.f='all'; HC.q=''; HC.x=null; paint(); } }
+  let bound=null; function bind(){ const tr=$('hsTr'); if(tr&&tr!==bound){ bound=tr; tr.addEventListener('scroll',onScroll,{passive:true}); } ensure(); }
+  const _hs=window.shHeroRender; window.shHeroRender=function(){ const r=_hs&&_hs.apply(this,arguments); bind(); if(HC.k) paint(); return r; };
+  bind(); setInterval(()=>{ bind(); if(HC.k===1&&document.querySelector('.hs-alt')) { loadFeed(); } },20000);
 })();
 </script>

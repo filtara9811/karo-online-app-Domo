@@ -18,3 +18,8 @@ alter table public.ko_visits enable row level security;
 create table if not exists public.ko_customers (phone text primary key, name text, visits int not null default 0, created_at timestamptz not null default now(), last_seen timestamptz not null default now());
 alter table public.ko_customers enable row level security;
 -- functions: ko_customer_get(p_phone), ko_customer_save(p jsonb); ko_visit ab phone se naam bharta hai; ko_visits_new phone bhi deta hai (migration "ko_customers")
+
+-- v281: ilaka (area) + web dukaan-panel ke liye visit feed (number aadha chhupa)
+alter table public.ko_visits add column if not exists area text;
+alter table public.ko_customers add column if not exists area text;
+-- functions: ko_visits_feed(p_shop, p_limit) — migration "ko_visits_area_feed"
