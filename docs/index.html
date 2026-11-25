@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=289;
+window.KO_V=290;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -27763,9 +27763,26 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   window.o2Open=function(id){ CUR=id; menu=false; closeSm('olOv'); openSm('o2Ov'); paint(); bub(); };
   window.o2Min=function(){ closeSm('o2Ov'); CUR=null; bub(); };
   window.o2Menu=()=>{ menu=!menu; paint(); };
-  window.o2Cancel=()=>{ const o=find(CUR); if(!o) return; if(o.st>=2){ toast('Packing shuru ho chuki — ab cancel nahi, delivery ke baad return kar sakte hain'); return; } o.st=-1; o.end=1; setSD(o,'rej'); log(o,'Aapne order cancel kiya · '+(o.mode==='cod'?'koi paisa nahi kata':R(o.amt)+' 3-5 din me wapas')); save(); toast('Order cancel ho gaya'); menu=false; paint(); bub(); };
+  window.o2Cancel=()=>{ const o=find(CUR); if(!o) return; if(o.st>=4||o.st<0){ toast('Delivery ho chuki — ab Return / Refund se'); return; } if(!o._cxS){ o._cxS=1; setTimeout(()=>{ o._cxS=0; },4000); toast(o.st>=3?'🛵 Rider raaste me hai — pakka cancel? ⋮ me dobara dabayein':o.st>=2?'📦 Packing ho rahi hai — pakka cancel? Dobara dabayein':'Pakka cancel? Dobara dabayein'); return; } o.st=-1; o.end=1; setSD(o,'rej'); log(o,'Aapne order cancel kiya · '+(o.mode==='cod'?'koi paisa nahi kata':R(o.amt)+' 3-5 din me wapas')); save(); toast('Order cancel ho gaya'); menu=false; paint(); bub(); };
   window.o2Rate=n=>{ const o=find(CUR); if(o){ o.rate=n; save(); paint(); } };
   window.o2ForceCancel=id=>{ const o=find(id); if(!o) return; o.st=-1; log(o,'Grahak ne order cancel kiya'); save(); try{ paint(); bub(); }catch(e){} };
+  /* ---------- rider / dukaan se chat ---------- */
+  const ch=document.createElement('div'); ch.className='sm-ov top2'; ch.id='o2ChOv'; ch.onclick=e=>{ if(e.target===ch) closeSm('o2ChOv'); }; ch.innerHTML='<div class="sm-sheet" id="o2ChB"></div>'; document.body.appendChild(ch);
+  let CHW='r';
+  const QR={r:['Kitni der me aaoge?','Gate par aa jaiye','Ghar ke neeche hoon','Call kar lo please','Thoda jaldi bhai'],s:['Order kab tak ready hoga?','Size L chahiye','Colour badal sakte hain?','Bill bhej do','Order cancel karna hai']};
+  const RP={r:['Theek hai, 2-3 minute me pahunch raha hoon 🛵','Ji, gate par aakar call karta hoon','Bas pahunch gaya, neeche aa jaiye','Ok sir 👍'],s:['Ji, 10–15 minute me pack ho jayega','Dekh kar batate hain 🙏','Ho jayega, bill WhatsApp kar dete hain','Thik hai, hum check karte hain']};
+  function chR(){ const o=find(CUR); if(!o) return; const who=CHW, nm=who==='r'?(o.rider?o.rider[0]:'Delivery partner'):o.shop; const M=(o.chat||[]).filter(m=>m.w===who);
+    $('o2ChB').innerHTML=`<div class="ch-hd"><span class="av">${who==='r'?'🛵':'🏪'}</span><div><b>${nm}</b><small>${who==='r'?(o.rider?o.rider[1]+' · ':'')+'Order '+o.id:'Order '+o.id+' · '+R(o.tot||o.amt)}</small></div><a href="tel:+919876543210" class="cl">📞</a></div>
+      <div class="ch-ls" id="o2ChL">${M.length?M.map(m=>`<div class="ch-m ${m.me?'me':''}">${String(m.t).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}<small>${new Date(m.at).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'})}${m.me?' ✓✓':''}</small></div>`).join(''):`<div class="ch-e">${who==='r'?'Rider se seedha baat karein — address, gate, timing':'Dukaan se order ke baare me poochhein'}</div>`}${o._typ===who?'<div class="ch-m ty"><i></i><i></i><i></i></div>':''}</div>
+      <div class="ch-qr">${QR[who].map(q=>`<button onclick="o2ChSend(this.textContent)">${q}</button>`).join('')}</div>
+      <div class="ch-in"><input id="o2ChI" placeholder="Message likhein…" onkeydown="if(event.key==='Enter')o2ChSend()"><button onclick="o2ChSend()">➤</button></div>`;
+    const L=$('o2ChL'); if(L) L.scrollTop=L.scrollHeight; }
+  window.o2Chat=function(w){ const o=find(CUR); if(!o){ toast('Order nahi mila'); return; } CHW=w||(o.st===3?'r':'s'); chR(); openSm('o2ChOv'); setTimeout(()=>{ const i=$('o2ChI'); if(i) i.focus(); },300); };
+  window.o2ChSend=function(t){ const o=find(CUR); if(!o) return; const i=$('o2ChI'); t=String(t||(i&&i.value)||'').trim(); if(!t) return; (o.chat=o.chat||[]).push({w:CHW,me:1,t,at:Date.now()}); if(i) i.value=''; save(); chR();
+    const w=CHW; o._typ=w; setTimeout(chR,400); setTimeout(()=>{ o._typ=0; const A=RP[w]; o.chat.push({w,t:/cancel/i.test(t)?'Ji, ⋮ menu se cancel kar dijiye — hum dekh lenge':A[(o.chat.length)%A.length],at:Date.now()}); save(); if(ch.classList.contains('open')) chR(); try{ koChime&&koChime('note'); }catch(e){} },1800+Math.random()*1200); };
+  window.o2ChatFor=(id,w)=>{ if(!find(id)){ toast('Order nahi mila'); return; } CUR=id; o2Chat(w); };
+  window.olCx=function(id,b){ if(b&&!b.dataset.s){ b.dataset.s=1; b.textContent='Pakka? Dobara dabayein'; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.s; b.textContent='✕ Cancel'; } },3500); return; }
+    const o=find(id); if(!o) return; if(o.st>=4){ toast('Delivery ho chuki — Return se'); return; } o.st=-1; o.end=1; try{ setSD(o,'rej'); }catch(e){} log(o,'Aapne order cancel kiya · '+(o.mode==='cod'?'koi paisa nahi kata':R(o.amt)+' 3-5 din me wapas')); save(); toast('✕ Order '+id+' cancel ho gaya'); listR._k=''; paintAll(); };
   window.o2Done=()=>{ const o=find(CUR); if(o){ if(o.rate) toast('Shukriya! '+o.rate+'⭐ review bheja'); if(!o.rf) o.end=1; save(); } o2Min(); };
   function dueCard(o){ const d=due(o); if(d<=0) return ''; if(o.dueOk) return `<div class="o2-due ok">✓ ${R(d)} ${o.dueOk==='cash'?'cash me diye':'UPI se diye'} — PIN batate hi delivery poori</div>`;
     const c=payCfg(o.si); const link=`upi://pay?pa=${encodeURIComponent((c.upi||'').trim()||'karoonline.demo@upi')}&pn=${encodeURIComponent(c.name||o.shop)}&am=${d}&cu=INR&tn=${encodeURIComponent('Order '+o.id)}`;
@@ -27782,12 +27799,12 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
     const S0=SHOPS[o.si]||['Dukaan','🏪'];
     const comm=s<0?`<div class="o2-cm"><div class="hd"><div class="av">↩️</div><div><b>${o.mode==='cod'?'Koi paisa nahi kata':R(o.amt)+' wapas aayega'}</b><small>${o.mode==='cod'?'COD order tha':'Original UPI par 3-5 kaam ke din me'}</small></div></div></div>`
       :s===0?`<div class="o2-cm"><div class="hd"><div class="av">🧾</div><div><b>${MODES[o.mode].t} · ${R(o.amt)}</b><small>${o.proofs&&o.proofs.length?o.proofs.length+' screenshot dukaan ko gaye':o.utr?'UTR '+o.utr:''}</small></div></div>${o.proofs&&o.proofs.length?`<div class="o2-ths">${o.proofs.map(u=>`<span style="background-image:url('${u}')"></span>`).join('')}</div>`:''}</div>`
-      :s<=2?`<div class="o2-cm"><div class="hd"><div class="av" style="background-image:var(--avatar)"></div><div><b>${o.shop}</b><small>${s===1?'Request dekh rahe hain':'Aapka order pack kar rahe hain'}</small></div></div><div class="bt"><a href="tel:+919876543210">📞 Call</a><a href="https://wa.me/919876543210?text=${encodeURIComponent('Order '+o.id+' ke baare me')}">💬 Chat</a></div></div>`
-      :s===3?`<div class="o2-pin"><small>Delivery PIN — saman lekar rider ko batayein</small><b>${(o.pin||'0000').split('').map(x=>`<i>${x}</i>`).join('')}</b></div>${dueCard(o)}<div class="o2-cm"><div class="hd"><div class="av">🛵</div><div><b>${o.rider?o.rider[0]:'Delivery partner'} · ${o.rider?o.rider[1]:''}</b><small>Lagbhag ${Math.max(2,Math.round(o.cd/5))} min me · ${due(o)>0?(o.dueOk?'Baaki paisa diya ✓':'Delivery par '+R(due(o))+' dena hai'):'Paid ✓'}</small></div></div><div class="bt"><a class="pri" href="tel:+919876543210">📞 Rider ko call</a><a href="https://wa.me/919876543210">💬 Chat</a></div></div>`
+      :s<=2?`<div class="o2-cm"><div class="hd"><div class="av" style="background-image:var(--avatar)"></div><div><b>${o.shop}</b><small>${s===1?'Request dekh rahe hain':'Aapka order pack kar rahe hain'}</small></div></div><div class="bt"><a href="tel:+919876543210">📞 Call</a><a href="javascript:void 0" onclick="o2Chat('s')">💬 Chat</a></div></div>`
+      :s===3?`<div class="o2-pin"><small>Delivery PIN — saman lekar rider ko batayein</small><b>${(o.pin||'0000').split('').map(x=>`<i>${x}</i>`).join('')}</b></div>${dueCard(o)}<div class="o2-cm"><div class="hd"><div class="av">🛵</div><div><b>${o.rider?o.rider[0]:'Delivery partner'} · ${o.rider?o.rider[1]:''}</b><small>Lagbhag ${Math.max(2,Math.round(o.cd/5))} min me · ${due(o)>0?(o.dueOk?'Baaki paisa diya ✓':'Delivery par '+R(due(o))+' dena hai'):'Paid ✓'}</small></div></div><div class="bt"><a class="pri" href="tel:+919876543210">📞 Rider ko call</a><a href="javascript:void 0" onclick="o2Chat('r')">💬 Chat</a></div></div>`
       :o.rf?`<div class="o2-rf"><b>↩️ Return · ${o.rf.why}</b><div class="stp">${[1,2,3,4].map(k=>`<span class="${o.rf.st>=k?'ok':''}"></span>`).join('')}</div><small>${['','Request bheji — dukaan dekh rahi hai','Approve ✓ — pickup jaldi aayega','Pickup ho gaya — refund process me','Refund '+R(o.rf.amt)+' '+(o.rf.to==='wallet'?'Karo Wallet me aa gaya':'UPI par bheja')+' ✓'][o.rf.st]}</small></div>`
       :`<div class="ot-rv">${[1,2,3,4,5].map(n=>`<button class="${(o.rate||0)>=n?'on':''}" onclick="o2Rate(${n})">⭐</button>`).join('')}</div><button class="ot-go" onclick="o2Done()">${o.rate?'Review bhejein ✓':'Baad me'}</button>`;
     const H=`<div class="o2-hd"><div><b>${T[0]}</b><small>Order ${o.id} · ${o.shop} · ${R(o.tot||o.amt)}</small></div><button onclick="o2Menu()" aria-label="Aur">⋮</button><button onclick="o2Min()" aria-label="Chhota karein">⌄</button></div>
-      <div class="o2-mn ${menu?'on':''}"><button class="${s>=2||s<0?'dis':''}" onclick="o2Cancel()">✕ Order cancel karein</button><button class="${s>=4&&!o.rf?'':'dis'}" onclick="${s>=4&&!o.rf?'rfOpen()':"toast('Delivery ke baad return kar sakte hain')"}">↩️ Return / Refund</button><button onclick="o2Menu();location.href='https://wa.me/919876543210?text=${encodeURIComponent('Help: order '+o.id)}'">💬 Help / Support</button><button onclick="o2Menu();toast('Bill: ${o.items.replace(/'/g,'')} · ${R(o.tot)}')">🧾 Bill dekhein</button></div>
+      <div class="o2-mn ${menu?'on':''}"><button class="${s>=4||s<0?'dis':''}" onclick="o2Cancel()">✕ Order cancel karein</button>${s>=0&&s<4?`<button onclick="o2Menu();o2Chat('${s===3?'r':'s'}')">💬 ${s===3?'Rider se chat':'Dukaan se chat'}</button>`:''}<button class="${s>=4&&!o.rf?'':'dis'}" onclick="${s>=4&&!o.rf?'rfOpen()':"toast('Delivery ke baad return kar sakte hain')"}">↩️ Return / Refund</button><button onclick="o2Menu();location.href='https://wa.me/919876543210?text=${encodeURIComponent('Help: order '+o.id)}'">💬 Help / Support</button><button onclick="o2Menu();toast('Bill: ${o.items.replace(/'/g,'')} · ${R(o.tot)}')">🧾 Bill dekhein</button></div>
       <div class="ot-st">${SSx.map(step).join('')}</div>
       <div class="ot-rd ${s>=4||s<0?'done':''}"><div class="r"></div><div class="r r2"></div><div class="r r3"></div><div class="sw"></div>${vs}<div class="c" style="${o.img?`background-image:url('${o.img}')`:''}">${o.img?'':o.em}</div></div>
       <div class="ot-tx"><b>${T[0]}</b><small>${T[1]}</small></div>${comm}
@@ -27813,7 +27830,7 @@ body:has(#shopsOv.open) #sellFab{display:none!important}
   const bb=document.createElement('button'); bb.id='o2B'; bb.innerHTML='<svg class="rg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="4"/><circle id="o2Rg" cx="32" cy="32" r="29" fill="none" stroke="#F47B20" stroke-width="4" stroke-linecap="round" stroke-dasharray="182.2" stroke-dashoffset="182.2"/></svg><span class="em">🛵</span><u></u><small>Order</small>'; document.body.appendChild(bb);
   const lo=document.createElement('div'); lo.className='sm-ov top2'; lo.id='olOv'; lo.onclick=e=>{ if(e.target===lo) closeSm('olOv'); }; lo.innerHTML='<div class="sm-sheet" id="olB"></div>'; document.body.appendChild(lo);
   const OLX={}; window.olX=id=>{ OLX[id]=!OLX[id]; const e=document.getElementById('old-'+id.slice(1)); if(e) e.classList.toggle('on',!!OLX[id]); const c=e&&e.previousElementSibling; if(c) c.classList.toggle('xo',!!OLX[id]); };
-  const olDet=o=>`<div class="ol-dst">${SS.map((x,k)=>`<div class="${o.st<0?'':k<o.st||o.st>=4?'ok':k===o.st?'now':''}"><i>${k<o.st||o.st>=4?'✓':x[0]}</i>${x[1]}</div>`).join('')}</div>${(o.log||[]).slice(0,3).map(l=>`<p><i>${l[0]}</i>${l[1]}</p>`).join('')}<button class="ol-go" onclick="o2Open('${o.id}')">📡 Radar / poora status</button>`;
+  const olDet=o=>`<div class="ol-dst">${SS.map((x,k)=>`<div class="${o.st<0?'':k<o.st||o.st>=4?'ok':k===o.st?'now':''}"><i>${k<o.st||o.st>=4?'✓':x[0]}</i>${x[1]}</div>`).join('')}</div>${(o.log||[]).slice(0,3).map(l=>`<p><i>${l[0]}</i>${l[1]}</p>`).join('')}<div class="ol-ac"><button class="ol-go" onclick="o2Open('${o.id}')">📡 Poora status</button>${o.st>=0&&o.st<4?`<button class="ol-go ch" onclick="o2ChatFor('${o.id}','${o.st===3?'r':'s'}')">💬 ${o.st===3?'Rider':'Dukaan'} se chat</button><button class="ol-go cx" onclick="olCx('${o.id}',this)">✕ Cancel</button>`:''}</div>`;
   const lab=o=>o.st<0?'Cancel':o.rf?'Return':['Verify…','Accept…','Packing','Raste me','Delivered'][Math.min(4,o.st)];
   function bub(){ const L=OTS.filter(live); const on=L.length&&!ov.classList.contains('open')&&!lo.classList.contains('open'); if(bb.classList.contains('on')!==!!on) bb.classList.toggle('on',!!on); if(!L.length) return;
     const o=L[0]; const pct=Math.min(1,Math.max(0,o.st)/4); const rg=$('o2Rg'); if(rg) rg.setAttribute('stroke-dashoffset',String(182.2*(1-pct)));
@@ -30372,6 +30389,54 @@ body.kdd-ed #shopBody .se-bar button{padding:8px 11px;font-size:12.5px;margin-le
     const S=sess(); if(S&&K.i===MY_SHOP){ rpc('ko_shop_update',{p_phone:S.phone,p_pin:S.pin,p:{data:{feat:keep.filter(f=>!f.v||/^https?:/.test(f.v))}}}).catch(()=>{}); } };
 })();
 </script>
+<style id="v290-css">
+/* live orders: dropdown me action */
+.ol-ac{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.ol-ac .ol-go{flex:1 1 auto;margin:0!important}
+.ol-ac .ol-go.ch{background:#EDE9FE!important;color:#5B21B6!important}
+.ol-ac .ol-go.cx{background:#FDECEC!important;color:#B91C1C!important}
+/* chat */
+#o2ChB{padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;max-height:86vh}
+.ch-hd{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #EFE6D3}
+.ch-hd .av{width:42px;height:42px;border-radius:14px;background:#FFF1E4;display:grid;place-items:center;font-size:21px;flex:none}
+.ch-hd div{flex:1;min-width:0}.ch-hd b{display:block;font:800 15px Poppins,system-ui}.ch-hd small{color:#7d6d50;font-size:12px}
+.ch-hd .cl{width:40px;height:40px;border-radius:50%;background:#16A34A;color:#fff;display:grid;place-items:center;text-decoration:none;font-size:17px}
+.ch-ls{flex:1;overflow:auto;min-height:220px;max-height:46vh;padding:12px 2px;display:flex;flex-direction:column;gap:7px}
+.ch-m{align-self:flex-start;max-width:78%;background:#fff;border:1px solid #EFE6D3;border-radius:16px 16px 16px 4px;padding:8px 11px;font:500 13.5px Poppins,system-ui;color:#1d1408}
+.ch-m.me{align-self:flex-end;background:#1d1408;color:#F5E6C8;border-color:#1d1408;border-radius:16px 16px 4px 16px}
+.ch-m small{display:block;font-size:10px;opacity:.6;margin-top:3px;text-align:right}
+.ch-m.ty{display:flex;gap:4px;padding:11px 13px}.ch-m.ty i{width:6px;height:6px;border-radius:50%;background:#a89272;animation:chT 1s infinite}.ch-m.ty i:nth-child(2){animation-delay:.15s}.ch-m.ty i:nth-child(3){animation-delay:.3s}
+@keyframes chT{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+.ch-e{margin:auto;text-align:center;color:#9a8a6a;font:600 12.5px Poppins,system-ui;padding:20px}
+.ch-qr{display:flex;gap:6px;overflow-x:auto;padding:6px 0;scrollbar-width:none}.ch-qr::-webkit-scrollbar{display:none}
+.ch-qr button{flex:none;border:1.5px solid #EDE2CB;background:#FFFBF4;border-radius:99px;padding:7px 11px;font:700 12px Poppins,system-ui;color:#3b2f1c;white-space:nowrap}
+.ch-in{display:flex;gap:8px;padding-top:6px}
+.ch-in input{flex:1;border:1.5px solid #EDE2CB;border-radius:99px;padding:11px 14px;font:500 14px Poppins,system-ui;background:#fff;min-width:0}
+.ch-in button{width:46px;height:46px;border:0;border-radius:50%;background:#F47B20;color:#fff;font-size:18px}
+/* dukaan ke andar "Packing" button → options */
+.lf-hd{display:flex;gap:12px;align-items:center}
+.lf-hd i{width:58px;height:72px;border-radius:12px;background:#F3EBDD center/cover;flex:none}
+.lf-hd b{display:block;font:800 15px Poppins,system-ui}.lf-hd small{color:#7d6d50;font-size:12px}
+.lf-op{display:grid;gap:8px;margin-top:12px}
+</style>
+<script id="v290">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const R=n=>'₹'+Math.round(+n||0).toLocaleString('en-IN');
+  function sh(id){ let o=$(id); if(!o){ o=document.createElement('div'); o.id=id; o.className='kr-ov'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); } return o; }
+  const ST=['Verify ho raha','Dukaan ka jawab baaki','Packing ho rahi hai','Raste me hai','Pahunch gaya'];
+  /* dukaan ke andar chalte order ka button: cancel / baat / poori jaankari */
+  try{ const _lv=window.ksfLive; window.ksfLive=function(){ const X=window._ksf; if(!X){ return _lv&&_lv.apply(this,arguments); } const L=X.ordersOf(X.K.i).filter(o=>o.st>=0&&o.st<4); if(!L.length) return _lv&&_lv.apply(this,arguments);
+      const o2=sh('lfOv'); o2.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>🛵 Aapke chalte order</h4><div class="kr-sb">${E(SHOPS[X.K.i][0])} · ${L.length} order</div>${L.map(o=>{ const it=(o.its||[])[0]||{}; return `<div class="kr-rc"><div class="lf-hd"><i style="${it.im?`background-image:url('${E(it.im)}')`:''}"></i><div><b>${E(it.n||'Order')}${(o.its||[]).length>1?' +'+((o.its.length)-1):''}</b><small>${E(o.id)} · ${R(o.tot||o.amt)}</small><div style="margin-top:4px"><span class="kr-tag ${o.st===3?'v':'p'}">${ST[o.st]||''}</span></div></div></div>
+        <div class="lf-op"><div class="kr-row" style="margin:0"><button class="p" onclick="lfFull('${E(o.id)}',${o.real?1:0})">📡 Poori jaankari</button><button onclick="lfTalk('${E(o.id)}',${o.real?1:0},${o.st})">💬 ${o.st===3?'Rider':'Dukaan'} se baat</button></div><button class="kr-x" style="color:#B91C1C;border:1.5px solid #F5C2C2;border-radius:12px;margin-top:0" onclick="lfCx('${E(o.id)}',this)">✕ Order cancel karein</button></div></div>`; }).join('')}<button class="kr-x" onclick="krClose('lfOv')">Band karein</button></div>`; o2.classList.add('on'); };
+    const lf=$('ksfLf'); if(lf) lf.onclick=()=>ksfLive(); }catch(e){}
+  window.lfFull=(id,real)=>{ krClose('lfOv'); if(real&&window.o2Open){ o2Open(id); } else { try{ ksfOrders(); }catch(e){} } };
+  window.lfTalk=(id,real,st)=>{ krClose('lfOv'); if(real&&window.o2ChatFor){ o2ChatFor(id,st===3?'r':'s'); return; } try{ ksfWa(); }catch(e){ try{ toast('💬 Dukaan ko WhatsApp'); }catch(_){} } };
+  window.lfCx=(id,b)=>{ if(b&&!b.dataset.s){ b.dataset.s=1; b.textContent='Pakka cancel? Dobara dabayein'; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.s; b.textContent='✕ Order cancel karein'; } },3500); return; } krClose('lfOv'); try{ ksfCx(id); }catch(e){} };
+})();
+</script>
+
 
 
 
