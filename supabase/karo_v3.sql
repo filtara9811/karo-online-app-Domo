@@ -23,3 +23,8 @@ alter table public.ko_customers enable row level security;
 alter table public.ko_visits add column if not exists area text;
 alter table public.ko_customers add column if not exists area text;
 -- functions: ko_visits_feed(p_shop, p_limit) — migration "ko_visits_area_feed"
+
+-- v282: ek grahak = ek line (phone ya device se pehchaan), dobara aane par count nahi badhta, history
+alter table public.ko_visits add column if not exists dev text;
+create index if not exists ko_visits_shop_idx on public.ko_visits(shop, id desc);
+-- ko_visits_new ab 'n' (kitni baar aaya) deta hai; ko_visits_feed 'key' deta hai — migration "ko_visits_dedupe"

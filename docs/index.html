@@ -15884,7 +15884,7 @@ const QS_L={hi:{h:['स्कैन करें, ऑर्डर करें',
 function qsTx(k){ const L=QS.lang==='en'?QS_L.en:QS_L.hi; if(QS.lang==='both'&&(k==='sub'||k==='scan'||k==='ss')) return QS_L.en[k]; return L[k]; }
 function qsShop(){ let n='Ashu Readymade Garments'; try{ if(typeof sdName!=='undefined'&&sdName&&sdName.length>3) n=sdName; }catch(e){} return {n,cat:'Readymade Garments',area:'Bara Hindu Rao, Delhi',ph:'+91 98110 45210',upi:'ashu@okaxis',e:'👕'}; }
 function qsSlug(n){ return String(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
-function qsUrl(t){ return 'https://karoonline.in/s/'+qsSlug(qsShop().n)+(t?'?src='+QS_SZ[t][4]:''); }
+function qsUrl(t){ return 'https://filtara9811.github.io/karo-online-app-Domo/s/'+(typeof MY_SHOP!=='undefined'?MY_SHOP:1)+'.html?src=qr'+(t?'&d='+QS_SZ[t][4]:''); }
 function qsAv(){ try{ const v=getComputedStyle(document.documentElement).getPropertyValue('--avatar'); const m=v.match(/url\(["']?(data:[^"')]+)["']?\)/); return m?m[1]:''; }catch(e){ return ''; } }
 const qsE=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const QS_F="'Noto Sans Devanagari','Plus Jakarta Sans','Segoe UI',Arial,sans-serif";
@@ -15939,7 +15939,7 @@ function qsOpen(){ let o=document.getElementById('qsOv'); if(!o){ o=document.cre
 function qsClose(){ const o=document.getElementById('qsOv'); if(o) o.classList.remove('on'); }
 function qsSet(k,v){ QS[k]=v; qsRender(); }
 function qsRender(){ const o=document.getElementById('qsOv'); if(!o) return; const sc=(o.querySelector('.qs-bd')||{}).scrollTop||0, s=qsShop(), url=qsUrl(), tg=(k,l,sub)=>`<div class="qs-row"><div>${l}${sub?`<small>${sub}</small>`:''}</div><button class="qs-tg ${QS[k]?'on':''}" onclick="qsSet('${k}',${!QS[k]})" aria-label="${l}"></button></div>`;
-  o.innerHTML=`<div class="qs-hd"><button onclick="qsClose()" aria-label="Wapas">‹</button><div><b>📇 Mera QR & Standee</b><small>${qsE(s.n)} · karoonline.in/s/${qsSlug(s.n)}</small></div><button onclick="qsCounter()" aria-label="Phone par QR">📱</button></div>
+  o.innerHTML=`<div class="qs-hd"><button onclick="qsClose()" aria-label="Wapas">‹</button><div><b>📇 Mera QR & Standee</b><small>${qsE(s.n)} · scan karte hi dukaan khulegi</small></div><button onclick="qsCounter()" aria-label="Phone par QR">📱</button></div>
   <div class="qs-bd">
    <div class="qs-st"><div><b>42</b><small>AAJ SCAN</small></div><div><b class="gn">18</b><small>JUDE</small></div><div><b>6</b><small>QR SE ORDER</small></div><div><b>₹4.8k</b><small>QR SE SALE</small></div></div>
    <div class="qs-sr"><span>🧾 Standee se 28</span><span>📄 Poster se 9</span><span>🔵 Sticker se 5</span><span>📲 Status se 3</span></div>
@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=281;
+window.KO_V=282;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -28702,12 +28702,13 @@ html.dark #ksfLf{filter:invert(.92) hue-rotate(180deg)}
 window.KO_OWNER_PH=['9540068380'];
 window.koIsOwner=function(){ try{ if(/[?&]vendor=1/.test(location.search)) return true;
     const d=x=>String(x||'').replace(/\D/g,'').slice(-10);
-    const s=JSON.parse(localStorage.getItem('1qr_session')||'null'), c=JSON.parse(localStorage.getItem('ko_cust')||'{}'), a=JSON.parse(localStorage.getItem('ko_myapp')||'null');
-    const ph=[d(s&&s.n),d(c.phone),d(a&&a.ph)].filter(x=>x.length===10);
-    if(ph.some(x=>KO_OWNER_PH.includes(x))) return true;
-    if(localStorage.getItem('1qr_vendor')==='1') return true;   /* is phone par dukaan judi hai (Vendor) */
-    if(!ph.length&&!/[?&]shop=\d/.test(location.search)) return true; /* ऐप khud khola, kisi grahak ka number nahi */
-    return false; }catch(e){ return true; } };
+    const ss=JSON.parse(localStorage.getItem('1qr_session')||'null'), c=JSON.parse(localStorage.getItem('ko_cust')||'{}'), a=JSON.parse(localStorage.getItem('ko_myapp')||'null');
+    const ph=[d(ss&&ss.n),d(c.phone)].filter(x=>x.length===10), ap=d(a&&a.ph);
+    if(ph.some(x=>KO_OWNER_PH.includes(x))||KO_OWNER_PH.includes(ap)) return true;
+    if(ph.length) return false;                       /* kisi aur number se login = grahak */
+    if(a&&ap.length===10) return false;               /* naya seller — uski apni dukaan, Ashu ki nahi */
+    return localStorage.getItem('1qr_vendor')==='1';  /* bina number ke: sirf is phone par judi dukaan */
+  }catch(e){ return false; } };
 (function(){ const f=()=>document.body&&document.body.classList.toggle('ko-cust',!window.koIsOwner()); f(); addEventListener('storage',f); setInterval(f,4000); })();
 </script>
 <script id="v275">
@@ -28760,7 +28761,8 @@ window.ksfOpen=function(i){ if(!SHOPS[i]) return; K.i=i; K.tmp=[]; const S=SHOPS
   try{ const k='ko_vis_'+i; if(!sessionStorage.getItem(k)&&!isOwner()){ sessionStorage.setItem(k,1); let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){}
     if(c.phone){ ping(c); setTimeout(()=>{ try{ toast('🙏 Swagat hai '+(c.name||'')+' — '+S[0]+' me'); }catch(e){} },1200); } else setTimeout(welcome,1600); } }catch(e){} };
 const src=()=>new URLSearchParams(location.search).get('src')||(window._ksfSrc||'link');
-function ping(c,s2){ try{ window.koRpc&&koRpc('ko_visit',{p:{shop:SHOPS[K.i][0],shop_idx:String(K.i),name:c.name||'',phone:c.phone||'',area:c.area||c.city||'',src:s2||src()}}); }catch(e){} }
+function devId(){ let d=''; try{ d=localStorage.getItem('ko_dev')||''; if(!d){ d='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem('ko_dev',d); } }catch(e){} return d; }
+function ping(c,s2){ try{ window.koRpc&&koRpc('ko_visit',{p:{shop:SHOPS[K.i][0],shop_idx:String(K.i),name:c.name||'',phone:c.phone||'',area:c.area||c.city||'',src:s2||src(),dev:devId()}}); }catch(e){} }
 /* video dekhi → dukaandar ko "watch" */
 function watched(){ if(!K.hero||isOwner()) return; const k='ko_wt_'+K.i; try{ if(sessionStorage.getItem(k)) return; sessionStorage.setItem(k,1); }catch(e){} let c={}; try{ c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); }catch(e){} ping(c,'watch'); }
 /* pehli baar aaye grahak se naam + mobile (OTP nahi) — doosri baar seedha */
@@ -29014,6 +29016,30 @@ new MutationObserver(()=>{ if(root.classList.contains('on')) cartN(); }).observe
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.querySelectorAll('video').forEach(v=>v.pause()); else if(root.classList.contains('on')) go(K.cur); });
 })();
 </script>
+<style id="v282-css">
+/* ===== v282 ===== */
+#sdOv .sd-nav{bottom:0!important;left:0!important;right:0!important;border-radius:24px 24px 0 0!important;padding-bottom:env(safe-area-inset-bottom,0px)}
+#sdOv #sdCtrI{bottom:0!important}
+#sdOv #sdCart{bottom:72px!important}
+#sdOv.hs-alt-on #sdCart,#sdOv.hs-alt-on .sdx-hint,#sdOv.hs-alt-on #moFab{display:none!important}
+#hsCtx .hc-hx{padding:0 12px 12px;border-bottom:1px solid #F4ECDC;background:#FCF8EF}
+#hsCtx .hc-pf{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 8px 60px}
+#hsCtx .hc-pf span{font-size:11.5px;font-weight:700;background:#fff;border:1px solid #EDE2CB;border-radius:99px;padding:3px 9px;color:#4a3d22}
+#hsCtx .hc-tl{margin:0 0 10px 60px;border-left:2px solid #E8DCC4;padding-left:12px}
+#hsCtx .hc-tl div{position:relative;padding:5px 0}
+#hsCtx .hc-tl i{position:absolute;left:-19px;top:9px;width:12px;height:12px;border-radius:50%;border:2px solid #FCF8EF;background:#2563EB}
+#hsCtx .hc-tl i.o{background:#16A34A}#hsCtx .hc-tl i.w{background:#E1306C}
+#hsCtx .hc-tl b{display:block;font-size:12.5px;font-weight:700;color:#231a0e}#hsCtx .hc-tl small{font-size:11px;color:#8a8373}
+#hsCtx .hc-hx .hc-x{padding:0 0 0 60px;border:none}
+#koGate{position:fixed;inset:0;z-index:99950;background:rgba(20,14,6,.55);display:none;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif}
+#koGate.on{display:flex}
+#koGate .c{width:100%;max-width:430px;background:#FFFBF2;color:#231a0e;border-radius:26px 26px 0 0;padding:22px 18px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;animation:hcIn .35s both}
+#koGate .ic{font-size:40px}#koGate h4{margin:6px 0 4px;font:900 19px Poppins,system-ui}#koGate p{margin:0 0 14px;color:#8a7a5a;font-size:13px}
+#koGate .st{background:#fff;border:1.5px solid #F0E3C6;border-radius:16px;padding:12px;text-align:left;margin-bottom:12px;font-size:13px}
+#koGate .st b{display:block;font-size:15px}
+#koGate a,#koGate button{display:block;width:100%;box-sizing:border-box;border:none;border-radius:16px;padding:14px;font:800 15px Poppins,system-ui;cursor:pointer;text-decoration:none;margin-top:8px}
+#koGate .p{background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff}#koGate .s{background:#F3E7CC;color:#6b5122}#koGate .x{background:none;color:#8a7a5a;padding:8px}
+</style>
 <style id="v281-css">
 /* ===== v281: vendor My Shop — upar ka card badle to neeche usi ki details ===== */
 .hs-alt>:not(#sdTgHost1),.hs-alt #v5w_shop{display:none!important}
@@ -29081,25 +29107,34 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.quer
   /* ---------- 1) QR / visitors — WhatsApp jaisi list ---------- */
   const AREAS=['Bara Hindu Rao','Sadar Bazar','Pul Bangash','Subzi Mandi','Kishan Ganj','Paharganj','Chandni Chowk','Karol Bagh','Daryaganj','Shastri Nagar'];
   const NAMES=['Rahul Verma','Sana Khan','Pooja Sharma','Imran Ali','Neha Gupta','Arjun Singh','Ayesha Siddiqui','Vikas Jain','Meena Kapoor','Faisal Ahmed','Kavita Arora','Salman Qureshi','Ritu Malhotra','Deepak Yadav'];
-  function demo(){ const now=Date.now(), L=[];
-    NAMES.forEach((n,k)=>{ const t=now-(k*k*7+k*11+3)*6e4, typ=k%5===1?'o':k%4===2?'w':'v', p=P()[k%Math.max(1,P().length)];
-      L.push({n,ph:'9'+String(870000000+k*7391357).slice(0,9),ar:AREAS[k%AREAS.length],t,typ,src:k%3?'qr':'link',cnt:1+(k*7)%4,it:typ==='o'&&p?p[1]+' ×1':'',amt:typ==='o'&&p?+String(p[2]).replace(/\D/g,''):0,demo:1}); });
-    try{ SD_ORD.forEach((o,k)=>L.push({n:o.c,ph:'',ar:o.ad,t:now-(k*17+4)*6e4,typ:'o',src:'app',cnt:1,it:o.it,amt:o.amt,oid:o.id,st:o.st})); }catch(e){}
-    return L; }
-  function rows(){ const real=HC.feed.map(v=>({n:v.name,ph:v.phone,ar:v.area,t:+new Date(v.at),typ:v.src==='watch'?'w':'v',src:v.src,cnt:1,real:1}));
-    return real.concat(demo()).sort((a,b)=>b.t-a.t); }
+  function demo(){ const now=Date.now(), E2=[];
+    NAMES.forEach((n,k)=>{ const ph='9'+String(870000000+k*7391357).slice(0,9), ar=AREAS[k%AREAS.length], cnt=1+(k*7)%4;
+      for(let v=0;v<cnt;v++){ const t=now-((k*k*7+k*11+3)+v*(1440+k*97))*6e4; E2.push({key:'demo'+k,n,ph,ar,t,typ:v===1&&k%4===2?'w':'v',src:k%3?'qr':'link',demo:1}); }
+      if(k%5===1){ const p=P()[k%Math.max(1,P().length)]; if(p) E2.push({key:'demo'+k,n,ph,ar,t:now-(k*k*7+k*11+1)*6e4,typ:'o',it:p[1]+' ×1',amt:+String(p[2]).replace(/\D/g,''),demo:1}); } });
+    try{ SD_ORD.forEach((o,k)=>E2.push({key:'ord'+o.c,n:o.c,ph:'',ar:o.ad,t:now-(k*17+4)*6e4,typ:'o',it:o.it,amt:o.amt,oid:o.id})); }catch(e){}
+    return E2; }
+  /* saare events → har grahak ki ek hi line (WhatsApp jaisa), andar poori history */
+  function people(){ const ev=HC.feed.map(v=>({key:'r'+(v.key||v.id),n:v.name,ph:v.phone,ar:v.area,t:+new Date(v.at),typ:v.src==='watch'?'w':'v',src:v.src,real:1})).concat(demo());
+    const M=new Map(); ev.forEach(e=>{ let g=M.get(e.key); if(!g){ g={key:e.key,n:e.n,ph:e.ph,ar:e.ar,ev:[],real:e.real}; M.set(e.key,g); } g.ev.push(e); if(e.n&&e.n!=='Koi grahak') g.n=e.n; if(e.ar&&!g.ar) g.ar=e.ar; if(e.ph&&!g.ph) g.ph=e.ph; });
+    const G=[...M.values()]; G.forEach(g=>{ g.ev.sort((a,b)=>b.t-a.t); g.t=g.ev[0].t; g.last=g.ev[0]; g.v=g.ev.filter(e=>e.typ==='v').length; g.o=g.ev.filter(e=>e.typ==='o'); g.w=g.ev.filter(e=>e.typ==='w').length; g.newToday=Date.now()-g.ev[g.ev.length-1].t<864e5; });
+    return G.sort((a,b)=>b.t-a.t); }
   function loadFeed(){ if(Date.now()-HC.fat<20000||!window.koRpc) return; HC.fat=Date.now();
-    koRpc('ko_visits_feed',{p_shop:shopName(),p_limit:60}).then(r=>{ if(Array.isArray(r)){ HC.feed=r; if(HC.k===1) paint(); } }).catch(()=>{}); }
-  function qrView(){ const L=rows(), q=HC.q.toLowerCase(), T={all:L,v:L.filter(x=>x.typ==='v'),o:L.filter(x=>x.typ==='o'),w:L.filter(x=>x.typ==='w')};
-    const V=(T[HC.f]||L).filter(x=>!q||(x.n+' '+x.ph+' '+x.ar).toLowerCase().includes(q));
-    const ic={v:'👀',o:'🛒',w:'▶'}, lab=x=>x.typ==='o'?`🛒 Order · ${E(x.it)}`:x.typ==='w'?`▶ Video dekhi${x.ar?' · 📍 '+E(x.ar):''}`:`${x.src==='qr'?'📷 QR scan':'🔗 Link'}${x.ar?' · 📍 '+E(x.ar):''}`;
-    const today=L.filter(x=>Date.now()-x.t<864e5);
-    return `<div class="hc-h"><b>Dukaan par kaun aaya</b><small>● ${today.length} aaj</small></div>
-     <div class="hc-sum"><div><b>${today.filter(x=>x.typ==='v').length}</b><small>AAJ VISIT</small></div><div><b>${new Set(L.filter(x=>x.ph).map(x=>x.ph)).size}</b><small>GRAHAK JUDE</small></div><div><b>${L.filter(x=>x.typ==='o').length}</b><small>ORDER</small></div><div><b>${L.filter(x=>x.typ==='w').length}</b><small>VIDEO DEKHI</small></div></div>
-     <div class="hc-ch">${[['all','Sab',L.length],['v','👀 Visit',T.v.length],['o','🛒 Order',T.o.length],['w','▶ Dekha',T.w.length]].map(([k,t,n])=>`<button class="${HC.f===k?'on':''}" onclick="hcF('${k}')">${t}<u>${n}</u></button>`).join('')}</div>
+    koRpc('ko_visits_feed',{p_shop:shopName(),p_limit:300}).then(r=>{ if(Array.isArray(r)){ HC.feed=r; if(HC.k===1) paint(); } }).catch(()=>{}); }
+  const dts=t=>{ const d=new Date(t); return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+', '+d.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}).toLowerCase(); };
+  function qrView(){ const G=people(), q=HC.q.toLowerCase(), day=Date.now()-864e5;
+    const T={all:G,v:G.filter(g=>g.v),o:G.filter(g=>g.o.length),w:G.filter(g=>g.w),nw:G.filter(g=>g.newToday)};
+    const V=(T[HC.f]||G).filter(g=>!q||(g.n+' '+g.ph+' '+g.ar).toLowerCase().includes(q));
+    const lastTxt=g=>{ const e=g.last; return e.typ==='o'?`🛒 Order · ${E(e.it)}`:e.typ==='w'?'▶ Video dekhi':`${e.src==='qr'?'📷 QR scan':'🔗 Link'}${g.ar?' · 📍 '+E(g.ar):''}`; };
+    const evTxt=e=>e.typ==='o'?`🛒 Order — ${E(e.it)}${e.amt?' · '+R(e.amt):''}`:e.typ==='w'?'▶ Video / story dekhi':`${e.src==='qr'?'📷 QR scan karke aaye':'🔗 Link se aaye'}`;
+    const todayV=G.filter(g=>g.ev.some(e=>e.t>day)).length;
+    return `<div class="hc-h"><b>Dukaan par kaun aaya</b><small>● ${todayV} aaj</small></div>
+     <div class="hc-sum"><div><b>${todayV}</b><small>AAJ AAYE</small></div><div><b>${G.length}</b><small>KUL GRAHAK</small></div><div><b>${T.o.length}</b><small>ORDER KIYA</small></div><div><b>${T.w.length}</b><small>VIDEO DEKHI</small></div></div>
+     <div class="hc-ch">${[['all','Sab',G.length],['nw','✨ Naye',T.nw.length],['v','👀 Visit',T.v.length],['o','🛒 Order',T.o.length],['w','▶ Dekha',T.w.length]].map(([k,t,n])=>`<button class="${HC.f===k?'on':''}" onclick="hcF('${k}')">${t}<u>${n}</u></button>`).join('')}</div>
      <div class="hc-sr">🔍<input placeholder="Naam, number ya ilaka khojein" value="${E(HC.q)}" oninput="hcQ(this.value)"></div>
-     <div class="hc-l">${V.length?V.slice(0,60).map((x,i)=>{ const key=x.n+'|'+x.t, op=HC.x===key; return `<div class="hc-r" onclick="hcX('${E(key)}')"><span class="hc-av" style="background:${col(x.n)}">${E(ini(x.n))}<i class="${x.typ}">${ic[x.typ]}</i></span><div class="hc-m"><div class="t"><b>${E(x.n)}</b><time class="${Date.now()-x.t<36e5?'nw':''}">${ago(x.t)}</time></div><div class="s"><span>${lab(x)}</span>${x.typ==='o'&&x.amt?`<em class="am">${R(x.amt)}</em>`:x.cnt>1?`<em>${x.cnt}</em>`:''}</div></div></div>${op?`<div class="hc-x">${x.ph&&!/•/.test(x.ph)?`<a class="cl" href="tel:${E(x.ph)}">📞 Call</a><a class="wa" href="https://wa.me/91${E(x.ph)}" target="_blank" rel="noopener">💬 WhatsApp</a>`:`<button onclick="toast('📱 Poora number Karo Business ऐप me dikhega')">📞 ${x.ph?E(x.ph):'Number nahi diya'}</button>`}${x.typ==='o'?`<button onclick="sdOrdersSheet&&sdOrdersSheet()">🧾 Order</button>`:''}</div>`:''}`; }).join(''):'<div class="hc-e">Koi nahi mila</div>'}</div>
-     <p class="hc-nt">QR / link se aaye grahak, unke order aur video dekhne wale — sab yahan</p>`; }
+     <div class="hc-l">${V.length?V.slice(0,80).map(g=>{ const op=HC.x===g.key, tp=g.last.typ, full=g.ph&&!/•/.test(g.ph); return `<div class="hc-r" onclick="hcX('${E(g.key)}')"><span class="hc-av" style="background:${col(g.n)}">${E(ini(g.n))}<i class="${tp}">${{v:'👀',o:'🛒',w:'▶'}[tp]}</i></span><div class="hc-m"><div class="t"><b>${E(g.n)}</b><time class="${Date.now()-g.t<36e5?'nw':''}">${ago(g.t)}</time></div><div class="s"><span>${lastTxt(g)}</span>${g.ev.length>1?`<em title="Kul ${g.ev.length} baar">${g.ev.length}</em>`:''}</div></div></div>${op?`<div class="hc-hx"><div class="hc-pf">${g.ph?`<span>📞 ${E(g.ph)}</span>`:''}${g.ar?`<span>📍 ${E(g.ar)}</span>`:''}<span>👀 ${g.v} visit</span><span>🛒 ${g.o.length} order</span>${g.w?`<span>▶ ${g.w} video</span>`:''}</div>
+       <div class="hc-tl">${g.ev.slice(0,12).map(e=>`<div><i class="${e.typ}"></i><b>${evTxt(e)}</b><small>${dts(e.t)}</small></div>`).join('')}</div>
+       <div class="hc-x">${full?`<a class="cl" href="tel:${E(g.ph)}">📞 Call</a><a class="wa" href="https://wa.me/91${E(g.ph)}" target="_blank" rel="noopener">💬 WhatsApp</a>`:`<button onclick="toast('📱 Poora number aur Call — Karo Business ऐप me')">📞 ${g.ph?'Number chhupa':'Number nahi diya'}</button>`}${g.o.length?`<button onclick="sdOrdersSheet&&sdOrdersSheet()">🧾 Orders</button>`:''}</div></div>`:''}`; }).join(''):'<div class="hc-e">Koi nahi mila</div>'}</div>
+     <p class="hc-nt">Ek grahak = ek line. Dobara aaye to nayi line nahi banti — wahi upar aa jati hai aur history me jud jata hai.</p>`; }
   /* ---------- 2) Stock ---------- */
   function soldToday(){ const m={}; try{ RPapi.today().forEach(b=>b.items.forEach(it=>{ const p=P().find(x=>String(it.n).indexOf(x[1])===0); if(p) m[p[1]]=(m[p[1]]||0)+(+it.q||1); })); }catch(e){} return m; }
   function stockView(){ const S=soldToday(), L=P().map((p,j)=>{ const st=+p[4]||0; let buy=0; try{ buy=posBuy(p); }catch(e){} return {p,j,st,buy,sold:S[p[1]]||0}; });
@@ -29129,7 +29164,7 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.quer
   /* ---------- wiring ---------- */
   function kind(k){ const tr=$('hsTr'); const s=tr&&tr.children[k]; if(!s) return 'main'; if(s.classList.contains('qs-sl')) return 'qr'; const t=s.textContent||''; if(/Total Stock/.test(t)) return 'stock'; if(/Recent invoices/.test(t)) return 'inv'; if(/Khata/.test(t)) return 'kh'; return 'main'; }
   function ensure(){ const host=$('sdTgHost1'), w=host&&host.querySelector('.hs-w'); if(!w) return null; let c=$('hsCtx'); if(!c){ c=document.createElement('div'); c.id='hsCtx'; w.insertAdjacentElement('afterend',c); } return c; }
-  function paint(){ const c=ensure(); if(!c) return; const host=$('sdTgHost1'), par=host.parentNode, kd=kind(HC.k); par.classList.toggle('hs-alt',kd!=='main'); if(kd==='main'){ c.innerHTML=''; return; }
+  function paint(){ const c=ensure(); if(!c) return; const host=$('sdTgHost1'), par=host.parentNode, kd=kind(HC.k); par.classList.toggle('hs-alt',kd!=='main'); const so=document.getElementById('sdOv'); if(so) so.classList.toggle('hs-alt-on',kd!=='main'); if(kd==='main'){ c.innerHTML=''; return; }
     if(kd==='qr') loadFeed(); const y=window.scrollY; c.innerHTML=kd==='qr'?qrView():kd==='stock'?stockView():kd==='inv'?invView():khView(); }
   window.hcF=f=>{ HC.f=f; HC.x=null; paint(); };
   let qt; window.hcQ=v=>{ HC.q=v; clearTimeout(qt); qt=setTimeout(()=>{ const a=document.activeElement, pos=a&&a.selectionStart; paint(); const i=document.querySelector('#hsCtx .hc-sr input'); if(i){ i.focus(); try{ i.setSelectionRange(pos,pos); }catch(e){} } },250); };
@@ -29138,5 +29173,26 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.quer
   let bound=null; function bind(){ const tr=$('hsTr'); if(tr&&tr!==bound){ bound=tr; tr.addEventListener('scroll',onScroll,{passive:true}); } ensure(); }
   const _hs=window.shHeroRender; window.shHeroRender=function(){ const r=_hs&&_hs.apply(this,arguments); bind(); if(HC.k) paint(); return r; };
   bind(); setInterval(()=>{ bind(); if(HC.k===1&&document.querySelector('.hs-alt')) { loadFeed(); } },20000);
+})();
+</script>
+<script id="v282">
+/* ===== v282: dukaandar panel / POS sirf us dukaan ke malik ko ===== */
+(function(){
+  function gate(){ let a=null; try{ a=JSON.parse(localStorage.getItem('ko_myapp')||'null'); }catch(e){} let o=document.getElementById('koGate'); if(!o){ o=document.createElement('div'); o.id='koGate'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); }
+    const APK='https://github.com/filtara9811/karo-online-app-Domo/releases?q=vendor';
+    o.innerHTML=a?`<div class="c"><div class="ic">🏪</div><h4>Aapki dukaan: ${String(a.n||a.name||'Nayi dukaan').replace(/</g,'&lt;')}</h4><p>Aapka POS, stock, orders aur grahak — sab <b>Karo Business</b> ऐप me, sirf aapke number se.</p>
+      <div class="st"><b>${a.st>=3?'✅ Dukaan LIVE hai':'⏳ Approval chal raha hai'}</b>${a.st>=3?'Grahak aapki dukaan dekh sakte hain':'Admin check kar rahe hain — 24 ghante me LIVE'}</div>
+      <a class="p" href="${APK}">⬇️ Karo Business ऐप kholein / download</a><button class="s" onclick="document.getElementById('koGate').classList.remove('on');try{sjReset();openSm('sellOv')}catch(e){}">📋 Application dekhein</button><button class="x" onclick="document.getElementById('koGate').classList.remove('on')">Band karein</button></div>`
+     :`<div class="c"><div class="ic">🔒</div><h4>Ye dukaandar ka panel hai</h4><p>Is number se koi dukaan judi nahi hai. Apni dukaan kholein — ₹1 me trial, apna POS, stock aur grahak.</p>
+      <button class="p" onclick="document.getElementById('koGate').classList.remove('on');try{sjReset();openSm('sellOv')}catch(e){}">🏪 Apni dukaan kholein</button><button class="x" onclick="document.getElementById('koGate').classList.remove('on')">Band karein</button></div>`;
+    o.classList.add('on'); }
+  window.koGate=gate;
+  /* ऐप ke scanner se Karo Online ka QR (s/N.html ya ?shop=N) → wahi dukaan, naye roop me */
+  try{ const _f=scFind; window.scFind=scFind=function(t){ const u=String(t||''); const m=u.match(/karo-online-app-Domo\/s\/(\d+)\.html/i)||u.match(/karo-online-app-Domo\/?\?(?:[^#]*&)?shop=(\d+)/i);
+      if(m&&SHOPS[+m[1]]){ window._ksfDeep=+m[1]; window._ksfSrc='qr'; return +m[1]; } return _f.apply(this,arguments); }; }catch(e){}
+  const wrap=n=>{ const f=window[n]; if(typeof f!=='function'||f._g) return; const g=function(){ if(!window.koIsOwner()){ gate(); return; } return f.apply(this,arguments); }; g._g=1; window[n]=g; try{ eval(n+'=g'); }catch(e){} };
+  ['vendorEnter','sdOpen','vbPos','vbEdit','posOpen'].forEach(wrap);
+  /* agar pehle se panel khula ho aur malik nahi — band */
+  setInterval(()=>{ const so=document.getElementById('sdOv'); if(so&&so.classList.contains('on')&&!window.koIsOwner()){ try{ sdClose(); }catch(e){ so.classList.remove('on'); } gate(); } },3000);
 })();
 </script>

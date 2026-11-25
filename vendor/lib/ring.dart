@@ -127,7 +127,7 @@ Future<void> bgMain(ServiceInstance service) async {
             if (last >= 0) {
               await fln.show(
                 200000 + id,
-                v['src'] == 'watch' ? '▶ ${v['name']} ne aapki video dekhi' : '👀 ${v['name']} ne aapki dukaan dekhi',
+                v['src'] == 'watch' ? '▶ ${v['name']} ne aapki video dekhi' : ((v['n'] ?? 1) as num) > 1 ? '🔁 ${v['name']} phir aaye · ${v['n']}vi baar' : '👀 ${v['name']} ne aapki dukaan dekhi',
                 '${(v['phone'] ?? '').toString().isNotEmpty ? '📞 ${v['phone']} · ' : ''}${(v['area'] ?? '').toString().isNotEmpty ? '📍 ${v['area']} · ' : ''}${v['src'] == 'qr' ? 'QR scan se aaye' : v['src'] == 'watch' ? 'Video dekhi' : 'Link se aaye'}',
                 const NotificationDetails(android: AndroidNotificationDetails('ko_visit', 'Dukaan par visit', importance: Importance.high, priority: Priority.high)),
               );
