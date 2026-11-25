@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=287;
+window.KO_V=288;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -29675,6 +29675,7 @@ body.ko-one #shopsOv .ko-micc .r{border-color:rgba(15,118,110,.45)}
     const tr=`${shop} — Shartein (Terms)\n\n• Saaman ki photo asli ke jaisi hai, rang thoda alag ho sakta hai.\n• Daam me GST shamil hai (agar laagu ho).\n• Cash on delivery par saaman lene se mana karne par agli baar advance maanga ja sakta hai.\n• Ye dukaan apni khud ki maalik hai — Karo Online (Filipra Private Limited) sirf app / tool deta hai.\n• Kisi bhi shikayat ke liye pehle dukaan se, phir Karo Online support se baat karein.`;
     return {ret,pr,tr}; }
   let PE=null;
+  window._krPol={pol,polSave,polFetch};
   window.krPolOpen=function(){ const shop=myShop(); const p=pol(shop); PE=Object.assign({},p,{cond:[...(p.cond||[])]}); if(!PE.txt) PE.txt=tpl(shop,PE); polFetch(shop); krPolR(); sheet('krPol').classList.add('on'); };
   window.krPolR=function(){ const o=sheet('krPol'), p=PE, shop=myShop();
     const seg=(k,opts,big)=>`<div class="kr-seg${big?' big':''}">${opts.map(([v,l,s])=>`<button class="${String(p[k])===String(v)?'on':''}" onclick="krPS('${k}','${v}')">${l}${s?`<small>${s}</small>`:''}</button>`).join('')}</div>`;
@@ -29911,7 +29912,6 @@ body.kdd-on #kddBar{display:block}
 #kddBar button.on{color:#2a2418}
 #kddBar button.r{justify-content:flex-end}
 #kddBar button em{font-style:normal;font-size:10px;font-weight:800;background:#16A34A;color:#fff;border-radius:99px;padding:2px 7px}
-body.kdd-on #ksf{top:calc(52px + env(safe-area-inset-top,0px))!important}
 body.kdd-on #shopOv{top:calc(52px + env(safe-area-inset-top,0px))!important}
 /* edit toolbar */
 #kddTools{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:2147482400;display:none;gap:6px;padding:6px;border-radius:99px;background:rgba(29,20,8,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 10px 28px rgba(0,0,0,.35);max-width:calc(100vw - 20px)}
@@ -29965,7 +29965,7 @@ body.kv-shop #sdOv .sd-mh,body.kv-shop #sdOv .sd-lbz,body.kv-shop #sdOv #sdMapCa
   document.addEventListener('click',e=>{ const a=$('adOv'); if(!a||!a.classList.contains('on')) return; const b=e.target.closest&&e.target.closest('.ad-tg,.ad-seg button'); if(b) koChime('tick'); },true);
 
   /* ================= 3) Admin: Dukaandar app me kya dikhe ================= */
-  const vmode=()=>{ const c=CFG(); if(c.vmode) return c.vmode; const m=c.mode||'both'; return m==='shops'?'shop':m==='quick'?'leads':'both'; };
+  const vmode=()=>{ if(window.KO_DK) return 'shop'; const c=CFG(); if(c.vmode) return c.vmode; const m=c.mode||'both'; return m==='shops'?'shop':m==='quick'?'leads':'both'; };
   window.koVMode=vmode;
   try{ const _s=window.adS_set; if(_s) window.adS_set=adS_set=function(){ let h=_s.apply(this,arguments); const v=vmode();
       const row=`<div style="display:block;margin-top:14px"><span>Dukaandar app me kya dikhe<small>Upar ki patti — "My Shop" hamesha rahega · doosri taraf Leads ya Digital Dukaan</small></span><div class="ad-seg">${[['leads','⚡ Sirf Leads'],['shop','🏬 Sirf Digital Dukaan'],['both','✨ Dono']].map(([k,l])=>`<button class="${v===k?'on':''}" onclick="koCfgSet('vmode','${k}',this);koVPrev('${k}')">${l}</button>`).join('')}</div><div class="ko-live" id="koVTag"><i></i>${vt(v)}</div></div>`;
@@ -30005,5 +30005,176 @@ body.kv-shop #sdOv .sd-mh,body.kv-shop #sdOv .sd-lbz,body.kv-shop #sdOv #sdMapCa
   setInterval(()=>{ if(document.body.classList.contains('kdd-on')&&!document.body.classList.contains('ksf-on')){ document.body.classList.remove('kdd-on','kdd-pv'); } },800);
 })();
 </script>
+<style id="v288-css">
+/* Digital Dukaan: patti me hi Edit (neeche wali patti hatai) */
+#kddTools,#kddPv{display:none!important}
+#kddBar .ed{margin-left:auto;margin-right:46px;border:0;border-radius:99px;padding:7px 13px;background:#1d1408;color:#F5C451;font:800 12.5px Poppins,system-ui;display:inline-flex;align-items:center;gap:5px;box-shadow:0 3px 10px rgba(0,0,0,.18);width:auto!important;height:auto!important;flex:none}
+#kddBar .ed.on{background:#16A34A;color:#fff}
+#kddBar button.on{gap:6px}
+/* edit mode: wahi dukaan, upar "Edit mode" patti */
+body.kdd-ed #shopBody{padding-top:0}
+body.kdd-ed #shopBody .se-bar{position:fixed!important;left:0;right:0;top:0;z-index:2147482450;max-width:520px;margin:0 auto;border-radius:0!important}
+body.kdd-ed #shopBody .se-bar button{margin-left:6px}
+body.kdd-ed #shopBody .se-bar span{font-size:11px;line-height:1.25}body.kdd-ed #shopBody .se-bar span b{font-size:13px}
+body.kdd-ed #shopBody .se-bar .kdd-k{background:#F5C451;color:#1d1408}
+body.kdd-ed #ksf .kf-kh{outline:2.5px dashed #F47B20;outline-offset:-6px}
+.kdd-ch{position:absolute;z-index:30;border:0;border-radius:99px;padding:7px 12px;background:#F47B20;color:#fff;font:800 12.5px Poppins,system-ui;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer;display:none}
+body.kdd-ed .kdd-ch{display:block}
+/* tabs ka kram / chhupe tab */
+#bpTabs button.kdd-hid{display:none}
+body.kdd-ed #bpTabs button.kdd-hid{display:inline-flex;opacity:.4}
+.kk-ls{display:grid;gap:7px;margin-top:6px;touch-action:none}
+.kk-it{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #EDE2CB;border-radius:14px;padding:10px 10px;font:700 14px Poppins,system-ui;color:#1d1408;user-select:none;-webkit-user-select:none}
+.kk-it.dr{box-shadow:0 12px 28px rgba(0,0,0,.18);border-color:#F47B20;position:relative;z-index:2}
+.kk-it.off{opacity:.45}
+.kk-it .h{cursor:grab;font-size:20px;color:#a89272;touch-action:none;padding:0 4px}
+.kk-it span{flex:1}
+.kk-it button{border:0;background:#F3EBDD;border-radius:9px;width:34px;height:32px;font-size:15px;cursor:pointer}
+/* menu card: referral text saaf */
+#kvcOv .ac-wallet .kvc-rf small{display:block;font:800 10px Poppins,system-ui;letter-spacing:.12em;color:#9a6b1f}
+#kvcOv .ac-wallet .kvc-rf b{display:block;font:800 15px Poppins,system-ui;line-height:1.25;white-space:nowrap;color:#2a2418}
+#kvcOv .ac-wallet .kvc-rf em{display:block;font:600 11.5px Poppins,system-ui;font-style:normal;color:#8a6a2a;white-space:nowrap}
+/* bulk upload */
+.kb-g{display:grid;gap:10px}
+.kb-c{display:grid;grid-template-columns:78px 1fr;gap:10px;background:#fff;border:1.5px solid #EDE2CB;border-radius:16px;padding:9px}
+.kb-c i{width:78px;height:96px;border-radius:12px;background:#F3EBDD center/cover;position:relative}
+.kb-c i b{position:absolute;left:4px;bottom:4px;border-radius:99px;padding:2px 7px;font:800 9.5px Poppins,system-ui;font-style:normal;color:#fff;background:rgba(0,0,0,.55)}
+.kb-c input{width:100%;box-sizing:border-box;border:1.5px solid #EDE2CB;border-radius:10px;padding:8px 9px;font:600 13px Poppins,system-ui;background:#FFFBF4}
+.kb-r{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.kb-r label{font:800 9px Poppins,system-ui;letter-spacing:.06em;color:#9a8460}
+.kb-x{border:0;background:none;color:#B91C1C;font:700 11.5px Poppins,system-ui;padding:4px 0;text-align:left}
+.kb-drop{display:grid;place-items:center;gap:4px;border:2px dashed #D9CBB0;border-radius:18px;padding:22px;background:#FBF6EC;color:#7d6d50;font:700 13.5px Poppins,system-ui;cursor:pointer;text-align:center}
+.kb-drop b{font-size:30px;color:#C2410C}
+/* Karo Dukaan app: bazaar wale raaste chhupao */
+body.ko-dk-app #sdOv .sd-back,body.ko-dk-app #kddBar .mk{display:none!important}
+</style>
+<script id="v288">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const T=m=>{ try{ toast(m); }catch(e){} };
+  const myShop=()=>{ try{ return SHOPS[MY_SHOP][0]; }catch(e){ return 'Ashu Readymade Garments'; } };
+
+  /* ===== 0) Karo Dukaan app (alag APK) ===== */
+  const qs=new URLSearchParams(location.search);
+  let DK=false; try{ if(qs.get('app')==='dukaan') localStorage.setItem('ko_app','dukaan'); DK=localStorage.getItem('ko_app')==='dukaan'&&qs.get('app')!=='market'; if(qs.get('app')==='market') localStorage.removeItem('ko_app'); }catch(e){}
+  window.KO_DK=DK;
+  if(DK){ document.body.classList.add('ko-dk-app'); try{ const _v=window.koVMode; window.koVMode=()=>'shop'; }catch(e){} try{ document.title='Karo Dukaan'; }catch(e){}
+    const boot=()=>{ try{ spSkip(); }catch(e){} const d=$('koDl'); if(d) d.remove();
+      try{ const own=window.koIsOwner?koIsOwner():true; if(!own){ vendorEnter(); return; } openSellerDash(1); setTimeout(()=>{ try{ kddOpen(); }catch(e){} },500); }catch(e){} };
+    addEventListener('load',()=>setTimeout(boot,1800));
+    /* dukaan app me marketplace par na jaaye */
+    try{ const _c=window.closeSellerDash; window.closeSellerDash=closeSellerDash=function(){ if(window.KO_DK){ T('🏪 Karo Dukaan — aapki dukaan ka app'); return; } return _c.apply(this,arguments); }; }catch(e){}
+    try{ const _m=window.ksfMk; window.ksfMk=function(){ if(window.KO_DK){ kddBack(); return; } return _m.apply(this,arguments); }; }catch(e){} }
+
+  /* ===== 1) Digital Dukaan: upar Edit — wahi screen edit mode me ===== */
+  function edBtn(){ const b=$('kddBar'); if(!b) return; const w=b.querySelector('.w button.on'); if(!w) return; let e=w.querySelector('.ed');
+    if(!e){ const lv=w.querySelector('em'); if(lv) lv.remove(); e=document.createElement('span'); e.className='ed'; e.setAttribute('role','button'); e.onclick=ev=>{ ev.stopPropagation(); kddEdit(); }; w.appendChild(e); }
+    const on=document.body.classList.contains('kdd-ed'); e.classList.toggle('on',on); e.innerHTML=on?'✓ Done':'✏️ Edit'; }
+  setInterval(edBtn,700);
+  window.kddEdit=function(){ try{ seToggle(); }catch(e){ T('Edit nahi khula'); } };
+  try{ const _st=window.seToggle; window.seToggle=seToggle=function(){ const r=_st.apply(this,arguments); try{ const on=!!SE.on&&document.body.classList.contains('kdd-on'); document.body.classList.toggle('kdd-ed',on); edBtn(); if(on){ const b=$('shopBody'); if(b) b.scrollTop=0; heroChips(); sebar(); } koChime&&koChime(on?'open':'ok'); }catch(e){} return r; }; }catch(e){}
+  function sebar(){ const s=document.querySelector('#shopBody .se-bar'); if(!s||s.querySelector('.kdd-k')) return; const k=document.createElement('button'); k.className='kdd-k'; k.textContent='↕ Kram'; k.onclick=e=>{ e.stopPropagation(); kkOpen(); }; const bu=document.createElement('button'); bu.className='kdd-k'; bu.textContent='＋ Bulk'; bu.onclick=e=>{ e.stopPropagation(); kbOpen(); }; s.appendChild(k); s.appendChild(bu); }
+  /* hero (video / photo) par bhi edit */
+  function heroChips(){ const k=$('ksf'); if(!k||!document.body.classList.contains('kdd-ed')) return; const h=k.querySelector('.kf-kh'); if(!h||h.querySelector('.kdd-ch')) return;
+    h.insertAdjacentHTML('beforeend',`<button class="kdd-ch" data-a="feat" style="left:50%;top:44%;transform:translateX(-50%)">✏️ Video / photo badlein</button><button class="kdd-ch" data-a="info" style="left:14px;top:96px">✏️ Naam & timing</button><button class="kdd-ch" data-a="story" style="right:14px;top:96px">⭕ Story</button>`); }
+  setInterval(heroChips,900);
+  document.addEventListener('click',e=>{ if(!document.body.classList.contains('kdd-ed')) return; const t=e.target; if(!t||!t.closest) return; const k=t.closest('#ksf'); if(!k) return;
+    const c=t.closest('.kdd-ch'); let a=c?c.dataset.a:(t.closest('.kf-kt-l')?'info':(t.closest('.kf-kh')?'feat':null));
+    if(!a){ if(t.closest('button,a,[onclick]')){ e.preventDefault(); e.stopPropagation(); T('Ye grahak ka button hai — Done dabakar dekhein'); } return; }
+    e.preventDefault(); e.stopPropagation(); try{ ({feat:()=>ksfFeat(),info:()=>seInfo(),story:()=>ksfStAdd()})[a](); }catch(_){ } },true);
+
+  /* ===== 2) Tabs ka kram + chhupana (drag & drop) ===== */
+  const P=()=>window._krPol||null;
+  function layout(shop){ try{ const p=P()&&P().pol(shop); return (p&&p.layout)||{}; }catch(e){ return {}; } }
+  function applyTabs(){ const t=$('bpTabs'); if(!t) return; let shop; try{ shop=SHOPS[shCur][0]; }catch(e){ return; } const L=layout(shop), ord=L.tabs||[], hid=L.hide||[];
+    [...t.querySelectorAll('button')].forEach(b=>{ const m=(b.getAttribute('onclick')||'').match(/bpTab\(\d+,(\d+)\)/); if(!m) return; const k=+m[1]; const i=ord.indexOf(k); b.style.order=i<0?100+k:i; b.classList.toggle('kdd-hid',hid.includes(k)); }); }
+  try{ const _bt=window.bpTab; window.bpTab=bpTab=function(){ const r=_bt.apply(this,arguments); try{ applyTabs(); }catch(e){} return r; }; }catch(e){}
+  try{ const _os=window.openShop; window.openShop=openShop=function(){ const r=_os.apply(this,arguments); setTimeout(applyTabs,80); setTimeout(applyTabs,800); return r; }; }catch(e){}
+  let KK=null;
+  window.kkOpen=function(){ const t=$('bpTabs'); if(!t) return; const shop=myShop(); const L=layout(shop);
+    const all=[...t.querySelectorAll('button')].map(b=>{ const m=(b.getAttribute('onclick')||'').match(/bpTab\(\d+,(\d+)\)/); return m?{k:+m[1],n:b.textContent.trim()}:null; }).filter(Boolean);
+    const ord=(L.tabs||[]).filter(k=>all.some(x=>x.k===k)); all.forEach(x=>{ if(!ord.includes(x.k)) ord.push(x.k); });
+    KK={all,ord,hide:[...(L.hide||[])]}; kkR(); const o=sh('kkOv'); o.classList.add('on'); };
+  function sh(id){ let o=$(id); if(!o){ o=document.createElement('div'); o.id=id; o.className='kr-ov'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); } return o; }
+  window.kkR=function(){ const o=sh('kkOv'), nm=k=>(KK.all.find(x=>x.k===k)||{}).n;
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>↕ Dukaan ke tabs ka kram</h4><div class="kr-sb">⠿ pakadkar upar-neeche khiskayein · 👁 se chhupayein / dikhayein · grahak ko isi kram me dikhenge</div>
+     <div class="kk-ls" id="kkLs">${KK.ord.map((k,i)=>`<div class="kk-it${KK.hide.includes(k)?' off':''}" data-k="${k}"><span class="h">⠿</span><span>${E(nm(k))}</span><button onclick="kkMv(${i},-1)">↑</button><button onclick="kkMv(${i},1)">↓</button><button onclick="kkHide(${k})">${KK.hide.includes(k)?'🙈':'👁'}</button></div>`).join('')}</div>
+     <button class="kr-go" onclick="kkSave()">✓ Kram save karein</button><button class="kr-x" onclick="krClose('kkOv')">Band karein</button></div>`; drag(); };
+  window.kkMv=(i,d)=>{ const j=i+d; if(j<0||j>=KK.ord.length) return; [KK.ord[i],KK.ord[j]]=[KK.ord[j],KK.ord[i]]; kkR(); };
+  window.kkHide=k=>{ const i=KK.hide.indexOf(k); if(i<0) KK.hide.push(k); else KK.hide.splice(i,1); kkR(); };
+  function drag(){ const ls=$('kkLs'); if(!ls) return; ls.querySelectorAll('.h').forEach(h=>{ h.addEventListener('pointerdown',ev=>{ const it=h.closest('.kk-it'); const y0=ev.clientY; const H=it.offsetHeight+7; it.classList.add('dr'); h.setPointerCapture(ev.pointerId); let dy=0;
+      const mv=e=>{ dy=e.clientY-y0; it.style.transform=`translateY(${dy}px)`; };
+      const up=()=>{ h.removeEventListener('pointermove',mv); h.removeEventListener('pointerup',up); h.removeEventListener('pointercancel',up); it.classList.remove('dr'); it.style.transform='';
+        const n=Math.round(dy/H); if(n){ const k=+it.dataset.k, i=KK.ord.indexOf(k); KK.ord.splice(i,1); KK.ord.splice(Math.max(0,Math.min(KK.ord.length,i+n)),0,k); try{ koChime('tick'); }catch(e){} } kkR(); };
+      h.addEventListener('pointermove',mv); h.addEventListener('pointerup',up); h.addEventListener('pointercancel',up); }); }); }
+  window.kkSave=function(){ const shop=myShop(); const L={tabs:KK.ord,hide:KK.hide}; try{ const p=Object.assign({},P().pol(shop),{layout:L}); P().polSave(shop,p); koRpc&&koRpc('ko_policy_set',{p_shop:shop,p_phone:(window.KO_OWNER_PH||[''])[0],p_policy:p}).catch(()=>{}); }catch(e){}
+    krClose('kkOv'); applyTabs(); T('✅ Tabs ka naya kram save'); };
+
+  /* ===== 3) Menu card: referral text, Call request → Support me, Policy tile ===== */
+  try{ const _k=window.kvcOpen; window.kvcOpen=window.csoOpen=function(i,me){ const r=_k.apply(this,arguments); try{ fixCard(i); }catch(e){} return r; }; }catch(e){}
+  function fixCard(i){ const sc=document.querySelector('#kvcOv'); if(!sc) return;
+    const wl=sc.querySelector('.ac-wallet'); if(wl){ const d=wl.querySelector('div'); if(d) d.innerHTML='<div class="kvc-rf"><small>SHARE &amp; EARN</small><b>Share karein</b><em>Naye grahak par reward 🎁</em></div>'; }
+    const tl=sc.querySelectorAll('.ac-tile'); const t0=tl[0]; if(t0){ t0.setAttribute('onclick','koVcPolicy()'); const l=t0.querySelector('.tl'); if(l) l.textContent='Policy';
+      const c=t0.querySelector('.c'); if(c) c.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>'; }
+    if(tl[2]) tl[2].setAttribute('onclick','koVcSupport()'); }
+  window.koVcPolicy=function(){ const own=window.koIsOwner&&koIsOwner(); let i=MY_SHOP; try{ i=window._kvcI!=null?window._kvcI:(window._ksf?_ksf.K.i:MY_SHOP); }catch(e){}
+    try{ closeSm('kvcOv'); }catch(e){} setTimeout(()=>{ if(own&&i===MY_SHOP) krPolOpen(); else krPolView(SHOPS[i][0]); },250); };
+  window.koVcSupport=function(){ window._spShop=1; try{ closeSm('kvcOv'); }catch(e){} try{ openSupport(); }catch(e){} };
+  try{ const _o=window.kvcOpen; window.kvcOpen=window.csoOpen=function(i){ window._kvcI=i; return _o.apply(this,arguments); }; }catch(e){}
+  try{ const _sp=window.openSupport; window.openSupport=openSupport=function(){ const r=_sp.apply(this,arguments); const on0=!!window._spShop; window._spShop=0; [0,350,900].forEach(d=>setTimeout(()=>spInj(on0),d)); return r; }; }catch(e){}
+  function spInj(on){ try{ const rq=[...document.querySelectorAll('#supportOv button')].find(x=>/Request a call/i.test(x.textContent)&&x.offsetParent); const g=rq?rq.parentElement:document.querySelector('#supportOv .sp-tiles'); if(g){ let b=g.querySelector('#spShopCall');
+        if(on&&!b){ b=document.createElement('button'); b.id='spShopCall'; b.className=rq?rq.className.replace(/\b(on|active|sel)\b/g,''):''; b.innerHTML=rq&&rq.querySelector('i,span')?'<'+rq.querySelector('i,span').tagName.toLowerCase()+' style="background:#FFF1E4;color:#C2410C">🏪</'+rq.querySelector('i,span').tagName.toLowerCase()+'>Dukaan se call':'<i style="background:#FFF1E4;color:#C2410C">🏪</i>Dukaan se call'; b.onclick=()=>{ try{ koVcCall(); }catch(e){ T('📲 Call request bhej di'); } }; g.insertBefore(b,g.firstChild); }
+        if(b) b.style.display=on?'':'none'; if(on){ g.scrollLeft=0; try{ g.scrollTo({left:0}); }catch(e){} } } }catch(e){} }
+
+  /* ===== 4) Awaaz chalu / band (dukaandar) ===== */
+  const sndOn=()=>{ try{ return localStorage.getItem('ko_snd')!=='0'; }catch(e){ return true; } };
+  window.koSndSet=function(v){ try{ localStorage.setItem('ko_snd',v?'1':'0'); }catch(e){} try{ sdSnd=!!v; }catch(e){} if(v){ try{ koChime('ok'); }catch(e){} } T(v?'🔔 Awaaz chalu':'🔕 Awaaz band'); menuRows(); };
+  try{ sdSnd=sndOn(); }catch(e){}
+  function row(base,ic,t,s,fn){ const r=base.cloneNode(true); r.classList.add('kx-row'); r.setAttribute('onclick',fn); const sv=r.querySelector('.ic'); if(sv) sv.innerHTML=`<span style="font-size:19px">${ic}</span>`; const b=r.querySelector('b'); if(b) b.textContent=t; const sm=r.querySelector('small'); if(sm) sm.textContent=s; return r; }
+  function menuRows(){ const sh=$('sdSh'); if(!sh) return; const hd=sh.querySelector('.sx-hd h3'); if(!hd||!/Shop Menu/.test(hd.textContent)) return; const rows=sh.querySelectorAll('.sx-row:not(.kx-row)'); if(!rows.length) return; const base=rows[0];
+    sh.querySelectorAll('.kx-row').forEach(x=>x.remove()); const host=base.parentElement; const on=sndOn();
+    [row(base,on?'🔔':'🔕','Awaaz: '+(on?'chalu':'band'),'Naya order, lead, return aur dukaan OPEN par halki awaaz','koSndSet('+(on?0:1)+')'),
+     row(base,'📦','Ek saath kai product','Photo chunein — naam, daam, stock ek hi jagah','sdShClose();kbOpen()'),
+     row(base,'🏪','Digital Dukaan','Dukaan ka poora preview aur edit','sdShClose();kddOpen()'),
+     row(base,'📜','Dukaan ke niyam','Return, privacy, shartein','sdShClose();krPolOpen()'),
+     row(base,'↩️','Return & Exchange','Grahak ki return requests','sdShClose();krV()')].reverse().forEach(r=>host.insertBefore(r,base)); }
+  try{ const _m=window.sdShopMenu; window.sdShopMenu=sdShopMenu=function(){ const r=_m.apply(this,arguments); try{ menuRows(); }catch(e){} return r; }; }catch(e){}
+
+  /* ===== 5) Ek saath kai product (bulk) ===== */
+  const CN=[['Laal',[200,40,40]],['Maroon',[120,25,40]],['Gulabi',[230,120,160]],['Narangi',[240,130,40]],['Peela',[235,200,60]],['Hara',[50,140,70]],['Neela',[40,80,170]],['Navy',[25,35,80]],['Aasmani',[120,180,230]],['Kaala',[25,25,25]],['Safed',[240,240,235]],['Cream',[235,220,190]],['Bhoora',[120,80,50]],['Grey',[130,130,135]],['Baingani',[110,60,140]]];
+  const TY={Women:['Kurti','Suit','Saree','Dress','Top','Lehenga'],Men:['Shirt','Kurta','T-shirt','Jeans','Trouser'],Kids:['Frock','Kids set','Kids tee']};
+  let KB=null;
+  function colorOf(img){ try{ const c=document.createElement('canvas'); c.width=c.height=24; const x=c.getContext('2d'); x.drawImage(img,img.width*.25,img.height*.2,img.width*.5,img.height*.6,0,0,24,24); const d=x.getImageData(0,0,24,24).data; let r=0,g=0,b=0,n=0; for(let i=0;i<d.length;i+=4){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; } r/=n; g/=n; b/=n;
+      let best=CN[0], bd=1e9; CN.forEach(q=>{ const dd=(q[1][0]-r)**2+(q[1][1]-g)**2+(q[1][2]-b)**2; if(dd<bd){ bd=dd; best=q; } }); return best[0]; }catch(e){ return ''; } }
+  window.kbOpen=function(){ KB={cat:'Women',type:'Kurti',items:[],busy:false}; kbR(); sh('kbOv').classList.add('on'); };
+  window.kbR=function(){ const o=sh('kbOv'), q=KB;
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>📦 Ek saath kai product</h4><div class="kr-sb">10–20 photo ek saath chunein · rang dekhkar naam apne-aap sujhaya jayega · daam aur stock bhar dein</div>
+     <div class="kr-h">KAUN SA SAAMAN</div><div class="kr-seg">${Object.keys(TY).map(c=>`<button class="${q.cat===c?'on':''}" onclick="kbCat('${c}')">${c}</button>`).join('')}</div>
+     <div class="kr-seg" style="margin-top:7px">${TY[q.cat].map(t=>`<button class="${q.type===t?'on':''}" onclick="kbTy('${t}')">${t}</button>`).join('')}</div>
+     <div class="kr-h">PHOTO</div><div class="kb-drop" onclick="document.getElementById('kbIn').click()"><b>＋</b>${q.items.length?'Aur photo jodein':'Gallery se photo chunein (kai ek saath)'}<small style="font-weight:600">${q.items.length} chune</small></div><input id="kbIn" type="file" accept="image/*" multiple hidden style="display:none!important" onchange="kbPick(this)">
+     ${q.items.length?`<div class="kr-h" style="display:flex">SAB PAR EK SAATH<span style="flex:1"></span></div><div class="kb-r" style="grid-template-columns:1fr 1fr 1fr auto"><input id="kbAP" inputmode="numeric" placeholder="Daam ₹"><input id="kbAM" inputmode="numeric" placeholder="MRP ₹"><input id="kbAS" inputmode="numeric" placeholder="Stock"><button class="kr-x" style="margin:0;width:auto;padding:0 8px;color:#C2410C" onclick="kbAll()">Lagayein</button></div>
+      <div class="kr-h">${q.items.length} PRODUCT</div><div class="kb-g">${q.items.map((x,k)=>`<div class="kb-c"><i style="background-image:url('${x.u}')"><b>${E(x.col||'')}</b></i><div><input value="${E(x.n)}" oninput="KBset(${k},'n',this.value)" placeholder="Naam"><div class="kb-r"><div><label>DAAM ₹</label><input inputmode="numeric" value="${x.p||''}" oninput="KBset(${k},'p',this.value)"></div><div><label>MRP ₹</label><input inputmode="numeric" value="${x.m||''}" oninput="KBset(${k},'m',this.value)"></div><div><label>STOCK</label><input inputmode="numeric" value="${x.s||''}" oninput="KBset(${k},'s',this.value)"></div></div><button class="kb-x" onclick="kbDel(${k})">✕ Hatayein</button></div></div>`).join('')}</div>
+      <div class="kr-nt">💡 Naam photo ke rang se sujhaya gaya hai — sahi kar dein. Size-wise stock baad me product kholkar bhar sakte hain.</div>
+      <button class="kr-go" ${q.busy?'disabled':''} onclick="kbSave()">✓ ${q.items.length} product dukaan me daalein</button>`:''}
+     <button class="kr-x" onclick="krClose('kbOv')">Band karein</button></div>`; };
+  window.KBset=(k,f,v)=>{ KB.items[k][f]=f==='n'?v:String(v).replace(/\D/g,''); };
+  window.kbCat=c=>{ KB.cat=c; KB.type=TY[c][0]; KB.items.forEach(x=>{ if(x.auto) x.n=((x.col?x.col+' ':'')+KB.type).trim(); }); kbR(); };
+  window.kbTy=t=>{ KB.type=t; KB.items.forEach(x=>{ if(x.auto) x.n=((x.col?x.col+' ':'')+t).trim(); }); kbR(); };
+  window.kbDel=k=>{ KB.items.splice(k,1); kbR(); };
+  window.kbAll=()=>{ const g=id=>String(($(id)||{}).value||'').replace(/\D/g,''); const p=g('kbAP'),m=g('kbAM'),s=g('kbAS'); KB.items.forEach(x=>{ if(p) x.p=p; if(m) x.m=m; if(s) x.s=s; }); kbR(); T('✓ Sab par laga diya'); };
+  window.kbPick=function(inp){ const L=[...(inp.files||[])].slice(0,30-KB.items.length); if(!L.length) return; let n=L.length; T('⏳ '+n+' photo taiyaar ho rahe hain…');
+    L.forEach(f=>{ const r=new FileReader(); r.onload=()=>{ const im=new Image(); im.onload=()=>{ const s=Math.min(1,700/Math.max(im.width,im.height)); const c=document.createElement('canvas'); c.width=Math.round(im.width*s); c.height=Math.round(im.height*s); c.getContext('2d').drawImage(im,0,0,c.width,c.height); const col=colorOf(c);
+          KB.items.push({u:c.toDataURL('image/jpeg',.78),col,n:((col?col+' ':'')+KB.type).trim(),auto:1,p:'',m:'',s:''}); if(--n<=0) kbR(); }; im.onerror=()=>{ if(--n<=0) kbR(); }; im.src=r.result; }; r.readAsDataURL(f); }); };
+  window.kbSave=function(){ const bad=KB.items.findIndex(x=>!x.n.trim()||!(+x.p)); if(bad>=0){ T('⚠️ Product '+(bad+1)+' ka naam aur daam bharein'); return; }
+    let ok=0; try{ const PP=posP(); const icon=(PP[0]&&PP[0][0])||'👗';
+      KB.items.forEach((x,k)=>{ const sell=+x.p, mrp=+x.m||Math.round(sell*1.4), st=+x.s||0, buy=Math.round(sell*.65); const sku=(x.n.replace(/[^A-Za-z]/g,'').slice(0,3)+'-B').toUpperCase()+String(Date.now()+k).slice(-4);
+        let X={}; try{ X=pxDef(); }catch(e){} Object.assign(X,{sub:KB.cat,sku,color:x.col||'',desc:`${x.n} — achhi quality, pakka rang.`,hl:['Pakka rang'],buy:String(buy),stock:st,low:5,track:true,min:1,max:5,act:'add',rev:'0',sold:'0',media:[{t:'img',u:x.u}],reviews:[],family:x.n,colors:[x.col||'']});
+        PP.push([icon,x.n,'₹'+sell,x.u,st,'₹'+mrp,X]); try{ POS_CAT[x.n]=KB.cat; POSBUY[x.n]=buy; }catch(e){} ok++; }); }catch(e){ T('⚠ Save nahi hua: '+e.message); return; }
+    try{ posRefreshAll(); }catch(e){} krClose('kbOv'); T('✅ '+ok+' product dukaan me LIVE'); try{ koChime('ok'); }catch(e){}
+    try{ if(document.body.classList.contains('kdd-on')){ ksfOpen(MY_SHOP); } }catch(e){} };
+})();
+</script>
+
 
 

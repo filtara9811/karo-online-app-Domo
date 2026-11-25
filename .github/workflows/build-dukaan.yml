@@ -1,0 +1,248 @@
+# Karo Online — Customer APK (phone se hi build)
+# Repo ka dhaancha:
+#   docs/  = ऐप ki screens (prototype) — yahi GitHub Pages par LIVE chalta hai,
+#            ऐप khulte hi yahin se taaza version leti hai (APK dobara install nahi)
+#   app/   = Flutter ऐप (WebView) — docs/ ki copy offline backup ke roop me andar
+# Kaise chalayein: app/ ya docs/ me badlav push hote hi apne-aap,
+# ya Actions → "Build Customer APK" → Run workflow.
+# 10-12 minute baad: Actions → is run par tap → neeche "Artifacts" → karo-online-apk (ZIP) download.
+#
+# Play Store ki purani listing par update karne ke liye (baad me):
+#   Settings → Secrets and variables → Actions →
+#     Variables: APP_ID = app.karoonline.twa
+#     Secrets:   KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
+# Abhi ke liye test APK alag naam (com.filipra.karoonline) se banti hai,
+# taaki phone me lagi purani Play wali ऐप se takraaye nahi.
+
+name: Build Karo Dukaan APK
+
+# Nayi APK sirf tab banti hai jab app/version.txt badle ("go ahead" par Claude badalta hai)
+# ya Actions → Run workflow dabayein. docs/ ke badlav APK banaye bina seedhe LIVE jaate hain.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths: ['app/dukaan_version.txt']
+
+permissions:
+  contents: write   # ऐप-के-अंदर update ke liye APK ko GitHub Release me daalna
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      APP_ID: com.filipra.karodukaan
+      VERSION_CODE: ${{ github.run_number }}
+      KARO_KS: ${{ github.workspace }}/signing/test-debug.keystore
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Screens (docs/) ko ऐप ke andar offline copy ke roop me rakho
+        run: |
+          mkdir -p app/assets/web
+          cp -r docs/. app/assets/web/
+          rm -f app/assets/web/.nojekyll
+          ls -la app app/assets/web
+
+      - name: Karo Dukaan ke liye ऐप badlo (URL, naam, icon, update)
+        run: |
+          python3 - <<'PY'
+          p='app/lib/main.dart'; s=open(p).read()
+          s=s.replace("const kLiveUrl = 'https://filtara9811.github.io/karo-online-app-Domo/';","const kLiveUrl = 'https://filtara9811.github.io/karo-online-app-Domo/dukaan.html';")
+          s=s.replace("releases/latest/download","releases/download/dukaan-latest")
+          s=s.replace("karo-online.apk","karo-dukaan.apk").replace("assets/web/index.html","assets/web/dukaan.html")
+          s=s.replace("title: 'Karo Online'","title: 'Karo Dukaan'")
+          assert 'dukaan.html' in s and 'dukaan-latest' in s, 'main.dart patch fail'
+          open(p,'w').write(s)
+          y='app/pubspec.yaml'; t=open(y).read().replace('image_path: "assets/logo.png"','image_path: "assets/dukaan_logo.png"'); open(y,'w').write(t)
+          PY
+
+      - name: Hamesha ek hi signing key (taaki nayi APK purani ke upar update ho jaye)
+        run: |
+          mkdir -p ~/.android
+          cp signing/test-debug.keystore ~/.android/debug.keystore
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Android project banao
+        working-directory: app
+        run: |
+          flutter create --platforms=android --org com.filipra --project-name karo_dukaan .
+          rm -rf test
+
+      - name: Naam, package aur permissions
+        working-directory: app
+        run: |
+          python3 - <<'PY'
+          import os,re
+          appid=os.environ['APP_ID']
+          g='android/app/build.gradle.kts'
+          if not os.path.exists(g): g='android/app/build.gradle'
+          s=open(g).read()
+          s=re.sub(r'applicationId\s*=?\s*"[^"]+"','applicationId = "%s"'%appid,s)
+          s=re.sub(r'minSdk\s*=\s*flutter\.minSdkVersion','minSdk = 23',s)
+          # hamesha ek hi signing key (purani APK ke upar update ke liye zaroori)
+          if g.endswith('.kts'):
+              sc='''    signingConfigs {
+                  create("fixed") {
+                      storeFile = file(System.getenv("KARO_KS"))
+                      storePassword = "android"
+                      keyAlias = "androiddebugkey"
+                      keyPassword = "android"
+                  }
+              }
+          '''
+              s=s.replace('android {','android {\n'+sc,1)
+              s=s.replace('signingConfig = signingConfigs.getByName("debug")','signingConfig = signingConfigs.getByName("fixed")')
+          else:
+              sc='''    signingConfigs {
+                  fixed {
+                      storeFile file(System.getenv("KARO_KS"))
+                      storePassword "android"
+                      keyAlias "androiddebugkey"
+                      keyPassword "android"
+                  }
+              }
+          '''
+              s=s.replace('android {','android {\n'+sc,1)
+              s=s.replace('signingConfig signingConfigs.debug','signingConfig signingConfigs.fixed')
+          assert 'getByName("fixed")' in s or 'signingConfigs.fixed' in s, 'signing patch fail'
+          # release lint (lintVital) naye Flutter par crash karta hai — band
+          if g.endswith('.kts'): s=s.replace('android {','android {\n    lint {\n        checkReleaseBuilds = false\n        abortOnError = false\n    }',1)
+          else: s=s.replace('android {','android {\n    lintOptions {\n        checkReleaseBuilds false\n        abortOnError false\n    }',1)
+          open(g,'w').write(s)
+          m='android/app/src/main/AndroidManifest.xml'
+          s=open(m).read()
+          s=re.sub(r'android:label="[^"]*"','android:label="Karo Dukaan"',s)
+          perms='''    <uses-permission android:name="android.permission.INTERNET"/>
+              <uses-permission android:name="android.permission.CAMERA"/>
+              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+              <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+              <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/>
+          '''
+          if 'android.permission.INTERNET' not in s:
+              s=s.replace('<application','%s<application'%perms,1)
+          q='''    <queries>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="https"/></intent>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="tel"/></intent>
+                  <intent><action android:name="android.intent.action.SENDTO"/><data android:scheme="mailto"/></intent>
+                  <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="upi"/></intent>
+                  <package android:name="com.whatsapp"/>
+                  <package android:name="com.whatsapp.w4b"/>
+              </queries>
+          '''
+          if '<queries>' in s:
+              s=s.replace('<queries>',q.strip()[:-len('</queries>')].replace('<queries>','<queries>',1),1)
+          else:
+              s=s.replace('</manifest>',q+'</manifest>')
+          # dukaan ke link se seedha app (karoonline://shop/N)
+          dl='''<intent-filter>
+                      <action android:name="android.intent.action.VIEW"/>
+                      <category android:name="android.intent.category.DEFAULT"/>
+                      <category android:name="android.intent.category.BROWSABLE"/>
+                      <data android:scheme="karodukaan" android:host="open"/>
+                  </intent-filter>
+              </activity>'''
+          if 'karodukaan' not in s: s=s.replace('</activity>',dl,1)
+          open(m,'w').write(s)
+          print(open(m).read())
+          # Gmail chunne ke liye Android account picker
+          import glob as _g
+          for f in _g.glob('android/app/src/main/kotlin/**/MainActivity.kt',recursive=True):
+              pkg=open(f).read().split('\n')[0]
+              open(f,'w').write(pkg+'\n\n'+open('MainActivity.kt.txt').read())
+          # app khulte hi pehli screen kaali (intro ke saath mel)
+          import glob
+          for f in glob.glob('android/app/src/main/res/drawable*/launch_background.xml'):
+              open(f,'w').write('<?xml version="1.0" encoding="utf-8"?>\n<layer-list xmlns:android="http://schemas.android.com/apk/res/android">\n    <item android:drawable="@android:color/black" />\n</layer-list>\n')
+          PY
+
+      - run: flutter pub get
+        working-directory: app
+      - run: dart run flutter_launcher_icons
+        working-directory: app
+
+      - name: APK banao
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          flutter build apk --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE --dart-define=APP_VER=1.0.$VERSION_CODE 2>&1 | tee /tmp/build.log
+      - name: Signing key jaancho (galat key par release nahi)
+        shell: bash
+        run: |
+          WANT=$(keytool -exportcert -alias androiddebugkey -keystore "$KARO_KS" -storepass android | sha256sum | cut -d' ' -f1)
+          GOT=$(python3 - <<'PY'
+          import struct,hashlib
+          d=open('app/build/app/outputs/flutter-apk/app-release.apk','rb').read()
+          i=d.rfind(b'APK Sig Block 42'); size=struct.unpack('<Q',d[i-8:i])[0]; p=i+16-size; end=i-8
+          def lp(b,o):
+              l=struct.unpack('<I',b[o:o+4])[0]; return b[o+4:o+4+l],o+4+l
+          while p<end:
+              ln=struct.unpack('<Q',d[p:p+8])[0]; idv=struct.unpack('<I',d[p+8:p+12])[0]; val=d[p+12:p+8+ln]; p+=8+ln
+              if idv==0x7109871a:
+                  a,_=lp(val,0); b,_=lp(a,0); sd,_=lp(b,0); _,o=lp(sd,0); cs,_=lp(sd,o); c,_=lp(cs,0); print(hashlib.sha256(c).hexdigest()); break
+          PY
+          )
+          echo "want=$WANT got=$GOT"
+          if [ "$WANT" != "$GOT" ]; then echo "::error::APK galat key se sign hui — release roka"; exit 1; fi
+      - name: Error dikhao (agar build fail ho)
+        if: failure()
+        shell: bash
+        run: |
+          grep -nE "error|Error|ERROR|What went wrong|FAILURE|Exception|requires|namespace|desugar" /tmp/build.log | grep -v "^\s*$" | tail -40 | while IFS= read -r l; do echo "::error::${l:0:900}"; done
+          tail -60 /tmp/build.log | tail -25 | while IFS= read -r l; do echo "::warning::${l:0:900}"; done
+
+      - name: Play Store ke liye AAB (agar key di ho)
+        working-directory: app
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then echo "Key nahi di — sirf test APK"; exit 0; fi
+          flutter build appbundle --release --build-number=$VERSION_CODE --build-name=1.0.$VERSION_CODE --dart-define=APP_VER=1.0.$VERSION_CODE
+          AAB=build/app/outputs/bundle/release/app-release.aab
+          echo "$KEYSTORE_BASE64" | base64 -d > upload.jks
+          zip -d "$AAB" 'META-INF/*' || true
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore upload.jks \
+            -storepass "$KEYSTORE_PASSWORD" -keypass "${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" "$AAB" "$KEY_ALIAS"
+          rm -f upload.jks
+
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true   # storage bhar jaye to bhi Release (ऐप update) bane
+        with:
+          retention-days: 3
+          name: karo-dukaan-apk
+          path: |
+            app/build/app/outputs/flutter-apk/app-release.apk
+            app/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: warn
+
+      # ऐप ke andar "Update" button isi Release se nayi APK uthata hai
+      - name: version.json banao
+        run: |
+          # app/notes.txt ki har line = ek badlav (update card me dikhti hai)
+          python3 -c "import json,os,subprocess;n=open('app/dukaan_notes.txt').read().strip() if os.path.exists('app/dukaan_notes.txt') else subprocess.check_output(['git','log','-1','--pretty=%s']).decode().strip();json.dump({'build':int(os.environ['VERSION_CODE']),'name':'1.0.'+os.environ['VERSION_CODE'],'notes':n},open('version.json','w'),ensure_ascii=False)"
+          cp app/build/app/outputs/flutter-apk/app-release.apk karo-dukaan.apk
+          cat version.json
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dukaan-latest
+          name: Karo Dukaan (dukaandar ka app) 1.0.${{ github.run_number }}
+          make_latest: false
+          overwrite_files: true
+          files: |
+            karo-dukaan.apk
+            version.json
