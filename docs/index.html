@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=285;
+window.KO_V=286;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -28921,6 +28921,7 @@ function jour(o){ const S=SHOPS[K.i], A=art(K.i); let c={}; try{ c=JSON.parse(lo
    ${st>=0&&st<4?`<button class="kf-cxb" onclick="ksfCx('${o.id}',this)">✕ Order cancel karein</button>`:''}
    <div class="kf-ab"><button onclick="ksfRet('${o.id}')">↩️ Return / refund</button><button class="kf-g" onclick="ksfAgain('${o.id}')">🔁 Order again</button><button onclick="ksfBill('${o.id}')">🧾 Bill</button><button onclick="ksfJour('${o.id}')">🗺️ Full journey</button></div></div>`; }
 const fo=id=>(K.OL||[]).find(o=>o.id===id);
+window._ksf={K,fo,osR:()=>osR(),ordersOf:i=>ordersOf(i)};
 window.ksfCx=function(id,b){ if(b&&!b.dataset.sure){ b.dataset.sure=1; b.textContent='Pakka cancel? Dobara dabayein'; b.classList.add('sure'); setTimeout(()=>{ if(b.isConnected){ delete b.dataset.sure; b.textContent='✕ Order cancel karein'; b.classList.remove('sure'); } },3500); return; }
   const o=fo(id); if(!o) return; if(o.real){ try{ window.o2ForceCancel&&o2ForceCancel(id); }catch(e){} } else { try{ const x=JSON.parse(localStorage.getItem('ko_cx')||'{}'); x[id]=1; localStorage.setItem('ko_cx',JSON.stringify(x)); }catch(e){} }
   o.st=-1; toast('✕ Order '+id+' cancel — paisa 2–3 din me wapas'); osR(); liveFab(); render(); go(K.cur); };
@@ -29254,7 +29255,7 @@ body.ko-one .hs-mic{display:none!important}
   window.koMode=mode;
   function applyCfg(start){ const m=mode(); CFG.quick=m!=='shops'; document.body.classList.toggle('ko-noquick',m==='shops'); document.body.classList.toggle('ko-onlyquick',m==='quick'); document.body.classList.toggle('ko-one',m!=='both'); micBtns();
     if(m==='quick'){ try{ const o=$('shopsOv'); if(o&&o.classList.contains('open')&&!window._ksfDeep){ window._koLeave=1; closeSm('shopsOv'); window._koLeave=0; } }catch(e){} }
-    if(start&&!deep&&(m==='shops'||(m==='both'&&CFG.home==='shops'))){ let n=0; const t=setInterval(()=>{ n++; const busy=document.body.classList.contains('splashing')||($('loginScr')&&$('loginScr').classList.contains('on'))||document.querySelector('.sm-ov.open');
+    const shOpen=()=>{ const o=$('shopsOv'); return !!(o&&o.classList.contains('open')); }; if(!deep&&((m==='shops'&&!shOpen())||(start&&m==='both'&&CFG.home==='shops'))){ let n=0; const t=setInterval(()=>{ n++; const busy=document.body.classList.contains('splashing')||($('loginScr')&&$('loginScr').classList.contains('on'))||document.querySelector('.sm-ov.open');
         if(!busy){ clearInterval(t); try{ renderShops('All'); openSm('shopsOv'); }catch(e){} } else if(n>60) clearInterval(t); },250); } }
   try{ const _c=closeSm; window.closeSm=closeSm=function(id){ if(id==='shopsOv'&&mode()==='shops'&&!window._koLeave){ return; } return _c.apply(this,arguments); }; }catch(e){}
   try{ const _o=openSm; window.openSm=openSm=function(id){ if(id==='shopsOv'&&mode()==='quick'&&!window._koLeave){ try{ toast('⚡ Abhi sirf Quick Service chalu hai'); }catch(e){} return; } return _o.apply(this,arguments); }; }catch(e){}
@@ -29522,3 +29523,381 @@ body.ko-one .hs-mic{display:none!important}
   window.kdFees=async()=>{ const C=window.KO_CFG||{}; ['rider_fee','rider_pay','courier_margin'].forEach(k=>{ const i=$('kdf_'+k); if(i) C[k]=+i.value||0; }); try{ const v=await koRpc('ko_settings_set',{p_pin:pin(),p_v:C}); Object.assign(C,v||{}); localStorage.setItem('ko_cfg',JSON.stringify(C)); toast('✅ Save'); }catch(e){ toast('❌ Galat PIN'); } };
 })();
 </script>
+<style id="v286-css">
+/* service mode: admin me chuna hua button saaf dikhe */
+.ad-seg button.on{background:linear-gradient(135deg,#F47B20,#E35D0A)!important;color:#fff!important;box-shadow:0 4px 12px rgba(244,123,32,.35)!important}
+.ad-seg button.on:after{content:' ✓'}
+.ko-live{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font:700 12px Poppins,system-ui;color:#0B7A4B;background:#E8F7EF;border-radius:99px;padding:5px 10px}
+.ko-live i{width:7px;height:7px;border-radius:50%;background:#16A34A;box-shadow:0 0 0 3px rgba(22,163,74,.2)}
+/* All Shops ki patti alag rang (teal) — Quick Service narangi hi rahega */
+#shopsOv .bottom-nav{background:linear-gradient(90deg,#0F766E,#0E8A7D)!important}
+#shopsOv .bottom-nav .nb-btn{box-shadow:0 8px 20px rgba(6,78,72,.35),0 0 0 4px rgba(15,118,110,.28)!important}
+#shopsOv .bottom-nav .nb-btn b,#shopsOv .bottom-nav .nb-btn svg{color:#0F766E!important}
+body.ko-one #shopsOv .ko-micc .c{color:#0F766E;box-shadow:0 6px 18px rgba(15,118,110,.35),0 0 0 4px #CCEFEA}
+body.ko-one #shopsOv .ko-micc b{color:#0F766E}
+body.ko-one #shopsOv .ko-micc .r{border-color:rgba(15,118,110,.45)}
+/* ---------- sheets ---------- */
+.kr-ov{position:fixed;inset:0;z-index:2147483000;background:rgba(20,14,6,.5);display:none;align-items:flex-end;justify-content:center}
+.kr-ov.on{display:flex}
+.kr-c{width:100%;max-width:480px;max-height:92vh;overflow:auto;background:#FFFBF4;border-radius:26px 26px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px));font-family:Poppins,system-ui,sans-serif;color:#1d1408;-webkit-overflow-scrolling:touch}
+.kr-gr{width:42px;height:5px;border-radius:9px;background:#E5D9C3;margin:2px auto 10px}
+.kr-c h4{margin:2px 0 2px;font-size:19px;display:flex;align-items:center;gap:8px}
+.kr-c h4 .sp{flex:1}
+.kr-sb{color:#7d6d50;font-size:12.5px;margin-bottom:10px}
+.kr-h{font:800 11px Poppins,system-ui;letter-spacing:.08em;color:#9a6b1f;margin:14px 0 7px}
+.kr-seg{display:flex;flex-wrap:wrap;gap:7px}
+.kr-seg button{border:1.5px solid #EDE2CB;background:#fff;border-radius:13px;padding:9px 12px;font:700 13px Poppins,system-ui;color:#3b2f1c;cursor:pointer}
+.kr-seg button.on{border-color:#F47B20;background:#FFF1E4;color:#C2410C}
+.kr-seg.big button{flex:1 1 30%;text-align:left;padding:11px 12px}
+.kr-seg.big button small{display:block;font:500 11px Poppins,system-ui;color:#7d6d50;margin-top:2px}
+.kr-c textarea,.kr-c input[type=text],.kr-c input:not([type]),.kr-c input[inputmode]{width:100%;box-sizing:border-box;border:1.5px solid #EDE2CB;border-radius:13px;padding:11px 12px;font:500 14px Poppins,system-ui;background:#fff;color:#1d1408}
+.kr-c textarea{min-height:74px;resize:vertical}
+.kr-c textarea.lg{min-height:150px;font-size:12.5px;line-height:1.5}
+.kr-go{display:block;width:100%;margin-top:14px;border:none;border-radius:16px;padding:15px;font:800 15px Poppins,system-ui;color:#fff;background:linear-gradient(135deg,#F47B20,#E35D0A);box-shadow:0 8px 20px rgba(227,93,10,.3);cursor:pointer}
+.kr-go:disabled{opacity:.6}
+.kr-go.dk{background:#1d1408;box-shadow:none}
+.kr-go.gr{background:linear-gradient(135deg,#16A34A,#0B7A4B)}
+.kr-x{display:block;width:100%;margin-top:8px;border:none;background:none;padding:10px;font:700 13px Poppins,system-ui;color:#7d6d50;cursor:pointer}
+.kr-nt{background:#FFF4E0;border:1px solid #F7D9A8;color:#7a4a05;border-radius:14px;padding:10px 12px;font-size:12.5px;margin-top:10px}
+.kr-nt.ok{background:#E8F7EF;border-color:#BDE7CF;color:#0B5F3A}
+.kr-nt.bad{background:#FDECEC;border-color:#F5C2C2;color:#991B1B}
+.kr-it{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #EDE2CB;border-radius:14px;padding:8px 10px;margin-bottom:7px;cursor:pointer}
+.kr-it.on{border-color:#F47B20;background:#FFF7EE}
+.kr-it i{width:42px;height:42px;border-radius:10px;background:#F3EBDD center/cover;flex:none}
+.kr-it div{flex:1;min-width:0}.kr-it b{display:block;font-size:13.5px}.kr-it small{color:#7d6d50;font-size:11.5px}
+.kr-it u{text-decoration:none;width:22px;height:22px;border-radius:7px;border:2px solid #D9CBB0;display:grid;place-items:center;font-size:13px;color:#fff;flex:none}
+.kr-it.on u{background:#F47B20;border-color:#F47B20}
+.kr-ph{display:flex;gap:8px;flex-wrap:wrap}
+.kr-ph span,.kr-ph label{width:68px;height:68px;border-radius:12px;background:#F3EBDD center/cover;position:relative;display:grid;place-items:center;font-size:24px;color:#9a8460;border:1.5px dashed #D9CBB0;cursor:pointer}
+.kr-ph span{border-style:solid}
+.kr-add{width:68px;height:68px;border-radius:12px;border:1.5px dashed #D9CBB0;background:#FBF6EC;display:grid;place-items:center;align-content:center;gap:0;font-size:22px;color:#9a8460;cursor:pointer;padding:0}.kr-add small{font:700 10px Poppins,system-ui}
+.kr-ph span b{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#1d1408;color:#fff;font-size:11px;display:grid;place-items:center}
+.kr-sum{display:flex;justify-content:space-between;background:#1d1408;color:#F5E6C8;border-radius:14px;padding:11px 13px;margin-top:12px;font-size:13px}
+.kr-sum b{color:#fff;font-size:15px}
+/* tabs */
+.kr-tb{display:flex;gap:6px;background:#F3EBDD;border-radius:14px;padding:4px;margin:8px 0 10px}
+.kr-tb button{flex:1;border:none;border-radius:11px;padding:9px 4px;background:none;font:700 12.5px Poppins,system-ui;color:#6b5a3c;cursor:pointer}
+.kr-tb button.on{background:#fff;color:#1d1408;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.kr-tb button u{text-decoration:none;background:#F47B20;color:#fff;border-radius:99px;padding:0 6px;margin-left:4px;font-size:11px}
+/* return cards */
+.kr-rc{background:#fff;border:1.5px solid #EDE2CB;border-radius:18px;padding:12px;margin-bottom:10px}
+.kr-rh{display:flex;gap:10px;align-items:flex-start}
+.kr-rh .av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#F7B733,#E0850C);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.kr-rh div{flex:1;min-width:0}.kr-rh b{font-size:14.5px}.kr-rh small{display:block;color:#7d6d50;font-size:11.5px}
+.kr-tag{display:inline-block;border-radius:99px;padding:3px 9px;font:800 10.5px Poppins,system-ui;background:#F3EBDD;color:#6b5a3c;white-space:nowrap}
+.kr-tag.p{background:#FFF1E4;color:#C2410C}.kr-tag.g{background:#E8F7EF;color:#0B7A4B}.kr-tag.r{background:#FDECEC;color:#B91C1C}.kr-tag.v{background:#EDE9FE;color:#5B21B6}
+.kr-pg{display:flex;align-items:center;margin:12px 2px 6px}
+.kr-pg i{width:24px;height:24px;border-radius:50%;background:#EFE6D3;color:#a89272;display:grid;place-items:center;font:800 11px Poppins,system-ui;font-style:normal;flex:none}
+.kr-pg i.ok{background:#16A34A;color:#fff}.kr-pg i.x{background:#DC2626;color:#fff}
+.kr-pg s{flex:1;height:3px;background:#EFE6D3;text-decoration:none}.kr-pg s.ok{background:#16A34A}
+.kr-pl{display:flex;justify-content:space-between;font:700 9.5px Poppins,system-ui;color:#8a7a5a;margin:0 -4px}
+.kr-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.kr-row button,.kr-row a{flex:1 1 auto;border:1.5px solid #EDE2CB;background:#fff;border-radius:12px;padding:10px 10px;font:700 12.5px Poppins,system-ui;color:#1d1408;text-decoration:none;text-align:center;cursor:pointer}
+.kr-row .p{background:#F47B20;border-color:#F47B20;color:#fff}.kr-row .g{background:#16A34A;border-color:#16A34A;color:#fff}.kr-row .d{color:#B91C1C}.kr-row .wa{background:#25D366;border-color:#25D366;color:#fff}
+.kr-ev{margin-top:10px;border-top:1px dashed #E8DCC4;padding-top:8px}
+.kr-ev div{font-size:12px;color:#5a4a2f;padding:2px 0 2px 14px;position:relative}.kr-ev div:before{content:'';position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:50%;background:#16A34A}
+.kr-ev small{color:#9a8a6a}
+.kr-op{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:#fff;border:1.5px solid #EDE2CB;border-radius:15px;padding:11px;margin-bottom:8px;cursor:pointer;font-family:inherit}
+.kr-op.on{border-color:#F47B20;background:#FFF7EE;box-shadow:0 0 0 3px rgba(244,123,32,.12)}
+.kr-op i{font-style:normal;font-size:22px;width:40px;height:40px;border-radius:12px;background:#FFF1E4;display:grid;place-items:center;flex:none}
+.kr-op div{flex:1}.kr-op b{display:block;font-size:14px;color:#1d1408}.kr-op small{color:#7d6d50;font-size:11.5px}
+.kr-op strong{font-size:14px;color:#C2410C}
+.kr-pin{font:800 30px Poppins,system-ui;letter-spacing:.3em;text-align:center;background:#1d1408;color:#F5C451;border-radius:14px;padding:10px;margin:8px 0}
+/* customer: order card par return ki patti */
+.kr-strip{margin:8px 12px 2px;display:flex;align-items:center;gap:8px;background:#F5F0FF;border:1px solid #DDD3FB;border-radius:12px;padding:8px 10px;font:600 12px Poppins,system-ui;color:#4C1D95;cursor:pointer}
+.kr-strip b{flex:1}
+/* storefront / dukaan par niyam ki chip */
+.kr-chip{display:flex;align-items:center;gap:8px;margin:10px 14px 0;padding:9px 12px;border-radius:14px;background:#F0FBF8;border:1px solid #BFE9DF;color:#0F5F55;font:700 12.5px Poppins,system-ui;cursor:pointer}
+.kr-chip span{flex:1}.kr-chip.no{background:#FBF4EA;border-color:#EBDCC0;color:#7a5a1f}
+/* vendor entry */
+.kr-ent{display:flex;align-items:center;gap:10px;margin:8px 0 10px;padding:11px 12px;border-radius:16px;background:linear-gradient(135deg,#2E1065,#5B21B6);color:#fff;cursor:pointer;font-family:Poppins,system-ui}
+.kr-ent i{font-style:normal;font-size:20px}.kr-ent div{flex:1}.kr-ent b{display:block;font-size:14px}.kr-ent small{opacity:.8;font-size:11.5px}
+.kr-ent u{text-decoration:none;background:#F5C451;color:#1d1408;border-radius:99px;padding:2px 9px;font-weight:800;font-size:12px}
+#krFab{position:fixed;right:12px;top:calc(70px + env(safe-area-inset-top,0px));z-index:2147482990;display:none;border:none;border-radius:99px;padding:8px 13px;background:#5B21B6;color:#fff;font:800 12px Poppins,system-ui;box-shadow:0 8px 20px rgba(91,33,182,.35);cursor:pointer}
+#krFab.on{display:block}
+/* policy view */
+.kr-pv{white-space:pre-wrap;font-size:13px;line-height:1.6;background:#fff;border:1px solid #EDE2CB;border-radius:14px;padding:12px;color:#3b2f1c}
+/* admin people */
+.kp-ls{display:grid;gap:8px}
+.kp-r{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E7E8EE;border-radius:14px;padding:10px 12px;cursor:pointer}
+.kp-r .av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;flex:none}
+.kp-r div{flex:1;min-width:0}.kp-r b{display:block;font-size:14px}.kp-r small{color:#6b7280;font-size:12px}
+.kp-r em{font-style:normal;font-size:11px;font-weight:800;border-radius:99px;padding:3px 8px;background:#F1F2F6;color:#374151}
+.kp-card{perspective:1200px;margin:0 auto 12px;max-width:420px}
+.kp-in{position:relative;transition:transform .6s;transform-style:preserve-3d;min-height:310px}
+.kp-card.fl .kp-in{transform:rotateY(180deg)}
+.kp-f,.kp-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;padding:18px;color:#fff;overflow:hidden}
+.kp-f{background:linear-gradient(135deg,#1d1408,#3b2a12)}
+.kp-f.v{background:linear-gradient(135deg,#0F766E,#064E48)}
+.kp-b{transform:rotateY(180deg);background:#fff;color:#1d1408;border:1px solid #E7E8EE}
+.kp-f h3{margin:10px 0 2px;font-size:21px}.kp-f p{margin:0;opacity:.85;font-size:13px}
+.kp-f .bd{position:absolute;right:16px;top:16px;font:800 10px Poppins,system-ui;letter-spacing:.1em;background:rgba(255,255,255,.15);padding:4px 9px;border-radius:99px}
+.kp-st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.kp-st div{background:rgba(255,255,255,.1);border-radius:12px;padding:8px}.kp-st b{display:block;font-size:17px}.kp-st small{font-size:10.5px;opacity:.8}
+.kp-b table{width:100%;font-size:12.5px;border-collapse:collapse}.kp-b td{padding:5px 0;border-bottom:1px solid #F1F2F6;vertical-align:top}.kp-b td:first-child{color:#6b7280;width:42%}
+</style>
+<script id="v286">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const R=n=>'₹'+Math.round(+n||0).toLocaleString('en-IN');
+  const T=m=>{ try{ toast(m); }catch(e){} };
+  const rpc=(f,p)=>window.koRpc?koRpc(f,p):Promise.reject(new Error('offline'));
+  const d10=x=>String(x||'').replace(/\D/g,'').slice(-10);
+  const ago=t=>{ const m=Math.round((Date.now()-new Date(t))/6e4); return m<1?'abhi':m<60?m+' min':m<1440?Math.round(m/60)+' ghante':Math.round(m/1440)+' din'; };
+  const tm=t=>new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+  const myShop=()=>{ try{ return SHOPS[MY_SHOP][0]; }catch(e){ return 'Ashu Readymade Garments'; } };
+  const ownPh=()=>{ try{ const ss=JSON.parse(localStorage.getItem('1qr_session')||'null'), a=JSON.parse(localStorage.getItem('ko_myapp')||'null'); return d10(ss&&ss.n)||d10(a&&a.ph)||(window.KO_OWNER_PH||[''])[0]; }catch(e){ return (window.KO_OWNER_PH||[''])[0]; } };
+  const cust=()=>{ try{ return JSON.parse(localStorage.getItem('ko_cust')||'{}')||{}; }catch(e){ return {}; } };
+  function sheet(id){ let o=$(id); if(!o){ o=document.createElement('div'); o.id=id; o.className='kr-ov'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); } return o; }
+  const close=id=>{ const o=$(id); if(o) o.classList.remove('on'); };
+  window.krClose=close;
+
+  /* ================= 1) Admin: kaunsi service LIVE — saaf dikhe ================= */
+  try{ const _s=window.adS_set; if(_s) window.adS_set=adS_set=function(){ let h=_s.apply(this,arguments); const m=(window.KO_CFG||{}).mode||'both'; const L={shops:'🏬 Abhi LIVE: sirf All Shops · beech me 🎤',quick:'⚡ Abhi LIVE: sirf Quick Service · beech me 🎤',both:'✨ Abhi LIVE: dono service'}[m];
+      return h.replace('<div style="display:block"><span>Kaunsi service LIVE ho','<div style="display:block"><span id="koLiveRow">Kaunsi service LIVE ho').replace(/(\['both','✨ Dono'\]\]\)\}|✨ Dono<\/button><\/div>)/,'$1<div class="ko-live" id="koLiveTag"><i></i>'+L+'</div>'); }; }catch(e){}
+  try{ const _c=window.koCfgSet; if(_c) window.koCfgSet=function(k,v,b){ _c.apply(this,arguments); if(k==='mode'){ const t=$('koLiveTag'); if(t) t.innerHTML='<i></i>'+({shops:'🏬 Chuna: sirf All Shops',quick:'⚡ Chuna: sirf Quick Service',both:'✨ Chuna: dono'}[v])+' — "Sab par lagayein" dabayein'; } }; }catch(e){}
+
+  /* ================= 2) Dukaan ke niyam (policy) — dukaandar ka apna ================= */
+  const PK='ko_pol';
+  const DEFP={type:'exchange',days:7,ship:'customer',fee:40,refund:'upi',cond:['tag','unused'],no:'Innerwear, sale wale saaman, custom silai'};
+  const polMap=()=>{ try{ return JSON.parse(localStorage.getItem(PK)||'{}'); }catch(e){ return {}; } };
+  function pol(shop){ const m=polMap(); return Object.assign({},DEFP,m[shop]||{}); }
+  function polSave(shop,p){ const m=polMap(); m[shop]=p; try{ localStorage.setItem(PK,JSON.stringify(m)); }catch(e){} }
+  const polLoaded={};
+  function polFetch(shop){ if(polLoaded[shop]) return; polLoaded[shop]=1; rpc('ko_policy_get',{p_shop:shop}).then(v=>{ if(v&&v.type){ polSave(shop,v); chip(); } }).catch(()=>{}); }
+  const CONDS={tag:'Tag laga ho',unused:'Istemal na hua ho',pack:'Original packing',video:'Unboxing video ho'};
+  const pType=p=>p.type==='none'?'❌ Return nahi':p.type==='exchange'?`🔄 ${p.days} din exchange`:`↩️ ${p.days} din return + refund`;
+  function tpl(shop,p){ const c=(p.cond||[]).map(k=>'• '+CONDS[k]).join('\n');
+    const ret=p.type==='none'?`${shop} — Return / Refund niyam\n\nIs dukaan par bika hua saaman wapas nahi hota. Delivery ke samay saaman achhe se dekh lein.\nAgar galat ya kharab saaman mila ho to 24 ghante me dukaan se WhatsApp par baat karein.`
+     :`${shop} — ${p.type==='exchange'?'Exchange':'Return aur Refund'} niyam\n\n1. Delivery ke ${p.days} din ke andar ${p.type==='exchange'?'exchange (size / rang badalna)':'return ya exchange'} ki request Karo Online app me "My Orders" se bhejein.\n2. Shartein:\n${c||'• Koi khaas shart nahi'}\n3. Inpar return nahi: ${p.no||'—'}\n4. Galat / kharab saaman mila to wapas laane ka kharcha dukaan dega.\n5. Size ya pasand badalne par wapas laane ka kharcha: ${p.ship==='customer'?R(p.fee)+' grahak dega (refund me se katega)':p.ship==='vendor'?'dukaan dega':'FREE'}.\n6. ${p.type==='exchange'?'Exchange me naya saaman bheja jayega.':`Refund ${p.refund==='upi'?'aapke UPI par':'store credit (agli khareed) me'} — saaman dukaan par milne aur jaanch ke 2 din ke andar.`}\n7. Aakhri faisla dukaan ka hoga. Dukaan: ${shop}.`;
+    const pr=`${shop} — Privacy niyam\n\n• Hum aapka naam, mobile aur pata sirf order pahunchane, return aur bill ke liye lete hain.\n• Aapka number kisi aur ko becha ya diya nahi jata.\n• Delivery ke liye rider / courier ko sirf pata aur naam diya jata hai.\n• Aap kabhi bhi apna data hatane ke liye dukaan ko WhatsApp kar sakte hain.\n• Payment seedha dukaan ke khate me jata hai — Karo Online aapka card / UPI PIN kabhi nahi dekhta.`;
+    const tr=`${shop} — Shartein (Terms)\n\n• Saaman ki photo asli ke jaisi hai, rang thoda alag ho sakta hai.\n• Daam me GST shamil hai (agar laagu ho).\n• Cash on delivery par saaman lene se mana karne par agli baar advance maanga ja sakta hai.\n• Ye dukaan apni khud ki maalik hai — Karo Online (Filipra Private Limited) sirf app / tool deta hai.\n• Kisi bhi shikayat ke liye pehle dukaan se, phir Karo Online support se baat karein.`;
+    return {ret,pr,tr}; }
+  let PE=null;
+  window.krPolOpen=function(){ const shop=myShop(); const p=pol(shop); PE=Object.assign({},p,{cond:[...(p.cond||[])]}); if(!PE.txt) PE.txt=tpl(shop,PE); polFetch(shop); krPolR(); sheet('krPol').classList.add('on'); };
+  window.krPolR=function(){ const o=sheet('krPol'), p=PE, shop=myShop();
+    const seg=(k,opts,big)=>`<div class="kr-seg${big?' big':''}">${opts.map(([v,l,s])=>`<button class="${String(p[k])===String(v)?'on':''}" onclick="krPS('${k}','${v}')">${l}${s?`<small>${s}</small>`:''}</button>`).join('')}</div>`;
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>📜 Dukaan ke niyam<span class="sp"></span></h4><div class="kr-sb">${E(shop)} · aapki dukaan, aapke niyam — grahak ko order karte samay dikhenge</div>
+     <div class="kr-h">RETURN KA NIYAM</div>${seg('type',[['none','❌ Return nahi','Bika maal wapas nahi'],['exchange','🔄 Sirf exchange','Size / rang badlein'],['return','↩️ Return + refund','Paisa wapas']],1)}
+     ${p.type!=='none'?`<div class="kr-h">KITNE DIN ME</div>${seg('days',[[3,'3 din'],[7,'7 din'],[15,'15 din'],[30,'30 din']])}
+     <div class="kr-h">SIZE / PASAND BADLE TO WAPSI KA KHARCHA</div>${seg('ship',[['customer','Grahak dega'],['vendor','Dukaan degi'],['free','FREE']])}
+     ${p.ship==='customer'?`<div style="display:flex;gap:8px;align-items:center;margin-top:8px"><span style="font-size:13px;flex:1">Kitna kaatein</span><input inputmode="numeric" style="max-width:110px" value="${p.fee}" oninput="PE_fee(this.value)"></div>`:''}
+     ${p.type==='return'?`<div class="kr-h">REFUND KAISE</div>${seg('refund',[['upi','💸 UPI par'],['credit','🎟️ Store credit']])}`:''}
+     <div class="kr-h">SHARTEIN</div><div class="kr-seg">${Object.entries(CONDS).map(([k,l])=>`<button class="${p.cond.includes(k)?'on':''}" onclick="krPC('${k}')">${p.cond.includes(k)?'✓ ':''}${l}</button>`).join('')}</div>
+     <div class="kr-h">INPAR RETURN NAHI</div><input id="krPNo" value="${E(p.no)}" placeholder="Jaise: innerwear, sale item">`:''}
+     <div class="kr-h" style="display:flex;align-items:center">LIKHE HUE NIYAM (BADAL SAKTE HAIN)<span style="flex:1"></span><button onclick="krPGen()" style="border:none;background:#FFF1E4;color:#C2410C;border-radius:99px;padding:5px 10px;font:800 11px Poppins,system-ui">✨ Apne-aap banayein</button></div>
+     <div class="kr-sb" style="margin:0 0 4px">↩️ Return / Refund</div><textarea class="lg" id="krT1">${E(p.txt.ret)}</textarea>
+     <div class="kr-sb" style="margin:8px 0 4px">🔒 Privacy</div><textarea class="lg" id="krT2">${E(p.txt.pr)}</textarea>
+     <div class="kr-sb" style="margin:8px 0 4px">📄 Shartein (Terms)</div><textarea class="lg" id="krT3">${E(p.txt.tr)}</textarea>
+     <div class="kr-nt">💡 Paisa seedha aapke khate me aata hai. Return lena hai ya nahi, refund dena hai ya nahi — sab aapka faisla. Karo Online sirf tool (rider, courier, app) deta hai.</div>
+     <button class="kr-go" onclick="krPolSave()">💾 Niyam save karein</button><button class="kr-x" onclick="krClose('krPol')">Band karein</button></div>`; };
+  const grab=()=>{ const a=$('krT1'),b=$('krT2'),c=$('krT3'),n=$('krPNo'); if(a) PE.txt={ret:a.value,pr:b.value,tr:c.value}; if(n) PE.no=n.value; };
+  window.krPS=(k,v)=>{ grab(); PE[k]=['days','fee'].includes(k)?+v:v; PE.txt=tpl(myShop(),PE); krPolR(); };
+  window.PE_fee=v=>{ PE.fee=+String(v).replace(/\D/g,'')||0; };
+  window.krPC=k=>{ grab(); const i=PE.cond.indexOf(k); if(i<0) PE.cond.push(k); else PE.cond.splice(i,1); PE.txt=tpl(myShop(),PE); krPolR(); };
+  window.krPGen=()=>{ grab(); PE.txt=tpl(myShop(),PE); krPolR(); T('✨ Niyam aapki choice se ban gaye'); };
+  window.krPolSave=function(){ grab(); const shop=myShop(); polSave(shop,PE); close('krPol'); chip(); T('✅ Niyam save — grahak ko dikhenge');
+    rpc('ko_policy_set',{p_shop:shop,p_phone:ownPh(),p_policy:PE}).catch(e=>{ if(/maalik/.test(String(e&&e.message||e))) T('❌ Sirf dukaan ka maalik niyam badal sakta hai'); }); };
+  /* grahak: niyam dekhein */
+  window.krPolView=function(shop,tab){ shop=shop||curShop(); const p=pol(shop); polFetch(shop); const txt=p.txt||tpl(shop,p); tab=tab||'ret';
+    const o=sheet('krPv'); o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>📜 ${E(shop)}</h4><div class="kr-sb">Ye niyam dukaan ne khud banaye hain</div>
+     <div class="kr-seg" style="margin-bottom:10px"><span class="kr-tag g">${pType(p)}</span>${p.type!=='none'?`<span class="kr-tag">${p.ship==='free'?'Wapsi FREE':p.ship==='vendor'?'Wapsi dukaan ki':'Wapsi '+R(p.fee)}</span>${p.type==='return'?`<span class="kr-tag v">${p.refund==='upi'?'UPI refund':'Store credit'}</span>`:''}`:''}</div>
+     <div class="kr-tb">${[['ret','↩️ Return'],['pr','🔒 Privacy'],['tr','📄 Shartein']].map(([k,l])=>`<button class="${tab===k?'on':''}" onclick="krPolView(${JSON.stringify(shop).replace(/"/g,'&quot;')},'${k}')">${l}</button>`).join('')}</div>
+     <div class="kr-pv">${E(txt[tab])}</div><button class="kr-x" onclick="krClose('krPv')">Band karein</button></div>`; o.classList.add('on'); };
+  /* dukaan ke page par niyam ki chip */
+  let SHI=null; const curShop=()=>{ try{ return SHOPS[SHI!=null?SHI:(window._ksf?_ksf.K.i:MY_SHOP)][0]; }catch(e){ return myShop(); } };
+  function chip(){ const b=$('shopBody'); if(!b||SHI==null) return; const info=b.querySelector('.sl-info'); if(!info) return; let c=b.querySelector('.kr-chip'); const shop=curShop(), p=pol(shop);
+    if(!c){ c=document.createElement('div'); info.insertAdjacentElement('afterend',c); } c.className='kr-chip'+(p.type==='none'?' no':''); c.onclick=()=>krPolView(shop); c.innerHTML=`<span>${pType(p)}${p.type!=='none'&&p.ship==='free'?' · wapsi FREE':''}</span>Niyam ›`; }
+  try{ const _o=window.openShop; window.openShop=openShop=function(i){ SHI=i; const r=_o.apply(this,arguments); try{ polFetch(SHOPS[i][0]); }catch(e){} setTimeout(chip,60); setTimeout(chip,700); return r; }; }catch(e){}
+
+  /* ================= 3) Grahak: Return / Exchange request ================= */
+  const RK='ko_rets';
+  const rets=()=>{ try{ return JSON.parse(localStorage.getItem(RK)||'[]'); }catch(e){ return []; } };
+  const retsSave=L=>{ try{ localStorage.setItem(RK,JSON.stringify(L.slice(0,80))); }catch(e){ try{ localStorage.setItem(RK,JSON.stringify(L.slice(0,80).map(x=>Object.assign({},x,{photos:[]})))); }catch(_){} } };
+  const upsert=r=>{ const L=rets(); const k=L.findIndex(x=>x.ref===r.ref); if(k>=0) L[k]=Object.assign({},L[k],r); else L.unshift(r); retsSave(L); return r; };
+  const retOf=(shop,oid)=>rets().find(x=>x.shop===shop&&x.order_ref===oid&&!['closed'].includes(x.status));
+  const RST={requested:['⏳ Dukaan ka jawab baaki','p',1],accepted:['✓ Maan liya · pickup jald','g',2],pickup:['🛵 Pickup chal raha','v',3],received:['📦 Dukaan par mila · jaanch','v',4],refunded:['💸 Refund ho gaya','g',5],exchanged:['🔄 Exchange ho gaya','g',5],rejected:['✕ Mana kiya','r',0],closed:['Cancel','r',0]};
+  const steps=r=>{ const x=r.status==='rejected'||r.status==='closed'; let n=(RST[r.status]||[0,0,1])[2];
+    if(x){ const ev=(r.events||[]).filter(e=>!['rejected','closed'].includes(e.s)); const last=ev.length?ev[ev.length-1].s:'requested'; n=(RST[last]||[0,0,1])[2]; }
+    const L=['Request','Maan liya','Pickup','Dukaan par',r.kind==='exchange'?'Exchange':'Refund'], xi=Math.min(4,n);
+    return `<div class="kr-pg">${L.map((l,k)=>{ const ok=x?k<xi:n>k, bad=x&&k===xi; return (k?`<s class="${ok?'ok':''}"></s>`:'')+`<i class="${bad?'x':ok?'ok':''}">${bad?'✕':ok?'✓':k+1}</i>`; }).join('')}</div><div class="kr-pl">${L.map(l=>`<span>${l}</span>`).join('')}</div>`; };
+  let RQ=null;
+  window.ksfRet=function(id){ const K=window._ksf&&_ksf.K; const o=window._ksf&&_ksf.fo(id); if(!o){ T('Order nahi mila'); return; }
+    const shop=SHOPS[K.i][0], p=pol(shop); polFetch(shop);
+    const ex=retOf(shop,o.id); if(ex){ krCView(ex.ref); return; }
+    const o2=sheet('krRq');
+    if(o.st!==4){ o2.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>↩️ Return / Exchange</h4><div class="kr-nt">Order abhi pahuncha nahi hai. Delivery ke baad yahin se return ya exchange maang sakte hain.${o.st>=0&&o.st<4?' Abhi chahein to order cancel kar sakte hain.':''}</div><button class="kr-x" onclick="krPolView(${JSON.stringify(shop).replace(/"/g,'&quot;')})">📜 Dukaan ke niyam dekhein</button><button class="kr-x" onclick="krClose('krRq')">Band karein</button></div>`; o2.classList.add('on'); return; }
+    const left=Math.ceil((o.t+p.days*864e5-Date.now())/864e5);
+    if(p.type==='none'||left<=0){ o2.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>↩️ Return / Exchange</h4><div class="kr-nt bad">${p.type==='none'?'Is dukaan par bika hua saaman wapas nahi hota (dukaan ka niyam).':`Return ka samay (${p.days} din) khatam ho gaya.`}</div><div class="kr-sb" style="margin-top:10px">Galat ya kharab saaman mila ho to dukaan se seedha baat karein.</div><div class="kr-row"><button onclick="krPolView(${JSON.stringify(shop).replace(/"/g,'&quot;')})">📜 Niyam</button><button class="wa" onclick="try{ksfWa()}catch(e){toast('WhatsApp')}">💬 Dukaan ko WhatsApp</button></div><button class="kr-x" onclick="krClose('krRq')">Band karein</button></div>`; o2.classList.add('on'); return; }
+    const c=cust(); RQ={o,shop,p,left,kind:p.type==='exchange'?'exchange':'return',sel:o.its.map((_,k)=>k),reason:'',note:'',photos:[],upi:c.upi||'',name:c.name||'',phone:d10(c.phone),addr:c.addr||c.area||'',busy:false};
+    o2.innerHTML=''; krRqR(); o2.classList.add('on'); };
+  const REAS=[['size','📏 Size chhota / bada',1],['bad','⚠️ Kharab / kata-phata',0],['wrong','🔁 Galat saaman aaya',0],['color','🎨 Rang / design alag',0],['like','🙁 Pasand nahi aaya',1]];
+  const fee=()=>{ if(!RQ) return 0; const r=REAS.find(x=>x[0]===RQ.reason); return r&&r[2]&&RQ.p.ship==='customer'?(+RQ.p.fee||0):0; };
+  const selAmt=()=>RQ.sel.reduce((a,k)=>a+(RQ.o.its[k].pr*RQ.o.its[k].q),0);
+  window.krRqR=function(){ const o=sheet('krRq'), q=RQ, p=q.p;
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>↩️ ${q.kind==='exchange'?'Exchange':'Return'} — ${E(q.o.id)}</h4><div class="kr-sb">${E(q.shop)} · ${pType(p)} · <b>${q.left} din baaki</b> · <a href="javascript:void 0" onclick="krPolView(${JSON.stringify(q.shop).replace(/"/g,'&quot;')})" style="color:#C2410C">niyam</a></div>
+     ${p.type==='return'?`<div class="kr-seg big">${[['exchange','🔄 Exchange','Size / rang badlein'],['return','↩️ Return','Paisa wapas']].map(([v,l,s])=>`<button class="${q.kind===v?'on':''}" onclick="krRK('${v}')">${l}<small>${s}</small></button>`).join('')}</div>`:''}
+     <div class="kr-h">KAUNSA SAAMAN</div>${q.o.its.map((x,k)=>`<div class="kr-it ${q.sel.includes(k)?'on':''}" onclick="krSel(${k})"><i style="${x.im?`background-image:url('${E(x.im)}')`:''}"></i><div><b>${E(x.n)}</b><small>${x.q} pc · ${R(x.pr*x.q)}</small></div><u>${q.sel.includes(k)?'✓':''}</u></div>`).join('')}
+     <div class="kr-h">KYUN</div><div class="kr-seg">${REAS.map(([k,l])=>`<button class="${q.reason===k?'on':''}" onclick="krRR('${k}')">${l}</button>`).join('')}</div>
+     ${q.kind==='exchange'?`<div class="kr-h">KYA CHAHIYE BADLE ME</div>`:'<div class="kr-h">KUCH AUR BATAYEIN (OPTIONAL)</div>'}<textarea id="krNote" placeholder="${q.kind==='exchange'?'Jaise: L size chahiye, ya laal rang':'Jaise: silai khuli hui thi'}">${E(q.note)}</textarea>
+     <div class="kr-h">PHOTO (${q.reason==='bad'||q.reason==='wrong'?'zaroori':'acha rahega'})</div><div class="kr-ph">${q.photos.map((u,k)=>`<span style="background-image:url('${u}')"><b onclick="krRP(${k})">✕</b></span>`).join('')}${q.photos.length<3?`<button type="button" class="kr-add" onclick="document.getElementById('krPhI').click()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><small>Photo</small></button><input id="krPhI" type="file" accept="image/*" hidden style="display:none!important;position:absolute;width:0;height:0;opacity:0" onchange="krPh(this)">`:''}</div>
+     <div class="kr-h">PICKUP KAHAN SE</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="krNm" placeholder="Naam" value="${E(q.name)}"><input id="krMb" inputmode="numeric" maxlength="10" placeholder="Mobile" value="${E(q.phone)}"></div><textarea id="krAd" style="margin-top:8px;min-height:56px" placeholder="Pura pata">${E(q.addr)}</textarea>
+     ${q.kind==='return'&&p.refund==='upi'?`<div class="kr-h">REFUND KAHAN BHEJEIN</div><input id="krUpi" placeholder="UPI ID ya UPI wala mobile" value="${E(q.upi)}">`:''}
+     <div class="kr-sum"><span>${q.kind==='exchange'?'Exchange ka saaman':'Refund (andaaza)'}${fee()?`<br><small>Wapsi ka kharcha −${R(fee())} (dukaan ka niyam)</small>`:''}</span><b>${R(Math.max(0,selAmt()-(q.kind==='return'?fee():0)))}</b></div>
+     ${fee()&&q.kind==='exchange'?`<div class="kr-nt">Exchange me ${R(fee())} wapsi ka kharcha lag sakta hai — dukaandar batayega.</div>`:''}
+     <div class="kr-nt ok">Request dukaandar ko jayegi. Maanne par rider / courier aapke ghar se saaman uthayega. ${q.kind==='return'?'Saaman dukaan par milne ke baad dukaandar refund bhejega.':'Naya saaman dukaan bhejegi.'}</div>
+     <button class="kr-go" ${q.busy?'disabled':''} onclick="krRqSend()">${q.busy?'Bhej rahe hain…':'✓ Request bhejein'}</button><button class="kr-x" onclick="krClose('krRq')">Baad mein</button></div>`; };
+  const keep=()=>{ const g=id=>{ const e=$(id); return e?e.value:null; }; if(!RQ) return; const n=g('krNote'); if(n!=null) RQ.note=n; const a=g('krNm'); if(a!=null) RQ.name=a; const b=g('krMb'); if(b!=null) RQ.phone=b; const c=g('krAd'); if(c!=null) RQ.addr=c; const u=g('krUpi'); if(u!=null) RQ.upi=u; };
+  ['krRqR'].forEach(f=>{ const _f=window[f]; window[f]=function(){ keep(); return _f.apply(this,arguments); }; });
+  window.krRK=v=>{ if(RQ.p.type==='return'||v==='exchange') RQ.kind=v; krRqR(); }; window.krRR=k=>{ RQ.reason=k; krRqR(); }; window.krRP=k=>{ RQ.photos.splice(k,1); krRqR(); }; window.krPO=k=>{ PU.opt=k; krPkR(); };
+  window.krSel=k=>{ const i=RQ.sel.indexOf(k); if(i<0) RQ.sel.push(k); else if(RQ.sel.length>1) RQ.sel.splice(i,1); krRqR(); };
+  window.krPh=function(inp){ const f=inp.files&&inp.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ const im=new Image(); im.onload=()=>{ const s=Math.min(1,480/Math.max(im.width,im.height)); const c=document.createElement('canvas'); c.width=Math.round(im.width*s); c.height=Math.round(im.height*s); c.getContext('2d').drawImage(im,0,0,c.width,c.height); RQ.photos.push(c.toDataURL('image/jpeg',.6)); krRqR(); }; im.src=rd.result; }; rd.readAsDataURL(f); };
+  window.krRqSend=async function(){ keep(); const q=RQ; if(!q.reason){ T('Wajah chunein'); return; } if((q.reason==='bad'||q.reason==='wrong')&&!q.photos.length){ T('📷 Kharab / galat saaman ki photo zaroori hai'); return; }
+    const ph=d10(q.phone); if(!/^[6-9]\d{9}$/.test(ph)){ T('Sahi 10 ank ka mobile daalein'); return; } if(String(q.addr).trim().length<6){ T('Pura pata daalein'); return; }
+    if(q.kind==='return'&&q.p.refund==='upi'&&String(q.upi).trim().length<5){ T('Refund ke liye UPI ID daalein'); return; }
+    try{ const c=cust(); localStorage.setItem('ko_cust',JSON.stringify(Object.assign(c,{name:q.name||c.name,phone:ph,addr:q.addr,upi:q.upi||c.upi}))); }catch(e){}
+    const its=q.sel.map(k=>q.o.its[k]); const body={shop:q.shop,shop_phone:q.shop===myShop()?(window.KO_OWNER_PH||[''])[0]:'',order_ref:q.o.id,cust_name:q.name||'Grahak',cust_phone:ph,cust_addr:q.addr,kind:q.kind,
+      reason:(REAS.find(x=>x[0]===q.reason)||[])[1],note:q.note,items:its.map(x=>x.n+(x.q>1?' ×'+x.q:'')).join(', '),amount:Math.max(0,selAmt()-(q.kind==='return'?fee():0)),photos:q.photos,upi:q.upi};
+    q.busy=true; krRqR(); let r=null;
+    try{ r=await rpc('ko_return_create',{p:body}); }catch(e){ const m=String(e&&e.message||e); if(/pehle se|mobile|order chahiye|photo/.test(m)){ q.busy=false; krRqR(); T('❌ '+m.replace(/^.*?:\s*/,'')); return; } }
+    if(!r||!r.ref) r=Object.assign({},body,{ref:'RT'+Date.now().toString(36).toUpperCase().slice(-6),status:'requested',events:[{s:'requested',t:new Date().toISOString(),n:q.kind==='exchange'?'Exchange ki request bheji':'Return ki request bheji'}],created_at:new Date().toISOString(),_local:1});
+    upsert(Object.assign({},body,r,{cust_phone:ph,cust_addr:q.addr,upi:q.upi})); close('krRq');
+    T('✅ Request chali gayi — dukaandar jald jawab dega'); try{ _ksf.osR(); }catch(e){} setTimeout(()=>krCView(r.ref),300); };
+  /* grahak: return ka haal */
+  window.krCView=function(ref){ const r=rets().find(x=>x.ref===ref); if(!r) return; const st=RST[r.status]||[r.status,'',1];
+    const o=sheet('krCv'); o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>${r.kind==='exchange'?'🔄 Exchange':'↩️ Return'} · ${E(r.ref)}<span class="sp"></span><span class="kr-tag ${st[1]}">${st[0]}</span></h4><div class="kr-sb">${E(r.shop)} · Order ${E(r.order_ref)} · ${E(r.items)}</div>
+     ${steps(r)}
+     ${r.status==='rejected'?`<div class="kr-nt bad">Dukaan ne mana kiya: <b>${E(r.reject_reason||'—')}</b></div>`:''}
+     ${r.status==='pickup'?`<div class="kr-nt">${r.pickup_mode==='drop'?'🏪 Saaman khud dukaan par de aayein.':r.pickup_mode==='courier'?'🚚 Courier aapke ghar aayega — saaman pack karke rakhein.':'🛵 Rider aapke ghar aayega — saaman pack karke rakhein.'}${r.awb?` · AWB <b>${E(r.awb)}</b>`:''}</div>`:''}
+     ${r.status==='refunded'?`<div class="kr-nt ok">💸 ${R(r.refund_amt)} bhej diye${r.refund_utr?' · UTR '+E(r.refund_utr):''}. 1–2 ghante me na dikhe to dukaan se baat karein.</div>`:''}
+     <div class="kr-sum"><span>${r.kind==='exchange'?'Saaman':'Refund'}</span><b>${R(r.refund_amt||r.amount)}</b></div>
+     <div class="kr-ev">${(r.events||[]).slice().reverse().map(e=>`<div>${E(e.n)} <small>· ${tm(e.t)}</small></div>`).join('')}</div>
+     <div class="kr-row">${['requested','accepted'].includes(r.status)?`<button class="d" onclick="krCCancel('${E(r.ref)}',this)">✕ Request cancel</button>`:''}${r.awb?`<a href="track.html?awb=${encodeURIComponent(r.awb)}" target="_blank" rel="noopener">📍 Track</a>`:''}<button onclick="krPolView(${JSON.stringify(r.shop).replace(/"/g,'&quot;')})">📜 Niyam</button></div>
+     <button class="kr-x" onclick="krClose('krCv')">Band karein</button></div>`; o.classList.add('on'); custSync(); };
+  window.krCCancel=async function(ref,b){ if(b&&!b.dataset.s){ b.dataset.s=1; b.textContent='Pakka? Dobara dabayein'; return; } const r=rets().find(x=>x.ref===ref); if(!r) return;
+    try{ const v=await rpc('ko_return_step_v',{p_ref:ref,p_shop:r.shop,p_phone:'',p_step:'cancel',p:{phone:r.cust_phone}}); upsert(v); }catch(e){ upsert({ref,status:'closed',events:(r.events||[]).concat([{s:'closed',t:new Date().toISOString(),n:'Grahak ne return cancel kiya'}])}); }
+    close('krCv'); T('Return request cancel'); try{ _ksf.osR(); }catch(e){} };
+  let csT=0; function custSync(){ if(Date.now()-csT<8000) return; csT=Date.now(); const ph=d10(cust().phone); if(!ph) return; rpc('ko_return_by_cust',{p_phone:ph}).then(L=>{ if(Array.isArray(L)&&L.length){ const old=rets(); L.forEach(r=>{ const o=old.find(x=>x.ref===r.ref); upsert(Object.assign({},o||{},r)); }); try{ const os=$('ksfOs'); if(os&&os.classList.contains('on')) strips(); }catch(e){} } }).catch(()=>{}); }
+  /* My Orders card par return ki patti */
+  function strips(){ const os=$('ksfOs'); if(!os||!window._ksf) return; let shop; try{ shop=SHOPS[_ksf.K.i][0]; }catch(e){ return; }
+    os.querySelectorAll('.kf-oc').forEach(c=>{ const id=(c.querySelector('.kf-oh b')||{}).textContent; const r=id&&retOf(shop,id); const s=c.querySelector('.kr-strip');
+      if(!r){ if(s) s.remove(); return; } const st=RST[r.status]||[r.status]; const h=`<span>${r.kind==='exchange'?'🔄':'↩️'}</span><b>${r.kind==='exchange'?'Exchange':'Return'} · ${st[0]}</b><span>›</span>`;
+      if(s){ if(s.innerHTML!==h) s.innerHTML=h; } else { const d=document.createElement('div'); d.className='kr-strip'; d.innerHTML=h; d.onclick=e=>{ e.stopPropagation(); krCView(r.ref); }; const pg=c.querySelector('.kf-pg'); (pg||c.firstChild).insertAdjacentElement('afterend',d); } }); }
+  (function(){ let os=null; const mo=new MutationObserver(()=>{ mo.disconnect(); try{ strips(); }finally{ if(os) mo.observe(os,{childList:true,subtree:true}); } });
+    const hook=()=>{ const o=$('ksfOs'); if(o&&o!==os){ os=o; mo.observe(os,{childList:true,subtree:true}); } }; setInterval(()=>{ hook(); const o=$('ksfOs'); if(o&&o.classList.contains('on')) custSync(); },3000); hook(); })();
+
+  /* ================= 4) Dukaandar: Returns screen ================= */
+  const VF={t:'new'}; let VL=[], vT=0, seen=null;
+  async function vLoad(force){ if(!force&&Date.now()-vT<15000) return; vT=Date.now(); const shop=myShop(); let srv=[];
+    try{ srv=await rpc('ko_return_by_shop',{p_shop:shop,p_phone:ownPh()}); }catch(e){ srv=null; }
+    const loc=rets().filter(x=>x.shop===shop); const m={}; loc.forEach(x=>m[x.ref]=x); (srv||[]).forEach(x=>m[x.ref]=Object.assign({},m[x.ref]||{},x)); VL=Object.values(m).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    VL.forEach(x=>upsert(x)); badge(); if($('krV')&&$('krV').classList.contains('on')) krVR(); }
+  const VT={new:x=>x.status==='requested',run:x=>['accepted','pickup','received'].includes(x.status),done:x=>['refunded','exchanged','rejected','closed'].includes(x.status)};
+  function badge(){ const n=VL.filter(VT.new).length; let f=$('krFab'); if(!f){ f=document.createElement('button'); f.id='krFab'; f.onclick=()=>krV(); document.body.appendChild(f); }
+    const vo=$('sdOv'); const show=n>0&&vo&&vo.classList.contains('open')&&!(window.koIsOwner&&!koIsOwner()); f.classList.toggle('on',!!show); f.textContent='↩ '+n+' Return request';
+    if(seen!==null&&n>seen){ T('↩ Nayi return request aayi'); try{ navigator.vibrate&&navigator.vibrate([60,40,60]); }catch(e){} } seen=n; ent(); }
+  window.krV=function(){ if(window.koIsOwner&&!koIsOwner()){ try{ koGate(); }catch(e){} return; } VL=VL.length?VL:rets().filter(x=>x.shop===myShop()); krVR(); sheet('krV').classList.add('on'); vLoad(true); };
+  let VX=null; // khula hua card
+  window.krVR=function(){ const o=sheet('krV'); const L=VL.filter(VT[VF.t]);
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>↩️ Return & Exchange<span class="sp"></span><button onclick="krPolOpen()" style="border:none;background:#FFF1E4;color:#C2410C;border-radius:99px;padding:6px 11px;font:800 12px Poppins,system-ui">📜 Niyam</button></h4><div class="kr-sb">${E(myShop())} · ${pType(pol(myShop()))} · faisla aapka</div>
+     <div class="kr-tb">${[['new','Nayi'],['run','Chal rahi'],['done','Poori']].map(([k,l])=>{ const n=VL.filter(VT[k]).length; return `<button class="${VF.t===k?'on':''}" onclick="krVT('${k}')">${l}${n?`<u>${n}</u>`:''}</button>`; }).join('')}</div>
+     ${L.length?L.map(vCard).join(''):`<div class="kr-nt" style="text-align:center">${VF.t==='new'?'Abhi koi nayi request nahi 🎉':'Yahan kuch nahi'}</div>`}
+     <button class="kr-x" onclick="krClose('krV')">Band karein</button></div>`; };
+  window.krVT=t=>{ VF.t=t; krVR(); };
+  function vCard(r){ const st=RST[r.status]||[r.status,'',1]; const p=pol(r.shop); const ph=d10(r.cust_phone); const wa=`https://wa.me/91${ph}?text=${encodeURIComponent('Namaste '+(r.cust_name||'')+', aapke '+(r.kind==='exchange'?'exchange':'return')+' '+r.ref+' ke baare me — '+myShop())}`;
+    const days=Math.round((Date.now()-new Date(r.created_at))/864e5);
+    let act='';
+    if(r.status==='requested') act=`<div class="kr-row"><button class="g" onclick="krAcc('${r.ref}')">✓ Maan lein</button><button class="d" onclick="krRej('${r.ref}')">✕ Mana karein</button></div>`;
+    else if(r.status==='accepted') act=`<div class="kr-row"><button class="p" onclick="krPick('${r.ref}')">🚚 Pickup chunein</button></div>`;
+    else if(r.status==='pickup') act=`${r.pin&&r.pickup_mode==='rider'?`<div class="kr-nt">🛵 Rider saaman laaye to use ye PIN dein: <b style="font-size:16px;letter-spacing:.2em">${E(r.pin)}</b></div>`:''}<div class="kr-row"><button class="g" onclick="krRecv('${r.ref}')">📦 Saaman mil gaya</button>${r.awb?`<a href="track.html?awb=${encodeURIComponent(r.awb)}" target="_blank" rel="noopener">📍 Track</a>`:''}</div>`;
+    else if(r.status==='received') act=r.kind==='exchange'?`<div class="kr-row"><button class="g" onclick="krExch('${r.ref}')">🔄 Naya saaman bhej diya</button><button class="d" onclick="krRej('${r.ref}',1)">✕ Saaman theek nahi</button></div>`:`<div class="kr-row"><button class="g" onclick="krRef('${r.ref}')">💸 Refund bhejein</button><button class="d" onclick="krRej('${r.ref}',1)">✕ Saaman theek nahi</button></div>`;
+    return `<div class="kr-rc"><div class="kr-rh"><span class="av">${E((r.cust_name||'G')[0].toUpperCase())}</span><div><b>${E(r.cust_name||'Grahak')}</b><small>${r.kind==='exchange'?'🔄 Exchange':'↩️ Return'} · ${E(r.ref)} · Order ${E(r.order_ref)} · ${ago(r.created_at)}</small></div><span class="kr-tag ${st[1]}">${st[0]}</span></div>
+     <div style="margin-top:8px;font-size:13px"><b>${E(r.items)}</b> · ${R(r.amount)}</div>
+     <div class="kr-seg" style="margin-top:6px"><span class="kr-tag p">${E(r.reason||'—')}</span>${r.status==='requested'?`<span class="kr-tag ${p.type==='none'?'r':'g'}">${p.type==='none'?'Niyam: return nahi':'Niyam ke andar ✓'}</span>`:''}</div>
+     ${r.note?`<div class="kr-sb" style="margin:6px 0 0">“${E(r.note)}”</div>`:''}
+     ${(r.photos||[]).length?`<div class="kr-ph" style="margin-top:8px">${r.photos.map(u=>`<span style="background-image:url('${u}')" onclick="window.open().document.write('<img src=&quot;${u}&quot; style=&quot;width:100%&quot;>')"></span>`).join('')}</div>`:''}
+     ${steps(r)}
+     ${act}
+     <div class="kr-row" style="margin-top:6px"><a class="wa" href="${wa}" target="_blank" rel="noopener">💬 WhatsApp</a>${ph?`<a href="tel:${ph}">📞 ${ph}</a>`:''}</div>
+     ${r.cust_addr?`<div class="kr-sb" style="margin:8px 0 0">📍 ${E(r.cust_addr)}</div>`:''}
+     <div class="kr-ev">${(r.events||[]).slice().reverse().slice(0,4).map(e=>`<div>${E(e.n)} <small>· ${tm(e.t)}</small></div>`).join('')}</div></div>`; }
+  async function vStep(ref,step,p){ const r=VL.find(x=>x.ref===ref)||rets().find(x=>x.ref===ref); let v=null;
+    try{ v=await rpc('ko_return_step_v',{p_ref:ref,p_shop:r.shop,p_phone:ownPh(),p_step:step,p:p||{}}); }
+    catch(e){ const m=String(e&&e.message||e); if(!/offline|fetch|Failed|network/i.test(m)&&!r._local){ T('❌ '+m.replace(/^.*?:\s*/,'')); return null; }
+      const ns={accept:'accepted',reject:'rejected',pickup:'pickup',received:'received',refund:'refunded',exchanged:'exchanged'}[step]; const nm={accept:'Dukaandar ne maan liya',reject:'Mana kiya: '+((p||{}).reason||''),pickup:'Pickup tay hua',received:'Saaman dukaan par mil gaya · jaanch ho gayi',refund:'Refund '+R((p||{}).amount)+' bheja',exchanged:'Naya saaman bhej diya'}[step];
+      v=Object.assign({},r,{status:ns,events:(r.events||[]).concat([{s:ns,t:new Date().toISOString(),n:nm}])},step==='reject'?{reject_reason:p.reason}:{},step==='pickup'?{pickup_mode:p.mode,awb:p.awb||r.awb,pin:p.pin||r.pin}:{},step==='refund'?{refund_amt:p.amount,refund_utr:p.utr}:{}); }
+    upsert(v); const k=VL.findIndex(x=>x.ref===ref); if(k>=0) VL[k]=Object.assign({},VL[k],v); badge(); krVR(); return v; }
+  window.krAcc=async ref=>{ const v=await vStep(ref,'accept'); if(v){ T('✓ Maan liya — ab pickup chunein'); VF.t='run'; krVR(); krPick(ref); } };
+  window.krRej=function(ref,after){ const o=sheet('krRj'); const RS=after?['Saaman istemal hua hai','Tag / packing nahi hai','Ye hamara saaman nahi','Kharabi grahak se hui']:['Return ka samay khatam','Is saaman par return nahi','Istemal hua lag raha hai','Photo me kharabi nahi dikhi'];
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>✕ Mana karein</h4><div class="kr-sb">Grahak ko wajah dikhegi — saaf likhein</div><div class="kr-seg">${RS.map(x=>`<button onclick="document.getElementById('krRjT').value=this.textContent">${x}</button>`).join('')}</div><textarea id="krRjT" style="margin-top:10px" placeholder="Wajah"></textarea>${after?'<div class="kr-nt">Saaman grahak ko wapas bhejna hoga — order me "Label banayein" se bhej sakte hain.</div>':''}<button class="kr-go dk" onclick="krRejGo('${ref}')">Mana karein</button><button class="kr-x" onclick="krClose('krRj')">Wapas</button></div>`; o.classList.add('on'); };
+  window.krRejGo=async ref=>{ const w=($('krRjT').value||'').trim(); if(w.length<3){ T('Wajah likhein'); return; } close('krRj'); const v=await vStep(ref,'reject',{reason:w}); if(v){ T('Grahak ko bata diya'); VF.t='done'; krVR(); } };
+  let PU=null;
+  window.krPick=function(ref){ const r=VL.find(x=>x.ref===ref); const c=Object.assign({rider_fee:40,rider_pay:30},window.KO_CFG||{}); PU={ref,opt:r.kind==='exchange'?'swap':'rider',busy:false,c}; krPkR(); sheet('krPk').classList.add('on'); };
+  window.krPkR=function(){ const r=VL.find(x=>x.ref===PU.ref), c=PU.c, o=sheet('krPk'); const op=(k,i,b,s,pr)=>`<button class="kr-op ${PU.opt===k?'on':''}" onclick="krPO('${k}')"><i>${i}</i><div><b>${b}</b><small>${s}</small></div><strong>${pr}</strong></button>`;
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>🚚 Saaman kaise wapas aaye?</h4><div class="kr-sb">${E(r.cust_name)} · ${E(String(r.cust_addr||'').slice(0,60))} · ${E(r.items)}</div>
+     ${r.kind==='exchange'?op('swap','🔄','Exchange — ek hi chakkar','Rider naya saaman dega, purana le aayega',R(c.rider_fee)):''}
+     ${op('rider','🛵','Karo rider — aaj hi','Paas ke sabhi online rider ko request · grahak se uthakar dukaan laayega',R(c.rider_fee))}
+     ${op('courier','🚚','Courier reverse pickup','Shiprocket — door ke grahak ke liye · 3–6 din','~'+R(90))}
+     ${op('drop','🏪','Grahak khud dukaan par de','Paas ka grahak ho to sabse sasta','₹0')}
+     <div class="kr-nt">${PU.opt==='rider'||PU.opt==='swap'?'Rider saaman laakar aapko dega — aap use apna 4 ank ka PIN batayein, tabhi "pahuncha" hoga.':PU.opt==='courier'?'Admin me Shiprocket keys na hon to demo booking hogi.':'Grahak ko WhatsApp par bata dein ki kab aaye.'}</div>
+     <button class="kr-go" ${PU.busy?'disabled':''} onclick="krPkGo()">${PU.busy?'Ho raha hai…':'✓ Pickup tay karein'}</button><button class="kr-x" onclick="krClose('krPk')">Baad mein</button></div>`; };
+  window.krPkGo=async function(){ const r=VL.find(x=>x.ref===PU.ref), c=PU.c, m=PU.opt; PU.busy=true; krPkR(); let awb=null, pin=null;
+    if(m!=='drop'){ const body={kind:m==='swap'?'exchange':'return',mode:m==='courier'?'courier':'rider',order_ref:r.ref,shop:r.shop,shop_phone:ownPh(),shop_addr:'Bara Hindu Rao, Sadar Bazar, Delhi 110006',cust_name:r.cust_name,cust_phone:r.cust_phone,cust_addr:r.cust_addr,items:r.items,cod:0,weight_g:500,fee:m==='courier'?90:c.rider_fee,rider_pay:c.rider_pay,courier:m==='courier'?'Courier return':null};
+      try{ const s=await rpc('ko_ship_create',{p:body}); awb=s&&s.awb; pin=s&&s.pin; if(m==='courier'&&awb&&window.koCourier){ koCourier({action:'return',awb,amount:r.amount}).catch(()=>{}); } }
+      catch(e){ awb='KR'+Date.now().toString(36).toUpperCase().slice(-7); pin=String(Math.floor(1000+Math.random()*9000)); } }
+    const v=await vStep(r.ref,'pickup',{mode:m,awb,pin}); PU.busy=false; close('krPk');
+    if(v){ T(m==='drop'?'🏪 Grahak ko bata diya':m==='courier'?'🚚 Courier pickup book':'🛵 Paas ke riders ko request chali gayi'); }
+    const ph=d10(r.cust_phone); if(ph){ const msg=`Namaste ${r.cust_name||''}, ${myShop()} ne aapka ${r.kind==='exchange'?'exchange':'return'} (${r.ref}) maan liya hai. `+(m==='drop'?'Saaman dukaan par de jaayein.':(m==='courier'?'Courier':'Rider')+' aapke ghar se saaman uthayega — pack karke rakhein.'+(awb?` Track: https://filtara9811.github.io/karo-online-app-Domo/track.html?awb=${awb}`:'')); setTimeout(()=>{ try{ window.open('https://wa.me/91'+ph+'?text='+encodeURIComponent(msg),'_blank'); }catch(e){} },400); } };
+  window.krRecv=async ref=>{ const v=await vStep(ref,'received'); if(v){ T('📦 Saaman mil gaya — ab jaanch karke aage badhein'); if(v.kind==='return') setTimeout(()=>krRef(ref),300); } };
+  window.krRef=function(ref){ const r=VL.find(x=>x.ref===ref)||rets().find(x=>x.ref===ref); const o=sheet('krRf'); const upi=String(r.upi||'').trim(); const pa=/@/.test(upi)?upi:/^\d{10}$/.test(d10(upi))&&d10(upi).length===10?d10(upi)+'@upi':'';
+    o.innerHTML=`<div class="kr-c"><div class="kr-gr"></div><h4>💸 Refund bhejein</h4><div class="kr-sb">${E(r.cust_name)} · ${E(r.ref)} · ${E(r.items)}</div>
+     <div class="kr-h">KITNA</div><input id="krRA" inputmode="numeric" value="${r.amount}">
+     <div class="kr-h">GRAHAK KA UPI</div><div class="kr-nt">${upi?`<b>${E(upi)}</b>`:'Grahak ne UPI nahi diya — WhatsApp par poochhein'}</div>
+     ${pa?`<button class="kr-go gr" onclick="krUpiGo('${E(pa)}','${E(r.cust_name||'')}','${E(r.ref)}')">📲 UPI app se bhejein</button>`:''}
+     <div class="kr-h">BHEJNE KE BAAD — UTR / REF NO. (OPTIONAL)</div><input id="krRU" placeholder="12 ank ka UTR">
+     <div class="kr-nt">Paisa aapke khate se seedha grahak ko jata hai — Karo Online beech me nahi hai. Bhejne ke baad niche dabayein.</div>
+     <button class="kr-go dk" onclick="krRefDone('${E(r.ref)}')">✓ Refund ho gaya</button><button class="kr-x" onclick="krClose('krRf')">Baad mein</button></div>`; o.classList.add('on'); };
+  window.krUpiGo=(pa,pn,ref)=>{ const am=+String(($('krRA')||{}).value||'').replace(/\D/g,'')||0; location.href=`upi://pay?pa=${encodeURIComponent(pa)}&pn=${encodeURIComponent(pn)}&am=${am}&cu=INR&tn=${encodeURIComponent('Refund '+ref)}`; };
+  window.krRefDone=async ref=>{ const am=+String(($('krRA')||{}).value||'').replace(/\D/g,'')||0, utr=(($('krRU')||{}).value||'').trim(); if(!am){ T('Rakam daalein'); return; } close('krRf'); const v=await vStep(ref,'refund',{amount:am,utr}); if(v){ T('✅ Refund darj — grahak ko dikh gaya'); VF.t='done'; krVR(); } };
+  window.krExch=async ref=>{ const v=await vStep(ref,'exchanged'); if(v){ T('🔄 Exchange poora'); VF.t='done'; krVR(); } };
+  /* entry: My Shop ke invoice card me + vendor ⋮ menu me */
+  function ent(){ const c=$('hsCtx'); if(c&&c.querySelector('.hc-h')&&/Saare bill/.test(c.querySelector('.hc-h').textContent)&&!c.querySelector('.kr-ent')){ const d=document.createElement('div'); d.className='kr-ent'; d.onclick=()=>krV(); c.querySelector('.hc-h').insertAdjacentElement('afterend',d); }
+    const d=c&&c.querySelector('.kr-ent'); if(d){ const n=VL.filter(VT.new).length, run=VL.filter(VT.run).length; d.innerHTML=`<i>↩️</i><div><b>Return & Exchange</b><small>${run} chal rahi · niyam: ${E(pType(pol(myShop())))}</small></div>${n?`<u>${n} nayi</u>`:'<span>›</span>'}`; }
+    document.querySelectorAll('.vb9-m').forEach(m=>{ if(m.querySelector('.kr-mi')) return; const b1=document.createElement('button'); b1.className='kr-mi sl-own'; b1.innerHTML='↩️ Return & Exchange'; b1.onclick=e=>{ e.stopPropagation(); krV(); }; const b2=document.createElement('button'); b2.className='kr-mi sl-own'; b2.innerHTML='📜 Dukaan ke niyam'; b2.onclick=e=>{ e.stopPropagation(); krPolOpen(); }; m.appendChild(b1); m.appendChild(b2); }); }
+  setInterval(()=>{ ent(); const vo=$('sdOv'); const isV=vo&&vo.classList.contains('open'); if(isV) vLoad(false); else { const f=$('krFab'); if(f) f.classList.remove('on'); } },2500);
+
+  /* ================= 5) Admin: Grahak & Dukaandar — poore card ================= */
+  try{ AD_NAV[0][1].splice(3,0,['ppl','🪪','Grahak & Dukaandar card']); }catch(e){}
+  const AP={t:'c',q:'',d:null,busy:0,err:''};
+  function apLoad(){ const pin=sessionStorage.getItem('ko_pin'); if(!pin){ AP.err='pin'; return; } if(AP.busy) return; AP.busy=1; AP.err='';
+    rpc('ko_admin_people',{p_pin:pin}).then(d=>{ AP.d=d||{}; AP.busy=0; try{ adRender(); }catch(e){} }).catch(e=>{ AP.busy=0; AP.err=/PIN/i.test(String(e&&e.message||e))?'pin':'net'; try{ adRender(); }catch(_){} }); }
+  window.apPin=()=>{ const v=($('apPin')||{}).value||''; if(v.length<4){ T('PIN daalein'); return; } sessionStorage.setItem('ko_pin',v); AP.d=null; apLoad(); };
+  const col=s=>{ let h=0; for(const c of String(s)) h=(h*31+c.charCodeAt(0))>>>0; return ['#F47B20','#0F766E','#7C3AED','#DB2777','#2563EB','#CA8A04'][h%6]; };
+  const dt=t=>t?new Date(t).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—';
+  window.adS_ppl=function(){ if(!AP.d&&!AP.err) apLoad();
+    if(AP.err==='pin') return `<div class="ad-cd"><h4>🔑 Admin PIN</h4><p style="color:#6b7280;font-size:13px">Grahak aur dukaandar ki poori jaankari dekhne ke liye PIN daalein</p><div style="display:flex;gap:8px"><input id="apPin" type="password" inputmode="numeric" placeholder="PIN" style="flex:1;border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><button class="ad-btn dk" onclick="apPin()">Kholein</button></div></div>`;
+    if(!AP.d) return `<div class="ad-cd">${AP.err==='net'?'❌ Net check karein <button class="ad-btn" onclick="AP_re()">Dobara</button>':'⏳ La rahe hain…'}</div>`;
+    const D=AP.d, q=AP.q.toLowerCase(); const C=(D.customers||[]).filter(x=>!q||(x.name+' '+x.phone+' '+x.area).toLowerCase().includes(q)), V=(D.vendors||[]).filter(x=>!q||String(x.phone).includes(q)), RT=D.returns||[], SH=D.shops||[];
+    const tab=(k,l,n)=>`<button class="${AP.t===k?'on':''}" onclick="AP_t('${k}')">${l} <b style="opacity:.6">${n}</b></button>`;
+    let body='';
+    if(AP.t==='c') body=C.map((x,k)=>`<div class="kp-r" onclick="AP_c('c',${D.customers.indexOf(x)})"><span class="av" style="background:${col(x.phone)}">${E((x.name||'G')[0].toUpperCase())}</span><div><b>${E(x.name||'Grahak')}</b><small>${E(x.phone)} · ${E(x.area||'—')} · ${x.visits||0} baar aaye · ${x.shops||0} dukaan</small></div>${x.returns?`<em>↩ ${x.returns}</em>`:''}<em>${ago(x.last||x.since)}</em></div>`).join('')||'<p style="color:#6b7280">Koi grahak nahi</p>';
+    if(AP.t==='v') body=V.map(x=>{ const on=+new Date(x.pos_until||0)>Date.now(); return `<div class="kp-r" onclick="AP_c('v',${D.vendors.indexOf(x)})"><span class="av" style="background:${col(x.phone)}">🏪</span><div><b>${E(x.phone)}</b><small>Juda ${dt(x.since)} · ${x.coins||0} coin · ${R(x.paid)} diya · ${x.ships||0} delivery</small></div><em style="${on?'background:#E8F7EF;color:#0B7A4B':''}">${on?'POS ✓':'Trial / free'}</em></div>`; }).join('')||'<p style="color:#6b7280">Koi dukaandar nahi</p>';
+    if(AP.t==='s') body=SH.map(x=>`<div class="kp-r"><span class="av" style="background:${col(x.shop)}">${E(String(x.shop)[0])}</span><div><b>${E(x.shop)}</b><small>${x.visits} visit · ${x.people} alag grahak · aakhri ${ago(x.last)}</small></div></div>`).join('')||'<p style="color:#6b7280">Abhi visit nahi</p>';
+    if(AP.t==='r') body=RT.map(x=>{ const st=RST[x.status]||[x.status,'']; return `<div class="kp-r"><span class="av" style="background:#5B21B6">↩</span><div><b>${E(x.shop)} · ${E(x.ref)}</b><small>${E(x.cust_name)} · ${E(x.reason||'')} · ${R(x.amount)} · ${ago(x.created_at)}</small></div><em>${st[0]}</em></div>`; }).join('')||'<p style="color:#6b7280">Koi return nahi</p>';
+    return `<div class="ad-cd"><div class="ad-seg" style="margin-bottom:10px">${tab('c','👥 Grahak',(D.customers||[]).length)}${tab('v','🏪 Dukaandar',(D.vendors||[]).length)}${tab('s','📊 Dukaanein',SH.length)}${tab('r','↩ Returns',RT.length)}</div>
+      ${AP.t==='c'||AP.t==='v'?`<input placeholder="🔍 Naam / mobile / ilaaka" value="${E(AP.q)}" oninput="AP_q(this.value)" style="width:100%;box-sizing:border-box;border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit;margin-bottom:10px">`:''}
+      <div id="apSel"></div><div class="kp-ls">${body}</div><button class="ad-btn" style="margin-top:10px" onclick="AP_re()">↻ Taaza karein</button></div>`; };
+  window.AP_t=t=>{ AP.t=t; try{ adRender(); }catch(e){} };
+  window.AP_re=()=>{ AP.d=null; AP.err=''; apLoad(); try{ adRender(); }catch(e){} };
+  let aq; window.AP_q=v=>{ AP.q=v; clearTimeout(aq); aq=setTimeout(()=>{ try{ adRender(); const i=document.querySelector('input[oninput^="AP_q"]'); if(i){ i.focus(); i.setSelectionRange(v.length,v.length); } }catch(e){} },300); };
+  window.AP_c=function(k,i){ const D=AP.d, x=k==='c'?D.customers[i]:D.vendors[i]; const box=$('apSel'); if(!box) return; const ph=d10(x.phone);
+    const front=k==='c'?`<div class="kp-f"><span class="bd">GRAHAK</span><div style="width:52px;height:52px;border-radius:16px;background:${col(x.phone)};display:grid;place-items:center;font-size:22px;font-weight:800">${E((x.name||'G')[0].toUpperCase())}</div><h3>${E(x.name||'Grahak')}</h3><p>📞 ${E(x.phone)} · 📍 ${E(x.area||'—')}</p><div class="kp-st"><div><b>${x.visits||0}</b><small>Baar aaye</small></div><div><b>${x.shops||0}</b><small>Dukaan dekhi</small></div><div><b>${x.returns||0}</b><small>Return</small></div></div><p style="margin-top:12px;font-size:11px;opacity:.7">Palatne ke liye dabayein ↻</p></div>`
+      :`<div class="kp-f v"><span class="bd">DUKAANDAR</span><div style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:24px">🏪</div><h3>${E(x.phone)}</h3><p>Juda: ${dt(x.since)}</p><div class="kp-st"><div><b>${x.coins||0}</b><small>Coin kharch</small></div><div><b>${R(x.paid)}</b><small>Plan diya</small></div><div><b>${x.ships||0}</b><small>Delivery</small></div></div><p style="margin-top:12px;font-size:11px;opacity:.7">Palatne ke liye dabayein ↻</p></div>`;
+    const back=k==='c'?`<div class="kp-b"><table><tr><td>Naam</td><td><b>${E(x.name||'—')}</b></td></tr><tr><td>Mobile</td><td>${E(x.phone)}</td></tr><tr><td>Ilaaka</td><td>${E(x.area||'—')}</td></tr><tr><td>Pehli baar</td><td>${dt(x.since)}</td></tr><tr><td>Aakhri baar</td><td>${x.last?tm(x.last):'—'}</td></tr><tr><td>Dukaanein</td><td>${E((x.shop_list||[]).slice(0,6).join(', ')||'—')}</td></tr></table><div class="kr-row"><a href="tel:${ph}">📞 Call</a><a class="wa" href="https://wa.me/91${ph}" target="_blank" rel="noopener">💬 WhatsApp</a></div></div>`
+      :`<div class="kp-b"><table><tr><td>Mobile</td><td><b>${E(x.phone)}</b></td></tr><tr><td>Juda</td><td>${dt(x.since)}</td></tr><tr><td>POS plan</td><td>${+new Date(x.pos_until||0)>Date.now()?'✅ '+dt(x.pos_until)+' tak':'—'}</td></tr><tr><td>Khata plan</td><td>${+new Date(x.khata_until||0)>Date.now()?'✅ '+dt(x.khata_until)+' tak':'—'}</td></tr><tr><td>Coin kharch</td><td>${x.coins||0} (${R((x.coins||0)*10)})</td></tr><tr><td>Delivery</td><td>${x.ships||0}</td></tr><tr><td>Grahak aaye</td><td>${x.visitors||0}</td></tr></table><div class="kr-row"><a href="tel:${ph}">📞 Call</a><a class="wa" href="https://wa.me/91${ph}" target="_blank" rel="noopener">💬 WhatsApp</a></div></div>`;
+    box.innerHTML=`<div class="kp-card" onclick="if(!event.target.closest('a'))this.classList.toggle('fl')"><div class="kp-in">${front}${back}</div></div>`; box.scrollIntoView({block:'center',behavior:'smooth'}); };
+  window.AP=AP;
+})();
+</script>
+

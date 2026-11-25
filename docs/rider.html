@@ -49,6 +49,7 @@ main{padding:6px 16px 40px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1d1408;color:#fff;padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
 .toast.on{opacity:1}
 .ft{text-align:center;font-size:11px;color:var(--mu);margin:10px 0 24px;letter-spacing:.08em}
+.tg.rvt{background:#EDE9FE;color:#5B21B6;font-weight:800}.c.rv{border:1.5px solid #C4B5FD}
 </style>
 </head>
 <body>
@@ -83,13 +84,15 @@ function paint(){ if(!ME){ join(); return; } const me=F.me||{}, on=!!me.online;
     <div class="st"><div><b>${(F.mine||[]).length}</b><small>CHAL RAHI</small></div><div><b>${me.trips||0}</b><small>KUL TRIPS</small></div><div><b>${R(me.earned)}</b><small>KAMAI</small></div></div></div>
    <div class="tabs"><button class="${TAB==='open'?'on':''}" onclick="TAB='open';paint()">🔔 Nayi${(F.open||[]).length?`<u>${F.open.length}</u>`:''}</button><button class="${TAB==='mine'?'on':''}" onclick="TAB='mine';paint()">🛵 Meri${(F.mine||[]).length?`<u>${F.mine.length}</u>`:''}</button><button class="${TAB==='done'?'on':''}" onclick="TAB='done';paint()">✅ Poori</button></div>
    <main>${!on&&TAB==='open'?`<div class="e"><div class="i">😴</div>Aap offline hain — upar <b>Online</b> karein, tabhi nayi delivery dikhegi</div>`:L&&L.length?L.map(s=>cardH(s)).join(''):`<div class="e"><div class="i">${TAB==='open'?'📭':TAB==='mine'?'🛵':'🏁'}</div>${TAB==='open'?'Abhi koi nayi delivery nahi — har 8 second me dekh rahe hain':TAB==='mine'?'Koi delivery chal nahi rahi':'Abhi koi delivery poori nahi'}</div>`}</main><div class="ft">POWERED BY FILIPRA PRIVATE LIMITED</div>`; }
-function cardH(s){ const st=s.status, mine=TAB==='mine';
-  return `<div class="c"><div class="h"><div><b>${E(s.shop)}</b><div style="font-size:12px;color:var(--mu)">${E(s.awb)} · ${ago(s.created_at)}</div></div><div class="pay">${R(s.rider_pay)}<small>AAPKI KAMAI</small></div></div>
-   <div class="rt"><div class="${['picked','on_way','delivered'].includes(st)?'d':''}"><b>Pickup:</b> ${E(s.shop)}<small>${E(s.shop_addr||'')}</small></div><div class="${st==='delivered'?'d':''}"><b>Drop:</b> ${E(s.cust_name||'Grahak')}<small>${E(s.cust_addr||'')}</small></div></div>
-   <div>${s.cod?`<span class="tg cod">💵 COD ${R(s.cod)} lena hai</span>`:'<span class="tg">Prepaid</span>'}<span class="tg">${(s.weight_g||500)/1000} kg</span><span class="tg">${E(s.items||'').slice(0,40)}</span></div>
-   ${TAB==='open'?`<div class="bt"><a href="${map(s.shop_addr)}" target="_blank" rel="noopener">🗺️ Raasta</a><button class="p" onclick="acc(${s.id})">✓ Accept karein</button></div>`:''}
-   ${mine?`<div class="bt"><a href="${map(st==='assigned'?s.shop_addr:s.cust_addr)}" target="_blank" rel="noopener">🗺️ ${st==='assigned'?'Dukaan':'Grahak'}</a>${st==='assigned'?`<button class="p" onclick="step(${s.id},'picked')">📦 Utha liya</button>`:st==='picked'?`<button class="p" onclick="step(${s.id},'on_way')">🛵 Nikal gaya</button>`:`<button class="g" onclick="document.getElementById('pn${s.id}').classList.add('on')">🏠 Pahuncha diya</button>`}</div>
-    <div class="pin" id="pn${s.id}"><input id="pi${s.id}" inputmode="numeric" maxlength="4" placeholder="PIN"><button class="g" style="flex:none;border:none;border-radius:14px;padding:0 18px;color:#fff;font-weight:800;background:var(--ok)" onclick="done(${s.id})">✓</button></div>
+function cardH(s){ const st=s.status, mine=TAB==='mine', rv=s.kind==='return', ex=s.kind==='exchange';
+  const A={n:s.shop,a:s.shop_addr,l:'Dukaan'}, B={n:s.cust_name||'Grahak',a:s.cust_addr,l:'Grahak'}; const P=rv?B:A, D=rv?A:B;
+  return `<div class="c${rv||ex?' rv':''}"><div class="h"><div>${rv?'<span class="tg rvt">↩ RETURN PICKUP</span>':ex?'<span class="tg rvt">🔄 EXCHANGE</span>':''}<b>${E(s.shop)}</b><div style="font-size:12px;color:var(--mu)">${E(s.awb)} · ${ago(s.created_at)}</div></div><div class="pay">${R(s.rider_pay)}<small>AAPKI KAMAI</small></div></div>
+   <div class="rt"><div class="${['picked','on_way','delivered'].includes(st)?'d':''}"><b>Pickup:</b> ${E(P.n)}<small>${E(P.a||'')}</small></div><div class="${st==='delivered'?'d':''}"><b>Drop:</b> ${E(D.n)}<small>${E(D.a||'')}</small></div></div>
+   ${ex?'<div class="tg rvt" style="display:block;margin:0 0 8px">Naya saaman grahak ko dein · purana saaman wapas dukaan laayein</div>':''}
+   <div>${s.cod?`<span class="tg cod">💵 COD ${R(s.cod)} lena hai</span>`:rv?'<span class="tg">Paisa nahi lena</span>':'<span class="tg">Prepaid</span>'}<span class="tg">${(s.weight_g||500)/1000} kg</span><span class="tg">${E(s.items||'').slice(0,40)}</span></div>
+   ${TAB==='open'?`<div class="bt"><a href="${map(P.a)}" target="_blank" rel="noopener">🗺️ Raasta</a><button class="p" onclick="acc(${s.id})">✓ Accept karein</button></div>`:''}
+   ${mine?`<div class="bt"><a href="${map(st==='assigned'?P.a:D.a)}" target="_blank" rel="noopener">🗺️ ${st==='assigned'?P.l:D.l}</a>${st==='assigned'?`<button class="p" onclick="step(${s.id},'picked')">📦 Utha liya</button>`:st==='picked'?`<button class="p" onclick="step(${s.id},'on_way')">🛵 Nikal gaya</button>`:`<button class="g" onclick="document.getElementById('pn${s.id}').classList.add('on')">${rv?'🏪 Dukaan par de diya':'🏠 Pahuncha diya'}</button>`}</div>
+    <div class="pin" id="pn${s.id}"><input id="pi${s.id}" inputmode="numeric" maxlength="4" placeholder="${rv?'Dukaandar ka PIN':'PIN'}"><button class="g" style="flex:none;border:none;border-radius:14px;padding:0 18px;color:#fff;font-weight:800;background:var(--ok)" onclick="done(${s.id})">✓</button></div>
     <div class="bt" style="margin-top:6px"><button onclick="if(confirmDrop(this))step(${s.id},'drop')">↩ Chhod dein</button></div>`:''}
    ${TAB==='done'?`<div style="font-size:12px;color:var(--ok);font-weight:800;margin-top:8px">✓ Pahunchaya · ${ago(s.updated_at)}</div>`:''}</div>`; }
 function confirmDrop(b){ if(b.dataset.s) return true; b.dataset.s=1; b.textContent='Pakka? Dobara dabayein'; setTimeout(()=>{ delete b.dataset.s; b.textContent='↩ Chhod dein'; },3000); return false; }

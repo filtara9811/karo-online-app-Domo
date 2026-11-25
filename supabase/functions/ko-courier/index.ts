@@ -96,6 +96,33 @@ Deno.serve(async (req) => {
       await db("rpc/ko_ship_courier_set", { method: "POST", body: JSON.stringify({ p_awb: sh.awb, p_ext: ext, p_label: c3?.label_url || null, p_courier: c2?.response?.data?.courier_name || b.courier || "Courier", p_status: "courier_booked" }) });
       return json({ ok: true, ext_awb: ext, label_url: c3?.label_url || null });
     }
+    if (act === "return") {
+      // reverse pickup: courier grahak se uthaye, dukaan (pickup location) par laaye
+      const rows = await db(`ko_shipments?awb=eq.${encodeURIComponent(b.awb)}&select=*`);
+      const sh = rows && rows[0];
+      if (!sh) return json({ ok: false, msg: "shipment nahi mila" }, 404);
+      if (!live) {
+        await db("rpc/ko_ship_courier_set", { method: "POST", body: JSON.stringify({ p_awb: sh.awb, p_ext: "DEMO-R" + sh.id, p_label: null, p_courier: b.courier || "Courier return (demo)", p_status: "courier_booked" }) });
+        return json({ ok: true, demo: true, ext_awb: "DEMO-R" + sh.id });
+      }
+      const tk = await srToken(s);
+      const H = { Authorization: `Bearer ${tk}`, "Content-Type": "application/json" };
+      const o = {
+        order_id: sh.awb, order_date: new Date().toISOString().slice(0, 10),
+        pickup_customer_name: sh.cust_name || "Customer", pickup_address: sh.cust_addr, pickup_city: b.city || "Delhi", pickup_state: b.state || "Delhi",
+        pickup_country: "India", pickup_pincode: b.cust_pin || "110006", pickup_phone: sh.cust_phone || "9999999999",
+        shipping_customer_name: sh.shop, shipping_address: sh.shop_addr || sh.shop, shipping_city: "Delhi", shipping_state: "Delhi", shipping_country: "India",
+        shipping_pincode: s.pickup_pincode || "110006", shipping_phone: sh.shop_phone || "9999999999",
+        order_items: [{ name: (sh.items || "Saaman").slice(0, 100), sku: sh.awb, units: 1, selling_price: b.amount || 1 }],
+        payment_method: "Prepaid", sub_total: b.amount || 1, length: 20, breadth: 15, height: 8, weight: (sh.weight_g || 500) / 1000,
+      };
+      const c1 = await (await fetch(`${SRK}/orders/create/return`, { method: "POST", headers: H, body: JSON.stringify(o) })).json();
+      if (!c1.shipment_id) return json({ ok: false, msg: "Shiprocket return nahi bana: " + JSON.stringify(c1).slice(0, 200) }, 400);
+      const c2 = await (await fetch(`${SRK}/courier/assign/awb`, { method: "POST", headers: H, body: JSON.stringify({ shipment_id: c1.shipment_id, is_return: 1 }) })).json();
+      const ext = c2?.response?.data?.awb_code || null;
+      await db("rpc/ko_ship_courier_set", { method: "POST", body: JSON.stringify({ p_awb: sh.awb, p_ext: ext, p_label: null, p_courier: c2?.response?.data?.courier_name || "Courier return", p_status: "courier_booked" }) });
+      return json({ ok: true, ext_awb: ext });
+    }
     return json({ ok: false, msg: "action galat" }, 400);
   } catch (e) {
     return json({ ok: false, msg: String((e as Error).message || e).slice(0, 300) }, 500);

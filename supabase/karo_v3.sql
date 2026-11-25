@@ -43,3 +43,9 @@ create table if not exists public.ko_bill_log (id bigserial primary key, phone t
 -- functions: ko_pin_ok, ko_ship_create, ko_ship_track (address nahi), ko_ship_by_shop, ko_ship_courier_set (service_role),
 --   ko_rider_join/online/feed/accept/step, ko_ship_vendor_step, ko_secret_set/list, ko_admin_delivery
 -- edge function: supabase/functions/ko-courier (status/test/rates/book via Shiprocket; bina keys demo)
+
+-- v286: return / exchange / refund + dukaan ke niyam + admin people
+-- tables: ko_shop_policy(shop pk, shop_phone, policy jsonb), ko_returns(ref, status requested→accepted→pickup→received→refunded/exchanged | rejected/closed)
+-- ko_shipments.kind = forward / return / exchange (rider app me ulta raasta)
+-- functions: ko_policy_get/set, ko_return_create, ko_return_by_cust, ko_return_by_shop(p_shop,p_phone), ko_return_step_v, ko_admin_people(p_pin)
+-- edge ko-courier: action "return" (Shiprocket reverse pickup)
