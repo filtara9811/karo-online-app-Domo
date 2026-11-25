@@ -33,3 +33,8 @@ create index if not exists ko_visits_shop_idx on public.ko_visits(shop, id desc)
 create table if not exists public.ko_settings (k text primary key, v jsonb not null, updated_at timestamptz not null default now());
 alter table public.ko_settings enable row level security;
 -- functions: ko_settings_get(), ko_settings_set(p_pin, p_v), ko_admin_pin_change(p_old, p_new) — migration "ko_settings"
+
+-- v284: dukaandar ka plan / trial phone se Supabase me; kamai ka hisaab (admin PIN se)
+create table if not exists public.ko_vendor_plan (phone text primary key, t0 timestamptz not null default now(), pos_until timestamptz, khata_until timestamptz, updated_at timestamptz not null default now());
+create table if not exists public.ko_bill_log (id bigserial primary key, phone text, kind text not null, what text, amount int not null default 0, coins int not null default 0, created_at timestamptz not null default now());
+-- functions: ko_plan_get, ko_plan_activate, ko_coin_log, ko_bill_summary(p_pin) — migration "ko_vendor_plans"

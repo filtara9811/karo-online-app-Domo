@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=283;
+window.KO_V=284;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -29231,20 +29231,38 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) root.quer
 .ad-seg button{flex:1;border:none;border-radius:9px;padding:9px 6px;font:700 12.5px inherit;background:none;cursor:pointer;color:#4b5563}
 .ad-seg button.on{background:#fff;color:#111;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 body.ko-noquick #shopsOv .nf-back{display:none!important}
+.ko-micc{display:none}
+body.ko-one .nb-wrap{position:relative}
+body.ko-one .nb-wrap .nb-btn{visibility:hidden}
+body.ko-one .ko-micc{display:grid;place-items:center;position:absolute;inset:0;border:none;background:none;padding:0;cursor:pointer;z-index:2}
+body.ko-one .ko-micc .c{position:relative;width:76px;height:76px;border-radius:50%;background:#fff;color:#EE6A0D;display:grid;place-items:center;align-content:center;gap:1px;box-shadow:0 6px 18px rgba(238,106,13,.35),0 0 0 4px #FFE2C7}
+body.ko-one .ko-micc b{font:800 9.5px/1.05 Poppins,system-ui;color:#EE6A0D;text-align:center}
+body.ko-one .ko-micc .r{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:2px solid rgba(238,106,13,.45);animation:koMicR 2s ease-out infinite}
+@keyframes koMicR{from{transform:scale(1);opacity:.9}to{transform:scale(1.5);opacity:0}}
+body.ko-one .hs-mic{display:none!important}
 </style>
 <script id="v283">
 (function(){
   const $=id=>document.getElementById(id);
   const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const DEF={home:'quick',quick:true,pos_price:599,khata_price:599,order_coin:1,visitors_per_coin:5,trial_days:7,welcome_coins:20};
+  const DEF={mode:'both',home:'quick',quick:true,pos_price:599,khata_price:599,order_coin:1,visitors_per_coin:5,trial_days:7,welcome_coins:20};
   let CFG=Object.assign({},DEF); try{ Object.assign(CFG,JSON.parse(localStorage.getItem('ko_cfg')||'{}')); }catch(e){}
   window.KO_CFG=CFG;
   /* ================= 1) Customer app: pehle kya khule (admin ki setting) ================= */
   const deep=/[?&]shop=/.test(location.search);
-  function applyCfg(start){ document.body.classList.toggle('ko-noquick',!CFG.quick);
-    if(start&&!deep&&(CFG.home==='shops'||!CFG.quick)){ let n=0; const t=setInterval(()=>{ n++; const busy=document.body.classList.contains('splashing')||($('loginScr')&&$('loginScr').classList.contains('on'))||document.querySelector('.sm-ov.open');
+  const mode=()=>CFG.mode||(CFG.quick===false?'shops':'both');
+  window.koMode=mode;
+  function applyCfg(start){ const m=mode(); CFG.quick=m!=='shops'; document.body.classList.toggle('ko-noquick',m==='shops'); document.body.classList.toggle('ko-onlyquick',m==='quick'); document.body.classList.toggle('ko-one',m!=='both'); micBtns();
+    if(m==='quick'){ try{ const o=$('shopsOv'); if(o&&o.classList.contains('open')&&!window._ksfDeep){ window._koLeave=1; closeSm('shopsOv'); window._koLeave=0; } }catch(e){} }
+    if(start&&!deep&&(m==='shops'||(m==='both'&&CFG.home==='shops'))){ let n=0; const t=setInterval(()=>{ n++; const busy=document.body.classList.contains('splashing')||($('loginScr')&&$('loginScr').classList.contains('on'))||document.querySelector('.sm-ov.open');
         if(!busy){ clearInterval(t); try{ renderShops('All'); openSm('shopsOv'); }catch(e){} } else if(n>60) clearInterval(t); },250); } }
-  try{ const _c=closeSm; window.closeSm=closeSm=function(id){ if(id==='shopsOv'&&!CFG.quick&&!window._koLeave){ return; } return _c.apply(this,arguments); }; }catch(e){}
+  try{ const _c=closeSm; window.closeSm=closeSm=function(id){ if(id==='shopsOv'&&mode()==='shops'&&!window._koLeave){ return; } return _c.apply(this,arguments); }; }catch(e){}
+  try{ const _o=openSm; window.openSm=openSm=function(id){ if(id==='shopsOv'&&mode()==='quick'&&!window._koLeave){ try{ toast('⚡ Abhi sirf Quick Service chalu hai'); }catch(e){} return; } return _o.apply(this,arguments); }; }catch(e){}
+  /* ek hi service chalu ho to beech ka gol button = 🎤 bolkar khojein */
+  function micBtns(){ document.querySelectorAll('.nb-wrap').forEach(w=>{ if(w.querySelector('.ko-micc')) return; const b=document.createElement('button'); b.className='ko-micc'; b.setAttribute('aria-label','Bolkar khojein');
+      b.innerHTML='<span class="r"></span><span class="c"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg><b>Bolkar<br>khojein</b></span>';
+      b.onclick=e=>{ e.stopPropagation(); try{ navigator.vibrate&&navigator.vibrate(12); }catch(_){} try{ openVoice(); }catch(_){ try{ toast('🎤 Voice search'); }catch(__){} } }; w.appendChild(b); }); }
+  setTimeout(micBtns,1500); setInterval(micBtns,6000);
   try{ const _m=window.ksfMk; if(_m) window.ksfMk=function(){ window._koLeave=1; try{ return _m.apply(this,arguments); }finally{ setTimeout(()=>{ window._koLeave=0; },400); } }; }catch(e){}
   applyCfg(true);
   function loadCfg(){ if(!window.koRpc) return; koRpc('ko_settings_get',{}).then(v=>{ if(v&&typeof v==='object'){ const before=JSON.stringify(CFG); Object.assign(CFG,v); try{ localStorage.setItem('ko_cfg',JSON.stringify(CFG)); }catch(e){} if(JSON.stringify(CFG)!==before) applyCfg(false); } }).catch(()=>{}); }
@@ -29253,6 +29271,11 @@ body.ko-noquick #shopsOv .nf-back{display:none!important}
   /* ================= 2) Dukaandar: plans + coins ================= */
   const BK='ko_bill';
   function B(){ let b=null; try{ b=JSON.parse(localStorage.getItem(BK)||'null'); }catch(e){} if(!b){ b={t0:Date.now(),pos:0,khata:0,unl:{},paid:{},vc:0,auto:true,log:[],wel:0}; save(b); } return b; }
+  /* plan aur trial ka asli hisaab Supabase me (phone se) — phone badalne / data saaf karne se trial dobara nahi */
+  function vPhone(){ try{ const d=x=>String(x||'').replace(/\D/g,'').slice(-10); const ss=JSON.parse(localStorage.getItem('1qr_session')||'null'), a=JSON.parse(localStorage.getItem('ko_myapp')||'null'); return d(ss&&ss.n)||d(a&&a.ph)||(window.KO_OWNER_PH||[])[0]||''; }catch(e){ return ''; } }
+  function syncPlan(){ const ph=vPhone(); if(!ph||!window.koRpc) return; koRpc('ko_plan_get',{p_phone:ph}).then(r=>{ if(r&&r.t0){ const b=B(); b.t0=Math.min(b.t0,+r.t0); b.pos=Math.max(b.pos||0,+r.pos||0); b.khata=Math.max(b.khata||0,+r.khata||0); save(b); try{ lockUi(); }catch(e){} } }).catch(()=>{}); }
+  setTimeout(syncPlan,2500); setInterval(syncPlan,180000);
+  const logCoin=(w,c)=>{ try{ const ph=vPhone(); if(ph&&c&&window.koRpc) koRpc('ko_coin_log',{p_phone:ph,p_what:w,p_coins:c}).catch(()=>{}); }catch(e){} };
   function save(b){ try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(e){} }
   const bal=()=>{ try{ return vwBal(); }catch(e){ return 0; } };
   const setBal=n=>{ const c=$('sdCoin'); if(c) c.textContent=Math.max(0,n); try{ vmPaint&&vmPaint(); }catch(e){} };
@@ -29269,7 +29292,7 @@ body.ko-noquick #shopsOv .nf-back{display:none!important}
      <button class="kp-b" ${bal()<coins?'disabled':''} onclick="koPlanPay('${f}','coin')">🪙 Wallet se ${coins} coins ${bal()<coins?'(kam hain)':''}</button>
      <button class="kp-x" onclick="document.getElementById('koPlan').classList.remove('on')">Baad mein</button><div class="kp-nt">30 din ke liye · kabhi bhi band karein · auto-renew nahi</div></div>`; o.classList.add('on'); };
   window.koPlanPay=function(f,how){ const F=FEAT[f], pr=CFG[F[1]], coins=Math.ceil(pr/10), b=B();
-    const done=()=>{ b[f]=Math.max(Date.now(),b[f]||0)+30*864e5; b.log.unshift({t:Date.now(),w:F[0]+' 30 din',c:how==='coin'?coins:0,r:how==='upi'?pr:0}); save(b); $('koPlan').classList.remove('on'); try{ toast('✅ '+F[0]+' chalu — 30 din'); }catch(e){} lockUi(); };
+    const done=()=>{ b[f]=Math.max(Date.now(),b[f]||0)+30*864e5; try{ const ph=vPhone(); if(ph&&window.koRpc) koRpc('ko_plan_activate',{p_phone:ph,p_feat:f,p_how:how,p_amount:how==='coin'?coins:pr}).then(r=>{ if(r){ const bb=B(); bb[f]=Math.max(bb[f]||0,+r[f]||0); save(bb); } }).catch(()=>{}); }catch(e){} b.log.unshift({t:Date.now(),w:F[0]+' 30 din',c:how==='coin'?coins:0,r:how==='upi'?pr:0}); save(b); $('koPlan').classList.remove('on'); try{ toast('✅ '+F[0]+' chalu — 30 din'); }catch(e){} lockUi(); };
     if(how==='coin'){ if(bal()<coins){ try{ xrOpen(); }catch(e){} return; } setBal(bal()-coins); done(); }
     else { const bt=document.querySelector('#koPlan .kp-a'); if(bt){ bt.textContent='Payment ho rahi hai…'; bt.disabled=true; } setTimeout(done,1200); } };
   /* POS lock card */
@@ -29291,7 +29314,7 @@ body.ko-noquick #shopsOv .nf-back{display:none!important}
       if(!b.unl[g.key]){ if(os.length&&ok){ b.unl[g.key]=1; }
         else if(!os.length){ if(b.vc>0&&b.auto){ b.vc--; b.unl[g.key]=1; } else if(b.auto&&bl>=1){ bl--; spent++; b.vc=CFG.visitors_per_coin-1; b.unl[g.key]=1; } } }
       if(b.ua) delete b.ua[g.key]; if(!b.unl[g.key]||!ok) L.add(g.key); });
-    if(spent){ setBal(bal()-spent); b.log.unshift({t:Date.now(),w:'Grahak / order dekhe',c:spent}); b.log=b.log.slice(0,50); }
+    if(spent){ logCoin('Grahak / order dekhe',spent); setBal(bal()-spent); b.log.unshift({t:Date.now(),w:'Grahak / order dekhe',c:spent}); b.log=b.log.slice(0,50); }
     save(b); window._koLocked=L.size; return L; };
   window.koVisBar=function(){ const b=B(), today=b.log.filter(x=>x.c&&Date.now()-x.t<864e5&&/Grahak/.test(x.w)).reduce((a,x)=>a+x.c,0);
     return `<div class="ko-vb"><span>🪙 <b>Pay-as-you-go:</b> 1 order = ${CFG.order_coin} coin · ${CFG.visitors_per_coin} naye grahak = 1 coin · dobara aaye to free<br>Aaj kate: <b>${today} coin</b>${window._koLocked?` · 🔒 ${window._koLocked} band`:''}</span><button class="${b.auto?'on':''}" onclick="koAuto()">${b.auto?'Auto ✓':'Auto off'}</button></div>`; };
@@ -29299,19 +29322,31 @@ body.ko-noquick #shopsOv .nf-back{display:none!important}
   const mask=s=>String(s||'').split(/\s+/).map(w=>w[0]+'•••').join(' ');
   window.koVisRow=function(g){ const hasO=(g.o||[]).length; return `<div class="hc-r lk" onclick="koUnl('${E(g.key)}',${hasO?CFG.order_coin*hasO:1})"><span class="hc-av" style="background:#8a7a5a">••</span><div class="hc-m"><div class="t"><b>${E(mask(g.n))}</b><time>${(()=>{ const m=Math.round((Date.now()-g.t)/6e4); return m<60?m+' min':Math.round(m/60)+' ghante'; })()}</time></div><div class="s"><span>🔒 ${hasO?'Naya order · '+hasO*CFG.order_coin+' coin me dekhein':'Naya grahak · 1 coin me '+CFG.visitors_per_coin+' grahak'}</span></div></div><button class="un">Kholein</button></div>`; };
   window.koUnl=function(key,c){ const b=B(); if(bal()<c){ try{ toast('🪙 Coins kam hain — recharge karein'); xrOpen(); }catch(e){} return; }
-    setBal(bal()-c); b.unl[key]=1; b.ua=b.ua||{}; b.ua[key]=1; if(c===1&&!b.vc) b.vc=CFG.visitors_per_coin-1; b.log.unshift({t:Date.now(),w:'Grahak / order dekhe',c}); save(b);
+    setBal(bal()-c); logCoin('Grahak / order dekhe',c); b.unl[key]=1; b.ua=b.ua||{}; b.ua[key]=1; if(c===1&&!b.vc) b.vc=CFG.visitors_per_coin-1; b.log.unshift({t:Date.now(),w:'Grahak / order dekhe',c}); save(b);
     try{ toast('🔓 Khul gaya · '+c+' coin'); }catch(e){} try{ shHeroRender(); }catch(e){} };
   /* ================= 3) Admin panel: settings (PIN ke saath) ================= */
   try{ const _a=adOpen; window.adOpen=adOpen=function(){ if(window.koIsOwner&&!koIsOwner()){ try{ koGate(); }catch(e){} return; } return _a.apply(this,arguments); }; }catch(e){}
   try{ const _s=adS_set; window.adS_set=adS_set=function(){ const seg=(k,opts)=>`<div class="ad-seg">${opts.map(([v,l])=>`<button class="${String(CFG[k])===String(v)?'on':''}" onclick="koCfgSet('${k}',${JSON.stringify(v).replace(/"/g,'&quot;')},this)">${l}</button>`).join('')}</div>`;
       const N=(k,l,sub)=>`<div><span>${l}<small>${sub}</small></span><input id="koc_${k}" inputmode="numeric" value="${CFG[k]}" style="max-width:90px"></div>`;
       return _s.apply(this,arguments)+`<div class="ad-g" style="margin-top:14px"><div class="ad-cd"><h4>📱 Customer app — pehle kya khule</h4><div class="ad-set">
-        <div style="display:block"><span>Home screen<small>App kholte hi grahak ko kya dikhe</small></span>${seg('home',[['shops','🏬 All Shops'],['quick','⚡ Quick Service']])}</div>
-        <div><span>⚡ Quick Service<small>Band karein to sirf All Shops chalega</small></span><button class="ad-tg ${CFG.quick?'on':''}" onclick="this.classList.toggle('on');koCfgSet('quick',this.classList.contains('on'))"></button></div></div></div>
+        <div style="display:block"><span>Kaunsi service LIVE ho<small>Ek chunein to doosri marketplace par dikhegi hi nahi · beech ka button 🎤 voice ban jayega</small></span>${seg('mode',[['shops','🏬 Sirf All Shops'],['quick','⚡ Sirf Quick'],['both','✨ Dono']])}</div>
+        <div style="display:${(CFG.mode||'both')==='both'?'block':'none'}" id="koHomeRow"><span>Dono me se pehle kya khule<small>App kholte hi grahak ko</small></span>${seg('home',[['shops','🏬 All Shops'],['quick','⚡ Quick Service']])}</div></div></div>
        <div class="ad-cd"><h4>💰 Plan aur coin ke niyam</h4><div class="ad-set">${N('pos_price','🧾 POS / mahina','₹')}${N('khata_price','📒 Khata / mahina','₹')}${N('order_coin','🛒 1 order / enquiry','coin')}${N('visitors_per_coin','👀 Kitne naye grahak = 1 coin','grahak')}${N('trial_days','🎁 Free trial','din')}${N('welcome_coins','🪙 Naye dukaandar ko free','coins')}</div>
         <div style="display:flex;gap:8px;margin-top:12px"><input id="koPin" type="password" inputmode="numeric" placeholder="Admin PIN" value="${E(sessionStorage.getItem('ko_pin')||'')}" style="flex:1;border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><button class="ad-btn dk" onclick="koCfgSave()">💾 Sab par lagayein</button></div>
-        <small style="display:block;margin-top:6px;color:#6b7280">Save hote hi har grahak / dukaandar ke app me apne-aap lag jayega</small></div></div>`; }; }catch(e){}
-  window.koCfgSet=(k,v,btn)=>{ CFG[k]=v; if(btn){ btn.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===btn)); } window._koDirty=1; try{ toast('Badla — "Sab par lagayein" dabayein'); }catch(e){} };
+        <small style="display:block;margin-top:6px;color:#6b7280">Save hote hi har grahak / dukaandar ke app me apne-aap lag jayega</small>
+        <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">🔑 Admin PIN badlein</summary><div style="display:grid;gap:8px;margin-top:8px"><input id="koPinO" type="password" inputmode="numeric" placeholder="Purana PIN" style="border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><input id="koPinN" type="password" inputmode="numeric" placeholder="Naya PIN (kam se kam 4 ank)" style="border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><input id="koPinN2" type="password" inputmode="numeric" placeholder="Naya PIN dobara" style="border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><button class="ad-btn dk" onclick="koPinChange()">PIN badlein</button></div></details></div></div>`; }; }catch(e){}
+  window.koPinChange=async function(){ const o=$('koPinO').value, n=$('koPinN').value, n2=$('koPinN2').value; if(n.length<4){ toast('Naya PIN kam se kam 4 ank'); return; } if(n!==n2){ toast('Dono naye PIN alag hain'); return; }
+    try{ await koRpc('ko_admin_pin_change',{p_old:o,p_new:n}); sessionStorage.setItem('ko_pin',n); toast('✅ PIN badal gaya'); ['koPinO','koPinN','koPinN2'].forEach(i=>$(i).value=''); }catch(e){ toast('❌ Purana PIN galat'); } };
+  /* Admin dashboard: aaj ki kamai (plan + coin) */
+  try{ const _d=window.adS_dash||(typeof adS_dash==='function'?adS_dash:null); if(_d){ window.adS_dash=adS_dash=function(){ return koEarnCard()+_d.apply(this,arguments); }; } }catch(e){}
+  window.koEarnCard=function(){ const S=window._koSum; const pin=sessionStorage.getItem('ko_pin'); if(!S&&pin&&!window._koSumL){ window._koSumL=1; koRpc('ko_bill_summary',{p_pin:pin}).then(r=>{ window._koSum=r; window._koSumL=0; try{ adRender(); }catch(e){} }).catch(()=>{ window._koSumL=0; }); }
+    const R2=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+    return `<div class="ad-cd" style="margin-bottom:14px;background:linear-gradient(135deg,#111827,#1f2937);color:#fff;border:0"><h4 style="color:#fff">💰 Karo Online ki kamai <button class="ad-btn" style="padding:6px 10px" onclick="window._koSum=null;koEarnRefresh()">↻</button></h4>
+      ${S?`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"><div><small style="color:#9ca3af">AAJ · PLAN</small><b style="display:block;font-size:22px">${R2(S.today_rs)}</b></div><div><small style="color:#9ca3af">AAJ · COIN KATE</small><b style="display:block;font-size:22px">${S.today_coins} <span style="font-size:13px;color:#9ca3af">(${R2(S.today_coins*10)})</span></b></div><div><small style="color:#9ca3af">IS MAHINE</small><b style="display:block;font-size:18px">${R2(S.month_rs+S.month_coins*10)}</b></div><div><small style="color:#9ca3af">PLAN CHALU / TRIAL</small><b style="display:block;font-size:18px">${S.plans_active} / ${S.trials}</b></div></div>
+       ${(S.recent||[]).length?`<div style="margin-top:12px;border-top:1px solid #374151;padding-top:8px;font-size:12px;color:#d1d5db">${S.recent.slice(0,5).map(x=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${x.k==='plan'?'🧾':'🪙'} ${String(x.w).replace(/</g,'&lt;')} · ${x.ph}</span><b>${x.rs?R2(x.rs):x.c+' coin'}</b></div>`).join('')}</div>`:''}`
+      :`<p style="color:#d1d5db;font-size:13px;margin:0">Kamai dekhne ke liye Settings me Admin PIN ek baar daalein</p><button class="ad-btn" style="margin-top:8px" onclick="adGo('set')">Settings kholein</button>`}</div>`; };
+  window.koEarnRefresh=()=>{ window._koSumL=0; window._koSum=null; koEarnCard(); };
+  window.koCfgSet=(k,v,btn)=>{ CFG[k]=v; if(k==='mode'){ const r=$('koHomeRow'); if(r) r.style.display=v==='both'?'block':'none'; } if(btn){ btn.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===btn)); } window._koDirty=1; try{ toast('Badla — "Sab par lagayein" dabayein'); }catch(e){} };
   window.koCfgSave=async function(){ const pin=($('koPin')||{}).value||''; ['pos_price','khata_price','order_coin','visitors_per_coin','trial_days','welcome_coins'].forEach(k=>{ const i=$('koc_'+k); if(i&&+i.value>=0) CFG[k]=+i.value; });
     if(pin.length<4){ try{ toast('🔑 Admin PIN daalein'); }catch(e){} return; }
     try{ const v=await koRpc('ko_settings_set',{p_pin:pin,p_v:CFG}); Object.assign(CFG,v||{}); localStorage.setItem('ko_cfg',JSON.stringify(CFG)); sessionStorage.setItem('ko_pin',pin); toast('✅ Sab par lag gaya'); applyCfg(false); lockUi(); }
