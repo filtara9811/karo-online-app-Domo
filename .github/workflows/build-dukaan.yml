@@ -49,11 +49,12 @@ jobs:
         run: |
           python3 - <<'PY'
           p='app/lib/main.dart'; s=open(p).read()
-          s=s.replace("const kLiveUrl = 'https://filtara9811.github.io/karo-online-app-Domo/';","const kLiveUrl = 'https://filtara9811.github.io/karo-online-app-Domo/dukaan.html';")
+          s=s.replace("c.loadRequest(Uri.parse(first ?? kLiveUrl));","c.loadRequest(Uri.parse(first ?? '${kLiveUrl}?app=dukaan'));")
+          s=s.replace("'$kLiveUrl?v=${DateTime.now().millisecondsSinceEpoch}'","'$kLiveUrl?app=dukaan&v=${DateTime.now().millisecondsSinceEpoch}'")
           s=s.replace("releases/latest/download","releases/download/dukaan-latest")
-          s=s.replace("karo-online.apk","karo-dukaan.apk").replace("assets/web/index.html","assets/web/dukaan.html")
+          s=s.replace("karo-online.apk","karo-dukaan.apk")
           s=s.replace("title: 'Karo Online'","title: 'Karo Dukaan'")
-          assert 'dukaan.html' in s and 'dukaan-latest' in s, 'main.dart patch fail'
+          assert '?app=dukaan' in s and 'app=dukaan&v=' in s and 'dukaan-latest' in s, 'main.dart patch fail'
           open(p,'w').write(s)
           y='app/pubspec.yaml'; t=open(y).read().replace('image_path: "assets/logo.png"','image_path: "assets/dukaan_logo.png"'); open(y,'w').write(t)
           PY

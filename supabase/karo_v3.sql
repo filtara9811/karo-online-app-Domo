@@ -49,3 +49,6 @@ create table if not exists public.ko_bill_log (id bigserial primary key, phone t
 -- ko_shipments.kind = forward / return / exchange (rider app me ulta raasta)
 -- functions: ko_policy_get/set, ko_return_create, ko_return_by_cust, ko_return_by_shop(p_shop,p_phone), ko_return_step_v, ko_admin_people(p_pin)
 -- edge ko-courier: action "return" (Shiprocket reverse pickup)
+
+-- v289: ko_shops (dukaandar signup: phone pk, PIN sha256, live) + ko_shop_lookup/register/login/update, ko_shops_live
+-- storage bucket ko-media (public, 30MB, image/video; anon upload sirf shops/ folder)
