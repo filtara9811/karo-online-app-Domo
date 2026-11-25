@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=284;
+window.KO_V=285;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -29351,5 +29351,174 @@ body.ko-one .hs-mic{display:none!important}
     if(pin.length<4){ try{ toast('🔑 Admin PIN daalein'); }catch(e){} return; }
     try{ const v=await koRpc('ko_settings_set',{p_pin:pin,p_v:CFG}); Object.assign(CFG,v||{}); localStorage.setItem('ko_cfg',JSON.stringify(CFG)); sessionStorage.setItem('ko_pin',pin); toast('✅ Sab par lag gaya'); applyCfg(false); lockUi(); }
     catch(e){ try{ toast('❌ '+(/PIN/i.test(String(e&&e.message||e))?'Galat PIN':'Save nahi hua — net check karein')); }catch(_){} } };
+})();
+</script>
+<style id="v285-css">
+/* ===== v285: Delivery — label, rider / courier / khud ===== */
+.kd-card{margin:10px 0;border-radius:18px;padding:14px;background:linear-gradient(135deg,#1d1408,#3b2a14);color:#fff;font-family:Poppins,system-ui,sans-serif}
+.kd-card h5{margin:0 0 4px;font:800 15px Poppins,system-ui}.kd-card p{margin:0 0 10px;font-size:12px;color:#e8dcc4}
+.kd-card .bt{display:flex;gap:8px;flex-wrap:wrap}
+.kd-card button{flex:1;min-width:120px;border:none;border-radius:12px;padding:11px 8px;font:800 13px Poppins,system-ui;cursor:pointer;background:linear-gradient(180deg,#F8D77A,#E0A21B);color:#231a0e}
+.kd-card button.s{background:#3b2a14;color:#F5E6C8;border:1px solid #6b5122}
+.kd-st{display:flex;gap:4px;margin:8px 0 10px}.kd-st i{flex:1;height:5px;border-radius:3px;background:#5a4524}.kd-st i.on{background:#22C55E}
+.kd-tg{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:2px 9px;background:#22C55E;color:#fff;margin-left:6px}
+#kdOv{position:fixed;inset:0;z-index:99970;background:rgba(20,14,6,.55);display:none;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif}
+#kdOv.on{display:flex}
+#kdOv .kd-c{width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#FFFBF2;color:#231a0e;border-radius:26px 26px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:hcIn .3s both}
+#kdOv .kd-gr{width:44px;height:5px;border-radius:3px;background:#E5D6B5;margin:0 auto 10px}
+#kdOv h4{margin:0 0 2px;font:900 19px Poppins,system-ui}#kdOv .kd-sb{margin:0 0 12px;color:#8a7a5a;font-size:12.5px}
+#kdOv label{display:block;font-size:11px;font-weight:800;color:#8a6a2a;margin:10px 0 4px;letter-spacing:.05em}
+#kdOv input,#kdOv textarea{width:100%;box-sizing:border-box;border:1.5px solid #EBDDBF;border-radius:12px;padding:10px 12px;font:600 14px Poppins,system-ui;background:#fff;color:#231a0e}
+#kdOv textarea{min-height:58px;resize:vertical}
+#kdOv .kd-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#kdOv .kd-w{display:flex;gap:6px}#kdOv .kd-w button{flex:1;border:1.5px solid #EBDDBF;background:#fff;border-radius:12px;padding:9px 4px;font:700 12.5px Poppins,system-ui;cursor:pointer}
+#kdOv .kd-w button.on{background:#231a0e;color:#fff;border-color:#231a0e}
+#kdOv .kd-op{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid #F0E3C6;background:#fff;border-radius:16px;padding:12px;margin-bottom:8px;cursor:pointer;font-family:inherit;color:inherit}
+#kdOv .kd-op.on{border-color:#E0A21B;background:#FFF7E3;box-shadow:0 0 0 3px rgba(224,162,27,.2)}
+#kdOv .kd-op i{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;font-style:normal;flex:none;background:#FFF1D6}
+#kdOv .kd-op div{flex:1;min-width:0}#kdOv .kd-op b{display:block;font-size:14px}#kdOv .kd-op small{color:#8a7a5a;font-size:11.5px}
+#kdOv .kd-op strong{font:900 16px Poppins,system-ui;color:#B7791F;white-space:nowrap}
+#kdOv .kd-h{font-size:11px;font-weight:800;color:#8a6a2a;letter-spacing:.06em;margin:14px 0 6px}
+#kdOv .kd-go{width:100%;border:none;border-radius:16px;padding:14px;background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff;font:800 15px Poppins,system-ui;cursor:pointer;margin-top:10px}
+#kdOv .kd-go:disabled{opacity:.5}
+#kdOv .kd-x{width:100%;border:none;background:none;color:#8a7a5a;font-weight:700;padding:10px;cursor:pointer}
+#kdOv .kd-ok{text-align:center}#kdOv .kd-ok .big{font-size:46px}
+#kdOv .kd-pin{display:inline-block;margin:8px 0;font:900 28px Poppins,system-ui;letter-spacing:.3em;background:#231a0e;color:#F5C451;border-radius:14px;padding:6px 16px}
+#kdOv .kd-row{display:flex;gap:8px}#kdOv .kd-row button{flex:1;border:1.5px solid #EBDDBF;background:#fff;border-radius:14px;padding:11px 6px;font:800 13px Poppins,system-ui;cursor:pointer}
+#kdOv .kd-row .wa{background:#E8F9EF;border-color:#BFEBD1;color:#0a7a48}
+#kdOv .kd-tl{margin:10px 0;border-left:2px solid #E8DCC4;padding-left:12px;text-align:left}
+#kdOv .kd-tl div{position:relative;padding:4px 0;font-size:12.5px}#kdOv .kd-tl div:before{content:'';position:absolute;left:-18px;top:9px;width:10px;height:10px;border-radius:50%;background:#22C55E}
+#kdOv .kd-tl small{color:#8a7a5a}
+</style>
+<script id="v285">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const R=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+  const FN='https://goyvhgpfxjpxkytpeigr.supabase.co/functions/v1/ko-courier';
+  const AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveXZoZ3BmeGpweGt5dHBlaWdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MDU4NzMsImV4cCI6MjEwODE4MTg3M30.5IYnhNkUtzjr8IvPoKezo-qnU1cLbXLbND9Kh6wOcmg';
+  const BASE='https://filtara9811.github.io/karo-online-app-Domo/';
+  async function courier(b){ const r=await fetch(FN,{method:'POST',headers:{apikey:AK,Authorization:'Bearer '+AK,'Content-Type':'application/json'},body:JSON.stringify(b)}); return r.json(); }
+  window.koCourier=courier;
+  const CFG=()=>Object.assign({rider_fee:40,rider_pay:30,courier_margin:10},window.KO_CFG||{});
+  const shopNm=()=>{ try{ return SHOPS[MY_SHOP][0]; }catch(e){ return 'Ashu Readymade Garments'; } };
+  const shopPh=()=>(window.KO_OWNER_PH||['9540068380'])[0];
+  const SK='ko_ships';
+  const getMap=()=>{ try{ return JSON.parse(localStorage.getItem(SK)||'{}'); }catch(e){ return {}; } };
+  const setMap=m=>{ try{ localStorage.setItem(SK,JSON.stringify(m)); }catch(e){} };
+  const STL={requested:['Rider dhoondh rahe',1],assigned:['Rider aa raha',2],picked:['Rider ne utha liya',3],on_way:['Raste me',3],delivered:['Pahunch gaya ✓',4],self:['Aap khud pahunchayenge',1],courier_pending:['Courier booking',1],courier_booked:['Courier booked',2],cancelled:['Cancel',0]};
+  /* ---------- order detail me Delivery card ---------- */
+  function card(o,i){ const m=getMap(), sh=m[o.id];
+    if(!sh) return `<div class="kd-card" id="kdCard"><h5>🚚 Delivery</h5><p>Order accept ho gaya. Label nikaalein — phir chunein: paas ka rider, courier ya khud.</p><div class="bt"><button onclick="kdOpen(${i})">📦 Label banayein</button></div></div>`;
+    const st=STL[sh.status]||[sh.status,1];
+    return `<div class="kd-card" id="kdCard"><h5>🚚 ${sh.mode==='rider'?'Karo rider':sh.mode==='courier'?(E(sh.courier)||'Courier'):'Khud pahunchana'} <span class="kd-tg">${E(st[0])}</span></h5>
+      <div class="kd-st">${[1,2,3,4].map(k=>`<i class="${st[1]>=k?'on':''}"></i>`).join('')}</div>
+      <p>AWB <b>${E(sh.awb)}</b>${sh.rider?` · 🛵 ${E(sh.rider.name)}`:''} · PIN <b>${E(sh.pin||'—')}</b> (grahak ko bataya hua)</p>
+      <div class="bt"><button onclick="kdLabel('${E(o.id)}')">🖨️ Label</button><button class="s" onclick="kdShare('${E(o.id)}')">💬 Grahak ko bhejein</button>${sh.mode==='self'&&sh.status!=='delivered'?`<button class="s" onclick="kdSelfDone('${E(o.id)}')">✓ Pahuncha diya</button>`:''}${['requested','self','courier_pending','courier_booked','assigned'].includes(sh.status)?`<button class="s" onclick="kdCancel('${E(o.id)}')">✕ Cancel</button>`:''}</div></div>`; }
+  function inject(){ try{ const S=OM&&OM.sel; if(!S||S.k!=='o'||OM.mode==='chat') return; const o=SD_ORD[S.i]; if(!o) return; const bd=$('omBd'); if(!bd||$('kdCard')) return;
+      if(!['acc','pack','out','done'].includes(o.st)){ return; }
+      const cu=bd.querySelector('.om-cu'); const html=card(o,S.i); if(cu) cu.insertAdjacentHTML('afterend',html); else bd.insertAdjacentHTML('afterbegin',html);
+      refresh(o.id); }catch(e){} }
+  async function refresh(oid){ const m=getMap(), sh=m[oid]; if(!sh||!window.koRpc) return; try{ const r=await koRpc('ko_ship_track',{p_awb:sh.awb}); if(r&&r.status){ const pin=sh.pin; m[oid]=Object.assign(sh,r,{pin}); setMap(m); const c=$('kdCard'); const S=OM&&OM.sel; if(c&&S&&SD_ORD[S.i]&&SD_ORD[S.i].id===oid){ c.outerHTML=card(SD_ORD[S.i],S.i); }
+      if(r.status==='delivered'){ const o=SD_ORD.find(x=>x.id===oid); if(o&&o.st!=='done'){ try{ sdOrdSet(SD_ORD.indexOf(o),'done'); }catch(e){ o.st='done'; } } } } }catch(e){} }
+  try{ const _d=omDet; window.omDet=omDet=function(){ const r=_d.apply(this,arguments); inject(); return r; }; }catch(e){}
+  setInterval(()=>{ const S=window.OM&&OM.sel; if(S&&S.k==='o'&&SD_ORD[S.i]) refresh(SD_ORD[S.i].id); },15000);
+  /* ---------- label + delivery chunna ---------- */
+  let KD=null;
+  window.kdOpen=function(i){ const o=SD_ORD[i]; const its=(typeof omItems==='function'?omItems(o):[]).map(x=>x.n+(x.q>1?' ×'+x.q:'')).join(', ')||o.it;
+    const mb=String(o.mob||'').replace(/\D/g,'').slice(-10); KD={i,o,step:1,name:o.c,phone:/^[6-9]\d{9}$/.test(mb)?mb:'',addr:(o.ad||'')+(o.ad&&!/delhi/i.test(o.ad)?', Delhi':''),pin:'110006',w:500,cod:o.pay==='COD'?o.amt:0,items:its,opt:'rider',rates:null,busy:false};
+    render(); $('kdOv').classList.add('on'); };
+  function ov(){ let o=$('kdOv'); if(!o){ o=document.createElement('div'); o.id='kdOv'; o.onclick=e=>{ if(e.target===o) o.classList.remove('on'); }; document.body.appendChild(o); } return o; }
+  function render(){ const o=ov(), c=CFG();
+    if(KD.step===1){ o.innerHTML=`<div class="kd-c"><div class="kd-gr"></div><h4>📦 Label banayein</h4><div class="kd-sb">${E(KD.o.id)} · ${E(KD.items)}</div>
+      <div class="kd-2"><div><label>GRAHAK</label><input id="kdN" value="${E(KD.name)}"></div><div><label>MOBILE</label><input id="kdP" inputmode="numeric" maxlength="10" value="${E(KD.phone)}" placeholder="10 ank"></div></div>
+      <label>PURA PATA</label><textarea id="kdA">${E(KD.addr)}</textarea>
+      <div class="kd-2"><div><label>PIN CODE</label><input id="kdZ" inputmode="numeric" maxlength="6" value="${E(KD.pin)}"></div><div><label>COD (grahak dega)</label><input id="kdC" inputmode="numeric" value="${KD.cod}"></div></div>
+      <label>WAZAN</label><div class="kd-w">${[[500,'0.5 kg'],[1000,'1 kg'],[2000,'2 kg'],[5000,'5 kg']].map(([g,l])=>`<button class="${KD.w===g?'on':''}" onclick="kdW(${g})">${l}</button>`).join('')}</div>
+      <button class="kd-go" onclick="kdNext()">Aage — delivery chunein ›</button><button class="kd-x" onclick="document.getElementById('kdOv').classList.remove('on')">Band karein</button></div>`; return; }
+    if(KD.step===2){ const rates=KD.rates; o.innerHTML=`<div class="kd-c"><div class="kd-gr"></div><h4>🚚 Kaise bhejein?</h4><div class="kd-sb">${E(KD.name)} · ${E(KD.addr).slice(0,60)} · ${KD.w/1000} kg${KD.cod?' · COD '+R(KD.cod):''}</div>
+      <div class="kd-h">PAAS KA RIDER (KARO / HAPPY FOOD NETWORK)</div>
+      <button class="kd-op ${KD.opt==='rider'?'on':''}" onclick="kdOpt('rider')"><i>🛵</i><div><b>Karo rider — aaj hi</b><small>1–2 ghante · paas ke sabhi online rider ko request jayegi</small></div><strong>${R(c.rider_fee)}</strong></button>
+      <div class="kd-h">COURIER (POORE BHARAT) ${rates&&rates.demo?'<span style="color:#B45309">· demo rate — admin me Shiprocket keys daalein</span>':''}</div>
+      ${rates?(rates.rates||[]).map((r,k)=>`<button class="kd-op ${KD.opt==='c'+k?'on':''}" onclick="kdOpt('c${k}')"><i>🚚</i><div><b>${E(r.courier)}</b><small>${E(r.days)} · pickup aapki dukaan se</small></div><strong>${R(r.rate+c.courier_margin)}</strong></button>`).join('')||'<div class="kd-sb">Is pin code par courier nahi mila</div>':'<div class="kd-sb">Courier ke rate la rahe hain…</div>'}
+      <div class="kd-h">KHUD</div>
+      <button class="kd-op ${KD.opt==='self'?'on':''}" onclick="kdOpt('self')"><i>🙋</i><div><b>Main khud pahunchaunga</b><small>Label + PIN milega — grahak se PIN lekar "pahuncha diya"</small></div><strong>₹0</strong></button>
+      <button class="kd-go" ${KD.busy?'disabled':''} onclick="kdBook()">${KD.busy?'Ban raha hai…':'✓ Label banayein aur bhejein'}</button><button class="kd-x" onclick="KD.step=1;kdR()">‹ Wapas</button></div>`;
+      if(!rates&&!KD.rl){ KD.rl=1; courier({action:'rates',weight_g:KD.w,cod:KD.cod>0,drop_pin:KD.pin}).then(r=>{ KD.rates=r&&r.rates?r:{demo:true,rates:[]}; if(KD.step===2) render(); }).catch(()=>{ KD.rates={demo:true,rates:[{courier:'Delhivery Surface',days:'3-5 din',rate:85},{courier:'Xpressbees',days:'2-4 din',rate:96}]}; if(KD.step===2) render(); }); }
+      return; }
+    if(KD.step===3){ const sh=KD.sh; o.innerHTML=`<div class="kd-c kd-ok"><div class="kd-gr"></div><div class="big">✅</div><h4>Label ban gaya</h4><div class="kd-sb">AWB <b>${E(sh.awb)}</b> · ${sh.mode==='rider'?'paas ke riders ko request chali gayi':sh.mode==='courier'?E(sh.courier||'Courier')+' booked':'aap khud pahunchayenge'}</div>
+      <div>Grahak ka delivery PIN</div><div class="kd-pin">${E(sh.pin)}</div><div class="kd-sb">Ye PIN sirf grahak ko bhejein — rider ko grahak se milega</div>
+      <div class="kd-row"><button onclick="kdLabel('${E(KD.o.id)}')">🖨️ Label print / PDF</button><button class="wa" onclick="kdShare('${E(KD.o.id)}')">💬 Grahak ko WhatsApp</button></div>
+      <button class="kd-go" onclick="document.getElementById('kdOv').classList.remove('on');try{omDet()}catch(e){}">Ho gaya</button></div>`; } }
+  window.kdR=render;
+  window.kdW=g=>{ save1(); KD.w=g; KD.rates=null; KD.rl=0; render(); };
+  function save1(){ const g=id=>($(id)||{}).value; if($('kdN')){ KD.name=g('kdN').trim(); KD.phone=g('kdP').replace(/\D/g,''); KD.addr=g('kdA').trim(); KD.pin=g('kdZ').replace(/\D/g,''); KD.cod=+g('kdC').replace(/\D/g,'')||0; } }
+  window.kdNext=()=>{ save1(); if(KD.name.length<2||KD.addr.length<6){ toast('⚠️ Grahak ka naam aur pura pata likhein'); return; } if(KD.phone&&!/^[6-9]\d{9}$/.test(KD.phone)){ toast('⚠️ Sahi mobile'); return; } KD.step=2; KD.rates=null; KD.rl=0; render(); };
+  window.kdOpt=k=>{ KD.opt=k; render(); };
+  window.kdBook=async function(){ if(KD.busy) return; const c=CFG(); let mode='rider', fee=c.rider_fee, cour=null, cr=null;
+    if(KD.opt==='self'){ mode='self'; fee=0; } else if(KD.opt[0]==='c'){ mode='courier'; cr=(KD.rates.rates||[])[+KD.opt.slice(1)]; if(!cr){ toast('Courier chunein'); return; } fee=cr.rate+c.courier_margin; cour=cr.courier; }
+    KD.busy=true; render();
+    try{ const sh=await koRpc('ko_ship_create',{p:{order_ref:KD.o.id,shop:shopNm(),shop_phone:shopPh(),shop_addr:'Bara Hindu Rao, Sadar Bazar, Delhi 110006',cust_name:KD.name,cust_phone:KD.phone,cust_addr:KD.addr+(KD.pin?' - '+KD.pin:''),items:KD.items,cod:KD.cod,weight_g:KD.w,mode,courier:cour,fee,rider_pay:c.rider_pay}});
+      if(mode==='courier'){ try{ const b=await courier({action:'book',awb:sh.awb,courier:cour,courier_id:cr&&cr.id,drop_pin:KD.pin}); if(b&&b.ok){ sh.status='courier_booked'; sh.ext_awb=b.ext_awb; sh.label_url=b.label_url||null; } else toast('Courier booking: '+((b&&b.msg)||'baad me')); }catch(e){} }
+      const m=getMap(); m[KD.o.id]=sh; setMap(m); KD.sh=sh; KD.step=3; KD.busy=false;
+      const o=KD.o; if(o.st==='acc'){ try{ sdOrdSet(KD.i,'pack'); }catch(e){} }
+      render(); try{ navigator.vibrate&&navigator.vibrate(30); }catch(e){} }
+    catch(e){ KD.busy=false; render(); toast('❌ Label nahi bana — net check karein'); } };
+  const shOf=oid=>getMap()[oid];
+  window.kdShare=function(oid){ const sh=shOf(oid); if(!sh) return; const o=SD_ORD.find(x=>x.id===oid)||{};
+    const t=`🛍️ *${shopNm()}* — aapka order ${oid} nikal gaya!\n\n🚚 ${sh.mode==='rider'?'Karo rider aaj hi pahunchayega':sh.mode==='courier'?(sh.courier||'Courier')+' se':'Dukaandar khud pahunchayenge'}\n🔐 Delivery PIN: *${sh.pin}* (sirf saaman milne par batayein)${sh.cod?`\n💵 COD: ₹${sh.cod}`:''}\n\n📍 Track karein: ${BASE}track.html?awb=${sh.awb}`;
+    const ph=String(sh.cust_phone||o.mob||'').replace(/\D/g,''); const a=document.createElement('a'); a.href='https://wa.me/'+(ph?'91'+ph.slice(-10):'')+'?text='+encodeURIComponent(t); a.target='_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); };
+  window.kdLabel=function(oid){ const sh=shOf(oid); if(!sh) return; if(sh.label_url){ window.open(sh.label_url,'_blank'); return; }
+    let qr=''; try{ qr=QRG.svg(BASE+'track.html?awb='+sh.awb,{quiet:1}); }catch(e){}
+    const w=window.open('','_blank'); if(!w){ toast('Label ke liye popup allow karein'); return; }
+    const d=new Date(sh.created_at||Date.now());
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Label ${E(sh.awb)}</title><style>
+      @page{size:100mm 150mm;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eee}.l{width:100mm;height:150mm;margin:10px auto;background:#fff;border:2px solid #000;padding:4mm;display:flex;flex-direction:column;gap:2.5mm}
+      .h{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:2mm}.h b{font-size:17px}.h span{font-size:11px;font-weight:700;border:2px solid #000;padding:2px 6px;border-radius:4px}
+      .q{display:flex;gap:3mm;align-items:center}.q .c{width:30mm;height:30mm}.q .c svg{width:100%;height:100%}.awb{font-size:20px;font-weight:900;letter-spacing:1px}.sm{font-size:10px;color:#333}
+      .bx{border:1.5px solid #000;border-radius:3px;padding:2mm}.bx h6{margin:0 0 1mm;font-size:9px;letter-spacing:.1em}.bx p{margin:0;font-size:12px;line-height:1.35}.to p{font-size:13.5px}.to b{font-size:15px}
+      .cod{display:flex;justify-content:space-between;align-items:center;background:#000;color:#fff;padding:2.5mm 3mm;font-weight:900;font-size:18px}.ft{margin-top:auto;font-size:9px;text-align:center;color:#444}
+      .pb{display:block;margin:10px auto;padding:10px 18px;border:0;border-radius:10px;background:#F47B20;color:#fff;font-weight:700;font-size:15px}@media print{.pb{display:none}body{background:#fff}.l{margin:0;border:0}}</style></head><body>
+      <div class="l"><div class="h"><b>Karo Online</b><span>${sh.mode==='rider'?'KARO RIDER':sh.mode==='courier'?E(String(sh.courier||'COURIER').toUpperCase()):'SELF DELIVERY'}</span></div>
+      <div class="q"><div class="c">${qr}</div><div><div class="sm">AWB</div><div class="awb">${E(sh.awb)}</div>${sh.ext_awb?`<div class="sm">Courier AWB: <b>${E(sh.ext_awb)}</b></div>`:''}<div class="sm">Order ${E(sh.order_ref||oid)} · ${d.toLocaleDateString('en-IN')}</div><div class="sm">Wazan ${(sh.weight_g||500)/1000} kg</div></div></div>
+      <div class="bx to"><h6>DELIVER TO (GRAHAK)</h6><p><b>${E(sh.cust_name||'')}</b><br>${E(sh.cust_addr||'')}<br>📞 ${E(sh.cust_phone||'')}</p></div>
+      <div class="cod"><span>${sh.cod?'COD — CASH LEIN':'PREPAID'}</span><span>${sh.cod?'₹'+sh.cod:'₹0'}</span></div>
+      <div class="bx"><h6>FROM (DUKAAN)</h6><p><b>${E(sh.shop)}</b><br>${E(sh.shop_addr||'')}<br>📞 ${E(shopPh())}</p></div>
+      <div class="bx"><h6>SAAMAN</h6><p>${E(sh.items||'')}</p></div>
+      <div class="ft">Delivery sirf PIN se · track: karo online · Powered by Filipra Private Limited</div></div>
+      <button class="pb" onclick="print()">🖨️ Print / PDF</button></body></html>`); w.document.close(); };
+  window.kdSelfDone=async function(oid){ const sh=shOf(oid); if(!sh) return; const pin=prompt? null:null; ov().innerHTML=`<div class="kd-c"><div class="kd-gr"></div><h4>✓ Pahuncha diya?</h4><div class="kd-sb">Grahak se 4 ank ka delivery PIN poochh kar likhein</div><input id="kdPin" inputmode="numeric" maxlength="4" placeholder="PIN" style="font-size:22px;text-align:center;letter-spacing:.3em"><button class="kd-go" onclick="kdSelfOk('${E(oid)}')">Pakka karein</button><button class="kd-x" onclick="document.getElementById('kdOv').classList.remove('on')">Band</button></div>`; $('kdOv').classList.add('on'); };
+  window.kdSelfOk=async function(oid){ const sh=shOf(oid), p=($('kdPin')||{}).value||''; try{ const r=await koRpc('ko_ship_vendor_step',{p_awb:sh.awb,p_shop:sh.shop,p_step:'delivered',p_pin:p}); const m=getMap(); m[oid]=Object.assign(sh,r,{pin:sh.pin}); setMap(m); $('kdOv').classList.remove('on'); toast('✅ Delivered'); refresh(oid); try{ omDet(); }catch(e){} }catch(e){ toast(/PIN/.test(String(e.message))?'❌ Galat PIN':'❌ Nahi hua'); } };
+  window.kdCancel=async function(oid){ const sh=shOf(oid); if(!sh) return; try{ const r=await koRpc('ko_ship_vendor_step',{p_awb:sh.awb,p_shop:sh.shop,p_step:'cancelled',p_pin:''}); const m=getMap(); delete m[oid]; setMap(m); toast('Delivery cancel — dobara label bana sakte hain'); try{ omDet(); }catch(e){} }catch(e){ toast('❌ '+String(e.message||'').replace(/^.*"message":"([^"]+)".*$/,'$1').slice(0,80)); } };
+
+  /* ---------- Admin → 🚚 Delivery ---------- */
+  try{ const g=AD_NAV.find(x=>x[0]==='PLATFORM'); if(g&&!g[1].some(x=>x[0]==='dlv')) g[1].splice(1,0,['dlv','🚚','Delivery & Courier']); }catch(e){}
+  let AV={sec:null,data:null,busy:0,test:''};
+  const pin=()=>sessionStorage.getItem('ko_pin')||'';
+  async function adLoad(){ if(!pin()||AV.busy) return; AV.busy=1; try{ const [s,d,st]=await Promise.all([koRpc('ko_secret_list',{p_pin:pin()}),koRpc('ko_admin_delivery',{p_pin:pin()}),courier({action:'status'}).catch(()=>null)]); AV.sec=s; AV.data=d; AV.live=st&&st.live; }catch(e){ AV.err=1; } AV.busy=0; try{ if(AD.sec==='dlv') adRender(); }catch(e){} }
+  window.adS_dlv=function(){ const c=CFG(); if(!pin()) return `<div class="ad-cd"><h4>🔑 Pehle Admin PIN</h4><div style="display:flex;gap:8px"><input id="kdAp" type="password" inputmode="numeric" placeholder="Admin PIN" style="flex:1;border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><button class="ad-btn dk" onclick="sessionStorage.setItem('ko_pin',document.getElementById('kdAp').value);adRender()">Kholein</button></div></div>`;
+    if(!AV.sec&&!AV.busy) setTimeout(adLoad,10);
+    const S=AV.sec||{}, D=AV.data||{riders:[],ships:[]}, hint=k=>S[k]?`<small style="color:#059669;font-weight:700">✓ Saved ${E(S[k].hint)}</small>`:`<small style="color:#9ca3af">Abhi nahi daala</small>`;
+    const F=(k,l,t,ph)=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">${l}</b>${hint(k)}</div><div style="display:flex;gap:6px;margin-top:4px"><input id="kds_${k}" type="${t}" placeholder="${S[k]?'Badalne ke liye naya likhein':ph}" autocomplete="off" style="flex:1;border:1px solid #E1E2EA;border-radius:10px;padding:10px;font:inherit"><button class="ad-btn dk" onclick="kdSec('${k}')">Save</button>${S[k]?`<button class="ad-btn" onclick="kdSecDel('${k}')">✕</button>`:''}</div></div>`;
+    const stc={requested:'#B45309',assigned:'#1D4ED8',picked:'#7C3AED',on_way:'#7C3AED',delivered:'#059669',cancelled:'#9CA3AF',self:'#4B5563',courier_booked:'#0E7490',courier_pending:'#B45309'};
+    return `<div class="ad-g"><div class="ad-cd"><h4>🚚 Shiprocket (courier) <span class="ad-st ${AV.live?'ok':'pd'}">${AV.live?'LIVE':'Demo rates'}</span></h4>
+       <p style="font-size:12.5px;color:#6b7280;margin:0 0 10px">Shiprocket → Settings → API → "Create API user" se email/password banayein. Save karte hi keys chhup jaati hain — Supabase me surakshit, app me kabhi nahi aati.</p>
+       ${F('shiprocket_email','API user email','email','api@aapki-company.com')}${F('shiprocket_password','API password','password','••••••••')}${F('shiprocket_pickup','Pickup location ka naam','text','Primary')}${F('pickup_pincode','Pickup pin code','text','110006')}
+       <button class="ad-btn dk" onclick="kdTest()">🔌 Connection test karein</button> <span style="font-size:12.5px;font-weight:700">${E(AV.test)}</span></div>
+      <div class="ad-cd"><h4>🛵 Karo rider network</h4><div class="ad-set">
+        <div><span>Grahak / dukaandar se fee<small>Paas ki delivery (₹)</small></span><input id="kdf_rider_fee" value="${c.rider_fee}" inputmode="numeric" style="max-width:80px"></div>
+        <div><span>Rider ko milega<small>Har delivery (₹)</small></span><input id="kdf_rider_pay" value="${c.rider_pay}" inputmode="numeric" style="max-width:80px"></div>
+        <div><span>Courier par aapka margin<small>Har parcel (₹)</small></span><input id="kdf_courier_margin" value="${c.courier_margin}" inputmode="numeric" style="max-width:80px"></div></div>
+        <button class="ad-btn dk" style="margin-top:10px" onclick="kdFees()">💾 Save</button>
+        <p style="font-size:12.5px;margin:12px 0 4px"><b>Rider kaise judein?</b> Ye link bhejein — wahi unka app hai:</p>
+        <div style="display:flex;gap:6px"><input readonly value="${BASE}rider.html" style="flex:1;border:1px solid #E1E2EA;border-radius:10px;padding:9px;font:inherit;font-size:12px"><button class="ad-btn" onclick="try{navigator.clipboard.writeText('${BASE}rider.html')}catch(e){};toast('🔗 Copy')">Copy</button><button class="ad-btn" onclick="window.open('https://wa.me/?text='+encodeURIComponent('🛵 Karo Online rider baniye — har delivery par kamai: ${BASE}rider.html'),'_blank')">💬</button></div></div></div>
+     <div class="ad-cd" style="margin-top:14px"><h4>🛵 Riders (${(D.riders||[]).length}) · online ${(D.riders||[]).filter(r=>r.online).length} <button class="ad-btn" onclick="AV.sec=null;adLoad()">↻</button></h4>
+      ${(D.riders||[]).length?`<div class="ad-wrap" style="border:0"><table class="ad-tbl"><thead><tr><th>RIDER</th><th>ILAKA</th><th>STATUS</th><th>TRIPS</th><th>KAMAI</th></tr></thead><tbody>${D.riders.map(r=>`<tr><td><b>${E(r.name)}</b><br><small>${E(r.phone)}</small></td><td>${E(r.area||'—')}</td><td><span class="ad-st ${r.online?'ok':'su'}">${r.online?'Online':'Offline'}</span></td><td>${r.trips}</td><td>${R(r.earned)}</td></tr>`).join('')}</tbody></table></div>`:'<p style="color:#6b7280;font-size:13px">Abhi koi rider nahi — upar ka link bhejein</p>'}</div>
+     <div class="ad-cd" style="margin-top:14px"><h4>📦 Shipments (live)</h4>
+      ${(D.ships||[]).length?`<div class="ad-wrap" style="border:0"><table class="ad-tbl"><thead><tr><th>AWB</th><th>DUKAAN → GRAHAK</th><th>TARIKA</th><th>STATUS</th><th>FEE</th></tr></thead><tbody>${D.ships.map(s=>`<tr><td><b>${E(s.awb)}</b><br><small>${new Date(s.created_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</small></td><td>${E(s.shop)}<br><small>→ ${E(s.cust_name||'')}</small></td><td>${s.mode==='rider'?'🛵 Rider'+(s.rider?' · '+E(s.rider.name):''):s.mode==='courier'?'🚚 '+E(s.courier||''):'🙋 Khud'}</td><td><span class="ad-st" style="background:${stc[s.status]||'#6b7280'};color:#fff">${E((STL[s.status]||[s.status])[0])}</span></td><td>${R(s.fee)}</td></tr>`).join('')}</tbody></table></div>`:'<p style="color:#6b7280;font-size:13px">Abhi koi shipment nahi — dukaandar order accept karke "Label banayein" dabaye</p>'}</div>`; };
+  window.kdSec=async k=>{ const v=($('kds_'+k)||{}).value||''; if(!v.trim()){ toast('Kuch likhein'); return; } try{ AV.sec=await koRpc('ko_secret_set',{p_pin:pin(),p_k:k,p_v:v.trim()}); toast('🔒 Save ho gaya — ab chhupa hua'); AV.live=null; const st=await courier({action:'status'}).catch(()=>null); AV.live=st&&st.live; adRender(); }catch(e){ toast(/PIN/.test(String(e.message))?'❌ Galat PIN':'❌ Save nahi hua'); } };
+  window.kdSecDel=async k=>{ try{ AV.sec=await koRpc('ko_secret_set',{p_pin:pin(),p_k:k,p_v:''}); toast('Hata diya'); adRender(); }catch(e){ toast('❌'); } };
+  window.kdTest=async()=>{ AV.test='Jaanch rahe…'; adRender(); try{ const r=await courier({action:'test'}); AV.test=(r&&r.msg)||'—'; }catch(e){ AV.test='❌ Net error'; } adRender(); };
+  window.kdFees=async()=>{ const C=window.KO_CFG||{}; ['rider_fee','rider_pay','courier_margin'].forEach(k=>{ const i=$('kdf_'+k); if(i) C[k]=+i.value||0; }); try{ const v=await koRpc('ko_settings_set',{p_pin:pin(),p_v:C}); Object.assign(C,v||{}); localStorage.setItem('ko_cfg',JSON.stringify(C)); toast('✅ Save'); }catch(e){ toast('❌ Galat PIN'); } };
 })();
 </script>

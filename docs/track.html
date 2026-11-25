@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F47B20">
+<title>Order Tracking</title>
+<link rel="icon" href="icon.png">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F6F1E7;color:#1d1408;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.hd{background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) 18px 54px;border-radius:0 0 28px 28px}
+.hd small{font-weight:700;opacity:.9;letter-spacing:.08em;font-size:11px}.hd h1{margin:4px 0 0;font-size:22px}
+.cd{margin:-38px 16px 14px;background:#fff;border-radius:22px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.big{display:flex;align-items:center;gap:12px}.big i{font-size:40px;font-style:normal}.big b{display:block;font-size:19px}.big span{color:#7d6d50;font-size:13px}
+.bar{display:flex;gap:5px;margin:14px 0 4px}.bar i{flex:1;height:6px;border-radius:3px;background:#EDE2CB}.bar i.on{background:#16A34A}
+.lb{display:flex;justify-content:space-between;font-size:10.5px;color:#7d6d50;font-weight:700}
+.tl{margin:6px 16px 16px;background:#fff;border-radius:22px;padding:16px}
+.tl h3{margin:0 0 10px;font-size:15px}
+.ev{position:relative;padding:0 0 14px 22px;border-left:2px solid #E8DCC4;margin-left:6px}.ev:last-child{border-color:transparent;padding-bottom:0}
+.ev:before{content:'';position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:#16A34A;border:2px solid #fff}
+.ev b{display:block;font-size:14px}.ev small{color:#7d6d50;font-size:12px}
+.in{margin:16px}.in input{width:100%;border:1.5px solid #EDE2CB;border-radius:14px;padding:13px;font-size:16px}.in button{width:100%;margin-top:10px;border:none;border-radius:14px;padding:14px;background:#1d1408;color:#fff;font-weight:800;font-size:15px}
+.nt{margin:0 16px 14px;background:#1d1408;color:#F5E6C8;border-radius:18px;padding:12px 14px;font-size:13px}
+.ft{text-align:center;font-size:11px;color:#7d6d50;margin:16px 0 26px;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const U='https://goyvhgpfxjpxkytpeigr.supabase.co/rest/v1/rpc/';
+const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveXZoZ3BmeGpweGt5dHBlaWdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MDU4NzMsImV4cCI6MjEwODE4MTg3M30.5IYnhNkUtzjr8IvPoKezo-qnU1cLbXLbND9Kh6wOcmg';
+const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const awb=(new URLSearchParams(location.search).get('awb')||'').toUpperCase();
+const S={requested:['🔎','Rider dhoondh rahe hain','Paas ke rider ko request gayi',1],assigned:['🛵','Rider dukaan ja raha hai','Jaldi saaman uthayega',2],picked:['📦','Saaman uth gaya','Rider ke paas hai',3],on_way:['🛵','Raste me hai','Aap tak aa raha hai',3],
+  delivered:['✅','Pahunch gaya','Shukriya!',4],self:['🙋','Dukaandar khud la rahe hain','Thodi der me',2],courier_pending:['🚚','Courier book ho raha','',1],courier_booked:['🚚','Courier ke paas','2-5 din me',2],cancelled:['✕','Delivery cancel','Dukaan se baat karein',0]};
+async function load(){ const a=document.getElementById('app'); if(!awb){ a.innerHTML=`<div class="hd"><small>KARO ONLINE</small><h1>Order track karein</h1></div><div class="cd"><div class="in" style="margin:0"><input id="aw" placeholder="AWB jaise KO2611…"><button onclick="location.search='?awb='+encodeURIComponent(document.getElementById('aw').value.trim())">Dekhein</button></div></div>`; return; }
+  let s=null; try{ const r=await fetch(U+'ko_ship_track',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_awb:awb})}); s=await r.json(); }catch(e){}
+  if(!s||!s.awb){ a.innerHTML=`<div class="hd"><small>KARO ONLINE</small><h1>Order nahi mila</h1></div><div class="cd">AWB <b>${E(awb)}</b> galat hai ya abhi bana nahi.</div>`; return; }
+  const st=S[s.status]||['📦',s.status,'',1];
+  a.innerHTML=`<div class="hd"><small>KARO ONLINE · ${E(s.awb)}</small><h1>${E(s.shop)}</h1></div>
+   <div class="cd"><div class="big"><i>${st[0]}</i><div><b>${st[1]}</b><span>${st[2]}</span></div></div>
+    <div class="bar">${[1,2,3,4].map(k=>`<i class="${st[3]>=k?'on':''}"></i>`).join('')}</div><div class="lb"><span>Label</span><span>Rider</span><span>Raste me</span><span>Pahuncha</span></div></div>
+   ${s.rider&&s.status!=='delivered'?`<div class="nt">🛵 Rider: <b>${E(s.rider.name)}</b> · saaman milne par apna <b>4 ank ka PIN</b> batayein (dukaandar ne WhatsApp par bheja hai)</div>`:''}
+   ${s.cod&&s.status!=='delivered'?`<div class="nt">💵 Cash on delivery: <b>₹${s.cod}</b> taiyaar rakhein</div>`:''}
+   <div class="tl"><h3>Safar</h3>${(s.events||[]).slice().reverse().map(e=>`<div class="ev"><b>${E(e.n)}</b><small>${new Date(e.t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</small></div>`).join('')}</div>
+   <div class="ft">POWERED BY FILIPRA PRIVATE LIMITED</div>`; }
+load(); setInterval(load,15000);
+</script>
+</body>
+</html>

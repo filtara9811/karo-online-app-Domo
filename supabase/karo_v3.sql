@@ -38,3 +38,8 @@ alter table public.ko_settings enable row level security;
 create table if not exists public.ko_vendor_plan (phone text primary key, t0 timestamptz not null default now(), pos_until timestamptz, khata_until timestamptz, updated_at timestamptz not null default now());
 create table if not exists public.ko_bill_log (id bigserial primary key, phone text, kind text not null, what text, amount int not null default 0, coins int not null default 0, created_at timestamptz not null default now());
 -- functions: ko_plan_get, ko_plan_activate, ko_coin_log, ko_bill_summary(p_pin) — migration "ko_vendor_plans"
+
+-- v285: delivery — ko_riders, ko_shipments, ko_secrets (keys sirf server par, masked list)
+-- functions: ko_pin_ok, ko_ship_create, ko_ship_track (address nahi), ko_ship_by_shop, ko_ship_courier_set (service_role),
+--   ko_rider_join/online/feed/accept/step, ko_ship_vendor_step, ko_secret_set/list, ko_admin_delivery
+-- edge function: supabase/functions/ko-courier (status/test/rates/book via Shiprocket; bina keys demo)
