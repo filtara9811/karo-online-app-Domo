@@ -26641,7 +26641,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=294;
+window.KO_V=295;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -30781,6 +30781,202 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   setInterval(()=>{ const ov=$('chatOv'); if(ov&&ov.classList.contains('cht-on')&&ov.classList.contains('open')) paint(); },15000);
 })();
 </script>
+<style id="v295-css">
+/* ===== Quote Room: ek grahak, 5 vendor — vendor ek-doosre ko nahi dekhte ===== */
+#qrmOv{position:fixed;inset:0;z-index:2147482000;background:rgba(20,14,6,.5);display:none;align-items:flex-end;justify-content:center}
+#qrmOv.on{display:flex}
+.qm{width:100%;max-width:480px;height:93vh;background:#FFFBF4;border-radius:26px 26px 0 0;display:flex;flex-direction:column;overflow:hidden;font-family:Poppins,system-ui,sans-serif;color:#1d1408;animation:qmUp .28s cubic-bezier(.2,.9,.3,1)}
+@keyframes qmUp{from{transform:translateY(40px);opacity:.4}}
+.qm-hd{display:flex;align-items:center;gap:10px;padding:12px 12px 8px 14px;background:linear-gradient(180deg,#F3E9D6,#EADDC6)}
+.qm-hd .ic{width:42px;height:42px;border-radius:13px;background:#FFF3E2;display:grid;place-items:center;font-size:21px;flex:none;box-shadow:0 2px 6px rgba(80,55,20,.1)}
+.qm-hd .tt{flex:1;min-width:0}.qm-hd b{display:block;font:800 15px Poppins,system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qm-hd small{font:600 11.5px Poppins,system-ui;color:#7d6d50}
+.qm-dots{display:flex;gap:3px;margin-top:4px}.qm-dots i{width:16px;height:4px;border-radius:3px;background:rgba(107,90,60,.2)}.qm-dots i.on{background:#EE6A0D}.qm-dots i.w{background:#16A34A}
+.qm-hd button{width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.7);font-size:14px;flex:none;cursor:pointer}
+/* chrome tabs */
+.qm-tb{display:flex;align-items:flex-end;overflow-x:auto;scrollbar-width:none;padding:0 10px;background:#EADDC6;flex:none}
+.qm-tb::-webkit-scrollbar{display:none}
+.qm-t{position:relative;flex:none;display:flex;align-items:center;gap:7px;height:46px;padding:0 13px 0 8px;border:0;background:none;border-radius:14px 14px 0 0;font:700 12.5px Poppins,system-ui;color:#6b5a3c;cursor:pointer;white-space:nowrap}
+.qm-t:not(.on):not(:last-child):after{content:'';position:absolute;right:0;top:14px;height:18px;width:1px;background:rgba(107,90,60,.22)}
+.qm-t.on{background:#FFFBF4;color:#1d1408;z-index:2}
+.qm-t.on:before{content:'';position:absolute;bottom:0;left:-14px;width:14px;height:14px;border-bottom-right-radius:14px;box-shadow:5px 5px 0 4px #FFFBF4}
+.qm-t.on>.fl{position:absolute;bottom:0;right:-14px;width:14px;height:14px;border-bottom-left-radius:14px;box-shadow:-5px 5px 0 4px #FFFBF4}
+.qm-t .a{position:relative;width:28px;height:28px;border-radius:50%;background:#FFF3E2;display:grid;place-items:center;font-size:15px;flex:none;box-shadow:0 0 0 2px #fff}
+.qm-t .a i{position:absolute;right:-3px;bottom:-2px;width:10px;height:10px;border-radius:50%;background:#16A34A;border:2px solid #fff}
+.qm-t .nm{display:flex;flex-direction:column;line-height:1.1;text-align:left}
+.qm-t .nm small{font:800 10px Poppins,system-ui;color:#C2410C}
+.qm-t u{text-decoration:none;min-width:17px;height:17px;border-radius:99px;background:#EE6A0D;color:#fff;font:800 10px/17px Poppins,system-ui;text-align:center;padding:0 4px}
+.qm-t.all .a{background:#1d1408;color:#F5C451;font-size:13px}
+.qm-t.wait{opacity:.55;font-style:italic}.qm-t.wait .a{background:#F3EBDD;animation:qmPulse 1.4s infinite}
+@keyframes qmPulse{50%{box-shadow:0 0 0 5px rgba(238,106,13,.15)}}
+.qm-t.lost{opacity:.45}.qm-t.lost .a i,.qm-t.wait .a i{display:none}
+.qm-t.won .a{box-shadow:0 0 0 2px #16A34A}
+.qm-t.new{animation:qmNew .6s ease}
+@keyframes qmNew{0%{transform:translateY(20px);opacity:0}100%{transform:none;opacity:1}}
+/* body */
+.qm-bd{flex:1;overflow:auto;padding:10px 12px 8px;-webkit-overflow-scrolling:touch}
+.qm-pv{display:flex;align-items:center;gap:8px;background:#EEF6F3;border:1px solid #CDE9E1;color:#0F5F55;border-radius:12px;padding:8px 10px;font:600 11.5px Poppins,system-ui;margin-bottom:10px}
+.qm-sort{display:flex;gap:6px;margin:2px 0 10px}
+.qm-sort button{border:1.5px solid #EDE2CB;background:#fff;border-radius:99px;padding:6px 11px;font:700 11.5px Poppins,system-ui;color:#5a4a2f}
+.qm-sort button.on{border-color:#1d1408;background:#1d1408;color:#F5E6C8}
+.qm-q{position:relative;background:#fff;border:1.5px solid #EDE2CB;border-radius:18px;padding:12px;margin-bottom:9px;animation:qmNew .4s ease}
+.qm-q.best{border-color:#16A34A;box-shadow:0 6px 16px rgba(22,163,74,.12)}
+.qm-q .tag{position:absolute;top:-9px;left:12px;background:#16A34A;color:#fff;border-radius:99px;padding:2px 9px;font:800 10px Poppins,system-ui}
+.qm-q .tag.fast{background:#2563EB}
+.qm-q .r1{display:flex;align-items:center;gap:10px}
+.qm-q .av{width:42px;height:42px;border-radius:50%;background:#FFF3E2;display:grid;place-items:center;font-size:21px;flex:none}
+.qm-q .who{flex:1;min-width:0}.qm-q .who b{display:block;font:800 14px Poppins,system-ui}.qm-q .who small{font:600 11px Poppins,system-ui;color:#8a7a5a}
+.qm-q .pr{text-align:right}.qm-q .pr b{display:block;font:900 20px Poppins,system-ui}.qm-q .pr s{font:600 11px Poppins,system-ui;color:#a89272}
+.qm-q .inc{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 2px}.qm-q .inc span{background:#FBF6EC;border:1px solid #F0E6D2;border-radius:99px;padding:3px 8px;font:600 11px Poppins,system-ui;color:#5a4a2f}
+.qm-q .ac{display:flex;gap:7px;margin-top:10px}
+.qm-q .ac button{flex:1;border:1.5px solid #EDE2CB;background:#fff;border-radius:12px;padding:9px;font:800 12.5px Poppins,system-ui;color:#1d1408}
+.qm-q .ac button.go{background:linear-gradient(135deg,#16A34A,#0B7A4B);border-color:#16A34A;color:#fff}
+.qm-q .tm{font:700 10.5px Poppins,system-ui;color:#B45309}
+.qm-wt{display:flex;align-items:center;gap:10px;border:1.5px dashed #E2D4B8;border-radius:16px;padding:11px 12px;margin-bottom:9px;color:#8a7a5a;font:600 12px Poppins,system-ui}
+.qm-wt i{width:34px;height:34px;border-radius:50%;background:#F3EBDD;animation:qmPulse 1.4s infinite;flex:none}
+.qm-h{font:800 10.5px Poppins,system-ui;letter-spacing:.08em;color:#9a6b1f;margin:14px 0 7px}
+/* chat bubbles */
+.qm-m{max-width:82%;margin:6px 0;padding:8px 11px;border-radius:16px 16px 16px 4px;background:#fff;border:1px solid #EFE6D3;font:500 13.5px Poppins,system-ui;line-height:1.45;animation:qmNew .3s ease}
+.qm-m.me{margin-left:auto;background:#1d1408;color:#F5E6C8;border-color:#1d1408;border-radius:16px 16px 4px 16px}
+.qm-m small{display:block;font:600 9.5px Poppins,system-ui;opacity:.6;margin-top:3px;text-align:right}
+.qm-m .bc{display:inline-block;font:800 9.5px Poppins,system-ui;background:rgba(245,196,81,.2);color:#F5C451;border-radius:99px;padding:1px 7px;margin-bottom:3px}
+.qm-m .mask{display:block;margin-top:4px;font:600 10.5px Poppins,system-ui;color:#B45309}
+.qm-m.qc{padding:0;overflow:hidden;min-width:220px}
+.qm-m.qc .h{background:linear-gradient(135deg,#FFF1E4,#FFE2C2);padding:8px 11px;font:800 11px Poppins,system-ui;color:#C2410C;letter-spacing:.05em}
+.qm-m.qc .b{padding:9px 11px}.qm-m.qc .b b{font:900 22px Poppins,system-ui}
+.qm-m.qc .b span{display:block;font:600 12px Poppins,system-ui;color:#5a4a2f}
+.qm-sys{text-align:center;margin:10px 0;font:700 11px Poppins,system-ui;color:#8a7a5a}
+.qm-sys span{background:#F3EBDD;border-radius:99px;padding:4px 10px}
+.qm-sys.ok span{background:#E8F7EF;color:#0B7A4B}.qm-sys.no span{background:#FDECEC;color:#B91C1C}
+.qm-pick{position:sticky;top:-10px;z-index:3;display:flex;align-items:center;gap:10px;background:#FFFBF4;padding:6px 0 8px;margin-top:-4px}
+.qm-pick .p{flex:1;font:700 12px Poppins,system-ui;color:#5a4a2f}.qm-pick .p b{font:900 16px Poppins,system-ui;color:#1d1408}
+.qm-pick button{border:0;border-radius:12px;padding:9px 14px;background:linear-gradient(135deg,#16A34A,#0B7A4B);color:#fff;font:800 12.5px Poppins,system-ui}
+/* composer */
+.qm-ft{flex:none;border-top:1px solid #F0E6D2;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));background:#FFFBF4}
+.qm-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:7px}.qm-chips::-webkit-scrollbar{display:none}
+.qm-chips button{flex:none;border:1.5px solid #EDE2CB;background:#fff;border-radius:99px;padding:6px 11px;font:700 11.5px Poppins,system-ui;color:#3b2f1c;white-space:nowrap}
+.qm-in{display:flex;align-items:center;gap:8px}
+.qm-to{flex:none;border-radius:99px;padding:5px 9px;font:800 10.5px Poppins,system-ui;background:#1d1408;color:#F5C451;white-space:nowrap}
+.qm-to.one{background:#FFF1E4;color:#C2410C}
+.qm-in input{flex:1;min-width:0;border:1.5px solid #EDE2CB;border-radius:99px;padding:11px 14px;font:500 14px Poppins,system-ui;background:#fff}
+.qm-in .sd{width:44px;height:44px;border:0;border-radius:50%;background:#F47B20;color:#fff;font-size:17px;flex:none}
+.qm-done{flex:none;padding:12px;text-align:center;background:#E8F7EF;color:#0B5F3A;font:800 13px Poppins,system-ui}
+/* chunne ki pakki + vendor ka nazara */
+.qm-cf{position:absolute;inset:0;background:rgba(20,14,6,.45);display:flex;align-items:flex-end;z-index:9}
+.qm-cf>div{width:100%;background:#fff;border-radius:24px 24px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:qmUp .25s ease}
+.qm-cf h4{margin:0 0 4px;font:800 17px Poppins,system-ui}.qm-cf p{margin:6px 0;font:500 13px Poppins,system-ui;color:#5a4a2f}
+.qm-cf .go{display:block;width:100%;margin-top:12px;border:0;border-radius:14px;padding:14px;background:linear-gradient(135deg,#16A34A,#0B7A4B);color:#fff;font:800 14.5px Poppins,system-ui}
+.qm-cf .x{display:block;width:100%;margin-top:6px;border:0;background:none;padding:10px;font:700 13px Poppins,system-ui;color:#7d6d50}
+.qm-vp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.qm-ph{border:6px solid #1d1408;border-radius:22px;overflow:hidden;background:#FFFBF4;font-size:11px}
+.qm-ph .t{background:#1d1408;color:#F5C451;padding:5px 8px;font:800 10px Poppins,system-ui}
+.qm-ph .c{padding:7px;min-height:170px}
+.qm-ph .m{background:#fff;border:1px solid #EFE6D3;border-radius:10px 10px 10px 3px;padding:5px 7px;margin:4px 0;font:500 10.5px Poppins,system-ui;max-width:90%}
+.qm-ph .m.me{margin-left:auto;background:#1d1408;color:#F5E6C8;border-radius:10px 10px 3px 10px}
+.qm-ph .hint{background:#FFF4E0;color:#7a4a05;border-radius:8px;padding:5px 6px;font:700 9.5px Poppins,system-ui;margin-bottom:5px}
+.qm-ph .lost{background:#FDECEC;color:#991B1B;border-radius:8px;padding:6px;font:700 10px Poppins,system-ui;margin-top:6px}
+/* My Orders card par Quote Room button */
+.qm-btn{display:flex;align-items:center;gap:8px;margin:10px 0 0;width:100%;border:0;border-radius:14px;padding:10px 12px;background:linear-gradient(135deg,#1d1408,#3b2a12);color:#F5E6C8;font:800 12.5px Poppins,system-ui;cursor:pointer}
+.qm-btn span{flex:1;text-align:left}.qm-btn em{font-style:normal;background:#F5C451;color:#1d1408;border-radius:99px;padding:2px 8px;font-size:11px}
+</style>
+<script id="v295">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const R=n=>'₹'+Math.round(+n||0).toLocaleString('en-IN');
+  const T=m=>{ try{ toast(m); }catch(e){} };
+  const H=36e5, now=()=>Date.now();
+  const tm=t=>new Date(t).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});
+  const left=ms=>{ if(ms<=0) return 'band'; const h=Math.floor(ms/H), m=Math.floor(ms%H/6e4); return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m`; };
+  const hh=s=>{ let h=0; for(const c of String(s)) h=(h*31+c.charCodeAt(0))>>>0; return h; };
+  /* number chhupana (chunne se pehle) */
+  const mask=t=>{ let hit=false; const o=String(t).replace(/(\+?91[\s-]?)?[6-9](?:[\s-]?\d){9}/g,m=>{ hit=true; return m.replace(/\d(?=(?:[\s-]?\d){0,7}$)/g,'•'); }).replace(/(wa\.me\/\S+|\S+@(?:ok|ybl|paytm|upi|axl|ibl)\S*)/gi,()=>{ hit=true; return '•••••'; }); return {t:o,hit}; };
+
+  const RM={};
+  function room(i){ if(RM[i]) return RM[i]; const o=ORDERS[i], L=orderVendors(i).slice(0,5), base=200+(hh(o[0])%8)*50; const t0=now();
+    const V=L.map((v,k)=>({k,n:v.n,e:v.e,r:v.r,st:k===0?'in':'wait',at:k===0?t0-40*6e4:0,join:k===0?0:2500+k*3200,price:Math.round((base+((hh(v.n+o[0])%7)-3)*30)/10)*10,eta:['Aaj shaam 6 baje','Kal subah 11 baje','Aaj 2 ghante me','Kal shaam tak','Parson'][hh(v.n)%5],inc:[['Saaman ke saath','1 saal guarantee'],['Ghar par','Free check-up'],['30 din guarantee'],['Pick & drop free','Bill ke saath'],['Express','Photo update']][hh(v.n+'i')%5],un:0}));
+    const M=[{f:'c',to:'all',t:'Namaste, '+o[0]+' chahiye — rate aur time batayein',at:t0-41*6e4}];
+    const v0=V[0]; M.push({f:'v',v:0,t:'Namaste ji 🙏 main kar dunga',at:t0-39*6e4},{f:'v',v:0,q:1,price:v0.price,eta:v0.eta,inc:v0.inc,at:t0-38*6e4});
+    RM[i]={i,o,V,M,tab:'all',sort:'price',won:null,tmr:[]}; return RM[i]; }
+  let CUR=null;
+  const joined=r=>r.V.filter(v=>v.st!=='wait');
+  function quoteOf(r,k){ const q=r.M.filter(m=>m.f==='v'&&m.v===k&&m.q).pop(); return q||null; }
+  /* ---------- ek-ek karke vendors judte hain ---------- */
+  function schedule(r){ r.tmr.forEach(clearTimeout); r.tmr=[]; r.V.forEach(v=>{ if(v.st!=='wait') return; r.tmr.push(setTimeout(()=>{ if(r.won!=null) return; v.st='in'; v.at=now(); v.isNew=1; v.un=2;
+      r.M.push({f:'v',v:v.k,t:['Ji, main kar sakta hoon 🙏','Namaste! Aaj hi aa sakta hoon','Haan ji, ho jayega — rate neeche bheja hai','Ji bilkul, achha kaam karunga'][v.k%4],at:now()});
+      r.M.push({f:'v',v:v.k,q:1,price:v.price,eta:v.eta,inc:v.inc,at:now()+1});
+      if(v.k===2) r.M.push({f:'v',v:v.k,t:'Mera number 9876543210 hai, WhatsApp kar dena',at:now()+2});
+      T(`🔔 ${v.n.split(' ')[0]} bhi judd gaya · ${joined(r).length}/5`); try{ koChime&&koChime('note'); }catch(e){} if(CUR===r) paint(); },v.join)); }); }
+  /* ---------- kholna ---------- */
+  window.qrmOpen=function(i,k){ const r=room(i); CUR=r; r.tab=(k!=null&&r.V[k]&&r.V[k].st!=='wait')?k:'all'; let o=$('qrmOv'); if(!o){ o=document.createElement('div'); o.id='qrmOv'; o.onclick=e=>{ if(e.target===o) qrmClose(); }; document.body.appendChild(o); } o.innerHTML='<div class="qm" id="qmB"></div>'; o.classList.add('on'); schedule(r); paint(); };
+  window.qrmClose=()=>{ const o=$('qrmOv'); if(o) o.classList.remove('on'); };
+  window.qmTab=t=>{ CUR.tab=t; if(t!=='all'){ CUR.V[t].un=0; } paint(); try{ koChime&&koChime('tick'); }catch(e){} };
+  window.qmSort=s=>{ CUR.sort=s; paint(); };
+  function head(r){ const J=joined(r).length; const w=r.won!=null?r.V[r.won]:null;
+    return `<div class="qm-hd"><span class="ic">${E(r.o[1])}</span><div class="tt"><b>${E(r.o[0])}</b><small>${w?`✓ ${E(w.n.split(' ')[0])} ko chuna · ${R(w.price)}`:`Quote Room · ${J}/5 vendor judd gaye`}</small><div class="qm-dots">${r.V.map(v=>`<i class="${v.st==='won'?'w':v.st!=='wait'?'on':''}"></i>`).join('')}</div></div><button onclick="qmVendorView()" title="Vendor ko kaisa dikhta hai">👁</button><button onclick="qrmClose()">✕</button></div>`; }
+  function tabs(r){ const J=joined(r);
+    const all=`<button class="qm-t all${r.tab==='all'?' on':''}" onclick="qmTab('all')"><span class="a">📣</span><span class="nm">Sab<small>${J.length} quote</small></span><span class="fl"></span></button>`;
+    return `<div class="qm-tb">${all}${r.V.map(v=>{ const q=quoteOf(r,v.k); const cls=v.st==='wait'?'wait':v.st==='lost'?'lost':v.st==='won'?'won':''; const isOn=r.tab===v.k;
+      const sub=v.st==='wait'?'aa raha…':v.st==='lost'?'band':v.st==='won'?'✓ chuna':(q?R(q.price):left(v.at+24*H-now()));
+      const h=`<button class="qm-t ${cls}${isOn?' on':''}${v.isNew?' new':''}" ${v.st==='wait'?'disabled':''} onclick="qmTab(${v.k})"><span class="a">${v.e}<i></i></span><span class="nm">${E(v.n.split(' ')[0])}<small>${sub}</small></span>${v.un&&!isOn?`<u>${v.un}</u>`:''}<span class="fl"></span></button>`; v.isNew=0; return h; }).join('')}</div>`; }
+  function qcard(r,v,q,best,fast){ const tag=best?'<span class="tag">💰 Sabse sasta</span>':fast?'<span class="tag fast">⚡ Sabse jaldi</span>':''; const won=r.won!=null;
+    return `<div class="qm-q${best?' best':''}">${tag}<div class="r1"><span class="av">${v.e}</span><div class="who"><b>${E(v.n)}</b><small>⭐ ${v.r} · ${E(q.eta)}</small><div class="tm">⏳ ${left(v.at+24*H-now())} window</div></div><div class="pr"><b>${R(q.price)}</b>${q.old?`<s>${R(q.old)}</s>`:''}</div></div>
+      <div class="inc">${(q.inc||[]).map(x=>`<span>✓ ${E(x)}</span>`).join('')}</div>
+      ${won?'':`<div class="ac"><button onclick="qmTab(${v.k})">💬 Chat</button><button class="go" onclick="qmPick(${v.k})">✓ Isse chunein</button></div>`}</div>`; }
+  function allView(r){ const J=joined(r).filter(v=>v.st!=='lost'); let L=J.map(v=>({v,q:quoteOf(r,v.k)})).filter(x=>x.q);
+    const minP=Math.min(...L.map(x=>x.q.price)); const fastV=(L.find(x=>/2 ghante|Aaj/.test(x.q.eta))||{}).v;
+    if(r.sort==='price') L.sort((a,b)=>a.q.price-b.q.price); else if(r.sort==='rate') L.sort((a,b)=>b.v.r-a.v.r); else L.sort((a,b)=>(/Aaj/.test(b.q.eta)?1:0)-(/Aaj/.test(a.q.eta)?1:0));
+    const waiting=r.V.filter(v=>v.st==='wait').length;
+    const bc=r.M.filter(m=>m.f==='c'&&m.to==='all');
+    return `<div class="qm-pv">🔒 Vendors ek-doosre ko nahi dekh sakte — sirf aap sabke quote dekh rahe hain</div>
+      ${r.won!=null?`<div class="qm-sys ok"><span>🎉 ${E(r.V[r.won].n)} ko order mila · baaki vendors band</span></div>`:''}
+      <div class="qm-sort">${[['price','💰 Sasta'],['fast','⚡ Jaldi'],['rate','⭐ Rating']].map(([k,l])=>`<button class="${r.sort===k?'on':''}" onclick="qmSort('${k}')">${l}</button>`).join('')}</div>
+      ${L.map(x=>qcard(r,x.v,x.q,x.q.price===minP&&L.length>1,x.v===fastV&&x.q.price!==minP)).join('')}
+      ${waiting&&r.won==null?`<div class="qm-wt"><i></i><span>${waiting} aur vendor aa rahe hain — har ek ka 24 ghante ka samay alag chalega</span></div>`:''}
+      <div class="qm-h">📣 SABKO BHEJE GAYE MESSAGE</div>
+      ${bc.map(m=>{ const rep=r.M.filter(x=>x.f==='v'&&x.at>m.at&&x.at<m.at+60*6e4).map(x=>x.v); const n=new Set(rep).size; return `<div class="qm-m me"><span class="bc">📣 ${joined(r).length} vendors ko</span><div>${E(m.t)}</div><small>${tm(m.at)} · ${n} ne jawab diya</small></div>`; }).join('')}`; }
+  function vView(r,k){ const v=r.V[k], q=quoteOf(r,k); const won=r.won!=null;
+    const list=r.M.filter(m=>(m.f==='c'&&(m.to==='all'||m.to===k))||(m.f==='v'&&m.v===k));
+    return `${!won&&v.st==='in'&&q?`<div class="qm-pick"><div class="p">${E(v.n.split(' ')[0])} ka quote <b>${R(q.price)}</b> · ${E(q.eta)}</div><button onclick="qmPick(${k})">✓ Chunein</button></div>`:''}
+      ${v.st==='lost'?'<div class="qm-sys no"><span>Band — aapne kisi aur ko chuna</span></div>':''}${v.st==='won'?'<div class="qm-sys ok"><span>✓ Aapne inhe chuna — ab order shuru</span></div>':''}
+      <div class="qm-sys"><span>⏳ ${left(v.at+24*H-now())} tak chat khuli · ${E(v.n.split(' ')[0])} 24 ghante pehle juda</span></div>
+      ${list.map(m=>{ if(m.q) return `<div class="qm-m qc"><div class="h">🧾 QUOTE</div><div class="b"><b>${R(m.price)}</b>${m.old?` <s style="opacity:.5">${R(m.old)}</s>`:''}<span>🕐 ${E(m.eta)}</span><span>${(m.inc||[]).map(x=>'✓ '+E(x)).join(' · ')}</span></div></div>`;
+        const mm=(m.f==='v'&&!won)?mask(m.t):{t:m.t,hit:false};
+        return `<div class="qm-m ${m.f==='c'?'me':''}">${m.f==='c'&&m.to==='all'?'<span class="bc">📣 sabko</span>':''}<div>${E(mm.t)}</div>${mm.hit?'<span class="mask">🔒 Number chunne ke baad dikhega</span>':''}<small>${tm(m.at)}${m.f==='c'?' ✓✓':''}</small></div>`; }).join('')}`; }
+  function foot(r){ if(r.won!=null) return `<div class="qm-done">✓ ${E(r.V[r.won].n)} ke saath order shuru — chat ab unke tab me</div>`;
+    const one=r.tab!=='all'; const v=one?r.V[r.tab]:null; if(one&&v.st!=='in') return '';
+    const Q=one?['Thoda kam karoge?','Kal aa sakte ho?','Photo bhejiye','Final rate?']:['Sabse kam rate batayein','Kal subah chahiye','Guarantee kitni?','Pehle dekh kar rate'];
+    return `<div class="qm-ft"><div class="qm-chips">${Q.map(q=>`<button onclick="qmSend(this.textContent)">${q}</button>`).join('')}</div><div class="qm-in"><span class="qm-to ${one?'one':''}">${one?'Sirf '+E(v.n.split(' ')[0]):'📣 Sabko'}</span><input id="qmI" placeholder="${one?'Sirf inko likhein…':'Sabhi vendors ko likhein…'}" onkeydown="if(event.key==='Enter')qmSend()"><button class="sd" onclick="qmSend()">➤</button></div></div>`; }
+  function paint(){ const r=CUR, b=$('qmB'); if(!r||!b) return; const sc=(b.querySelector('.qm-bd')||{}).scrollTop;
+    b.innerHTML=head(r)+tabs(r)+`<div class="qm-bd" id="qmBd">${r.tab==='all'?allView(r):vView(r,r.tab)}</div>`+foot(r);
+    const bd=$('qmBd'); if(bd) bd.scrollTop=r.tab==='all'?(sc||0):bd.scrollHeight; const on=b.querySelector('.qm-t.on'); if(on) try{ on.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} }
+  /* ---------- bhejna: sabko ya ek ko ---------- */
+  window.qmSend=function(t){ const r=CUR; const i=$('qmI'); t=String(t||(i&&i.value)||'').trim(); if(!t) return; const to=r.tab==='all'?'all':r.tab; r.M.push({f:'c',to,t,at:now()}); paint();
+    const targets=(to==='all'?joined(r).filter(v=>v.st==='in'):[r.V[to]]); if(to==='all') T(`📣 ${targets.length} vendors ko gaya — har ek ko alag dikhega`);
+    targets.forEach((v,n)=>{ setTimeout(()=>{ if(r.won!=null) return; const cut=/kam|sasta|final|rate/i.test(t); const q=quoteOf(r,v.k);
+      if(cut&&q&&q.price>150){ const np=q.price-(20+10*(v.k%3)); r.M.push({f:'v',v:v.k,t:['Aapke liye thoda kam kar deta hoon 🙏','Theek hai ji, ye mera final rate','Chaliye, ye le lijiye'][v.k%3],at:now()},{f:'v',v:v.k,q:1,price:np,old:q.price,eta:q.eta,inc:q.inc,at:now()+1}); v.price=np; }
+      else r.M.push({f:'v',v:v.k,t:['Ji haan, ho jayega','Bilkul ji 👍','Main abhi bata deta hoon','Ji, kal subah pakka'][(v.k+n)%4],at:now()});
+      if(r.tab!==v.k) v.un=(v.un||0)+1; if(CUR===r) paint(); try{ koChime&&koChime('note'); }catch(e){} },1500+n*1300+Math.random()*900); }); };
+  /* ---------- ek ko chunna → baaki band ---------- */
+  window.qmPick=function(k){ const r=CUR, v=r.V[k], q=quoteOf(r,k); const others=joined(r).filter(x=>x.k!==k&&x.st==='in').length+r.V.filter(x=>x.st==='wait').length;
+    const b=$('qmB'); const d=document.createElement('div'); d.className='qm-cf'; d.onclick=e=>{ if(e.target===d) d.remove(); };
+    d.innerHTML=`<div><h4>${v.e} ${E(v.n)} ko chunein?</h4><p><b>${R(q.price)}</b> · ${E(q.eta)} · ⭐ ${v.r}</p><p>✓ Inka number aur call ab khul jayega<br>✓ Order, PIN aur payment shuru hoga<br>✕ Baaki <b>${others}</b> vendor band ho jayenge — unhe sirf “kisi aur ko mila” dikhega, aapka rate ya naam nahi</p><button class="go" onclick="qmWin(${k})">✓ Haan, ${E(v.n.split(' ')[0])} ko chunein</button><button class="x" onclick="this.closest('.qm-cf').remove()">Abhi nahi</button></div>`; b.appendChild(d); };
+  window.qmWin=function(k){ const r=CUR; r.won=k; r.tmr.forEach(clearTimeout); r.V.forEach(v=>{ v.st=v.k===k?'won':'lost'; v.un=0; }); r.tab=k; r.M.push({f:'v',v:k,t:'Shukriya ji 🙏 mera number 98765 43210 — main samay par pahunch jaunga',at:now()});
+    paint(); T('🎉 '+r.V[k].n.split(' ')[0]+' ko order mila · baaki vendors band'); try{ koChime&&koChime('open'); }catch(e){} };
+  /* ---------- vendor ko kaisa dikhta hai (discussion ke liye) ---------- */
+  window.qmVendorView=function(){ const r=CUR; const J=joined(r); const a=J[0], b2=J[1]||J[0]; const cm=r.M.filter(m=>m.f==='c'&&m.to==='all').slice(-2);
+    const ph=(v,lost)=>`<div class="qm-ph"><div class="t">${v.e} ${E(v.n.split(' ')[0])} ka phone</div><div class="c"><div class="hint">👤 Naya grahak · ${E(r.o[0])}<br>Aap akele nahi — achha quote dein</div>${cm.map(m=>`<div class="m">${E(m.t)}</div>`).join('')}<div class="m me">Mera rate ${R((quoteOf(r,v.k)||{}).price||v.price)}</div>${lost?'<div class="lost">Grahak ne is baar kisi aur ko chuna 🙏<br><span style="font-weight:600">(kaun, kitne me — nahi dikhta)</span></div>':''}</div></div>`;
+    const bx=$('qmB'); const d=document.createElement('div'); d.className='qm-cf'; d.onclick=e=>{ if(e.target===d) d.remove(); };
+    d.innerHTML=`<div><h4>👁 Vendor ko kaisa dikhta hai</h4><p>Har vendor ko sirf <b>grahak aur apni chat</b> dikhti hai. Doosre vendor, unke rate, unke naam — kuch nahi.</p><div class="qm-vp">${ph(a,false)}${ph(b2,true)}</div><button class="x" onclick="this.closest('.qm-cf').remove()">Samajh gaya</button></div>`; bx.appendChild(d); };
+  /* ---------- My Orders: vendor dabao → Quote Room; card par button ---------- */
+  try{ window.odvTap=function(i,k){ qrmOpen(i,k); }; }catch(e){}
+  function btns(){ document.querySelectorAll('.od-vw[data-oi]').forEach(w=>{ if(w.querySelector('.qm-btn')) return; const i=+w.dataset.oi; const o=ORDERS[i]; if(!o||!o[5]) return; const r=RM[i]; const n=r?joined(r).length:1;
+      const b=document.createElement('button'); b.className='qm-btn'; b.innerHTML=`<span>📣 Quote Room — sabke rate ek jagah</span><em>${n}/5</em>`; b.onclick=e=>{ e.stopPropagation(); qrmOpen(i); }; w.appendChild(b); }); }
+  setInterval(btns,1200);
+  setInterval(()=>{ const o=$('qrmOv'); if(o&&o.classList.contains('on')&&CUR&&CUR.tab==='all') paint(); },30000);
+})();
+</script>
+
 
 
 
