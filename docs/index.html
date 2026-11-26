@@ -26641,7 +26641,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=296;
+window.KO_V=297;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -31008,6 +31008,222 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   setInterval(()=>{ const o=$('qrmOv'); if(o&&o.classList.contains('on')&&CUR&&CUR.tab==='all') paint(); },30000);
 })();
 </script>
+<style id="v297-css">
+/* ===== Coin & Kamai: admin + vendor wallet ===== */
+.kc-kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.kc-kp div{background:#F8F8FB;border:1px solid #ECEDF2;border-radius:14px;padding:12px}
+.kc-kp b{display:block;font-size:20px;font-weight:900}.kc-kp small{font-size:11.5px;color:#6b7280;font-weight:700}
+.kc-kp div.hl{background:linear-gradient(135deg,#FFF6EA,#FFE7C9);border-color:#F8D7A8}
+.kc-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.kc-f label{display:flex;flex-direction:column;gap:5px;background:#F8F8FB;border:1px solid #ECEDF2;border-radius:12px;padding:10px;font-size:12px;font-weight:800;color:#374151}
+.kc-f label small{font-weight:600;color:#6b7280;font-size:11px;line-height:1.35}
+.kc-f input[type=number],.kc-f input[type=text],.kc-in{border:1px solid #E1E2EA;border-radius:9px;padding:9px 10px;font:inherit;font-size:14px;width:100%;box-sizing:border-box;background:#fff}
+.kc-f .ck{flex-direction:row;align-items:center;gap:10px}
+.kc-h{font-size:12px;font-weight:900;letter-spacing:.06em;color:#9a6b1f;margin:16px 0 8px}
+.kc-ct{display:flex;flex-direction:column;gap:8px}
+.kc-seg button{flex:0 0 auto!important;white-space:nowrap}
+.kc-cr{display:grid;grid-template-columns:40px minmax(90px,1fr) 56px 56px 40px;gap:8px;align-items:center;background:#F8F8FB;border:1px solid #ECEDF2;border-radius:12px;padding:9px}
+.kc-cr.off{opacity:.5}.kc-cr .k{grid-column:2/6;font-size:11px}
+.kc-cr input{border:1px solid #E1E2EA;border-radius:8px;padding:7px 8px;font:inherit;font-size:13px;width:100%;box-sizing:border-box;background:#fff}
+.kc-cr .ic{text-align:center;font-size:18px}.kc-cr button{border:0;border-radius:8px;background:#fff;border:1px solid #E1E2EA;padding:7px 0;cursor:pointer}
+.kc-cr .sp{grid-column:1/6;display:flex;gap:5px;flex-wrap:wrap}
+.kc-cr .sp span{font-size:10.5px;font-weight:800;background:#fff;border:1px solid #ECEDF2;border-radius:99px;padding:3px 8px;color:#4b5563}
+.kc-cr .sp span.c{background:#16151d;color:#F5C451;border-color:#16151d}
+.kc-ls{display:flex;flex-direction:column;gap:8px}
+.kc-r{display:flex;align-items:center;gap:10px;background:#F8F8FB;border:1px solid #ECEDF2;border-radius:12px;padding:10px}
+.kc-r>div{flex:1;min-width:0}.kc-r b{font-size:13.5px}.kc-r small{display:block;font-size:11.5px;color:#6b7280;margin-top:2px}
+.kc-r em{font-style:normal;font-size:11px;font-weight:800;background:#fff;border:1px solid #E1E2EA;border-radius:99px;padding:3px 8px;white-space:nowrap}
+.kc-r .ok{background:#16A34A;color:#fff;border:0;border-radius:9px;padding:8px 10px;font-weight:800;cursor:pointer}.kc-r .no{background:#fff;border:1px solid #E1E2EA;border-radius:9px;padding:8px 10px;font-weight:800;cursor:pointer}
+.kc-m{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.kc-m span{font-size:10.5px;font-weight:700;background:#fff;border:1px solid #ECEDF2;border-radius:8px;padding:3px 7px}
+.kc-m span.won{border-color:#16A34A;color:#0B7A4B}.kc-m span.lost{opacity:.65}
+.kc-st{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.kc-st div{background:#F8F8FB;border-left:3px solid #EE6A0D;border-radius:10px;padding:9px 11px;font-size:13px;font-weight:700}
+.kc-st div p{margin:5px 0 0;display:flex;flex-wrap:wrap;gap:5px}.kc-st div p span{font-size:11px;background:#fff;border:1px solid #ECEDF2;border-radius:8px;padding:3px 7px;font-weight:700}
+.kc-note{background:#FFF8EC;border:1px solid #F8DDB0;color:#7a4a05;border-radius:12px;padding:10px 12px;font-size:12.5px;font-weight:600;line-height:1.5;margin-bottom:12px}
+.kc-bar{position:sticky;bottom:0;display:flex;gap:8px;padding-top:12px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff 30%)}
+/* vendor wallet */
+#kwOv{position:fixed;inset:0;z-index:2147482400;background:rgba(20,14,6,.5);display:none;align-items:flex-end;justify-content:center}
+#kwOv.on{display:flex}
+.kw{width:100%;max-width:480px;max-height:92vh;overflow:auto;background:#FFFBF4;border-radius:24px 24px 0 0;padding:0 0 calc(20px + env(safe-area-inset-bottom,0px));font-family:Poppins,system-ui,sans-serif;color:#1d1408;animation:qmUp .26s ease}
+.kw-hd{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:14px 14px 10px;background:#FFFBF4}
+.kw-hd b{flex:1;font:800 17px Poppins,system-ui}.kw-hd button{width:34px;height:34px;border-radius:50%;border:0;background:#F3EBDD;font-size:14px}
+.kw-bal{margin:0 14px;border-radius:22px;padding:18px;background:linear-gradient(135deg,#1d1408,#3b2a12);color:#F5E6C8;position:relative;overflow:hidden}
+.kw-bal:after{content:'🪙';position:absolute;right:-6px;top:-10px;font-size:90px;opacity:.12}
+.kw-bal small{font:700 11.5px Poppins,system-ui;opacity:.75}.kw-bal b{display:block;font:900 34px Poppins,system-ui;color:#F5C451;margin:2px 0}
+.kw-bal .rw{display:flex;gap:14px;margin-top:10px;font:700 12px Poppins,system-ui}.kw-bal .rw span{opacity:.85}
+.kw-s{margin:16px 14px 0}.kw-s h5{margin:0 0 8px;font:800 11px Poppins,system-ui;letter-spacing:.08em;color:#9a6b1f}
+.kw-pk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kw-pk button{border:1.5px solid #EDE2CB;background:#fff;border-radius:16px;padding:12px 6px;font-family:inherit;cursor:pointer}
+.kw-pk button.on{border-color:#EE6A0D;background:#FFF4E8}
+.kw-pk b{display:block;font:900 18px Poppins,system-ui}.kw-pk small{display:block;font:700 11px Poppins,system-ui;color:#7d6d50}.kw-pk i{display:block;font:800 10px Poppins,system-ui;font-style:normal;color:#16A34A;margin-top:3px}
+.kw-buy{margin-top:10px;background:#fff;border:1.5px solid #EDE2CB;border-radius:16px;padding:12px}
+.kw-buy p{margin:0 0 8px;font:600 12.5px Poppins,system-ui;color:#5a4a2f}
+.kw-buy input{width:100%;box-sizing:border-box;border:1.5px solid #EDE2CB;border-radius:12px;padding:11px;font:500 14px Poppins,system-ui;margin-bottom:8px}
+.kw-go{display:block;width:100%;border:0;border-radius:14px;padding:13px;background:linear-gradient(135deg,#F7A531,#EE6A0D);color:#fff;font:800 14px Poppins,system-ui;cursor:pointer;text-align:center;text-decoration:none;box-sizing:border-box}
+.kw-go.dk{background:#1d1408;color:#F5E6C8;margin-top:8px}
+.kw-tx{display:flex;flex-direction:column;gap:6px}
+.kw-t{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #F0E6D2;border-radius:14px;padding:10px 12px}
+.kw-t i{width:34px;height:34px;border-radius:11px;background:#FBF6EC;display:grid;place-items:center;font-style:normal;font-size:16px;flex:none}
+.kw-t div{flex:1;min-width:0}.kw-t b{display:block;font:700 12.5px Poppins,system-ui}.kw-t small{font:600 10.5px Poppins,system-ui;color:#8a7a5a}
+.kw-t u{text-decoration:none;font:900 13.5px Poppins,system-ui;white-space:nowrap}.kw-t u.p{color:#16A34A}.kw-t u.m{color:#B91C1C}.kw-t u.h{color:#B45309}
+.kw-how{background:#fff;border:1px solid #F0E6D2;border-radius:16px;padding:12px;font:600 12.5px Poppins,system-ui;color:#3b2f1c;line-height:1.6}
+.kw-how table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11.5px}.kw-how td,.kw-how th{border-bottom:1px solid #F3EBDD;padding:5px 3px;text-align:left}.kw-how th{color:#9a6b1f;font-size:10.5px}
+.kw-pl{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}.kw-pl::-webkit-scrollbar{display:none}
+.kw-pl div{flex:0 0 150px;background:#fff;border:1.5px solid #EDE2CB;border-radius:16px;padding:12px}.kw-pl div.g{border-color:#F5C451;background:linear-gradient(180deg,#FFF8E6,#fff)}
+.kw-pl b{display:block;font:800 13px Poppins,system-ui}.kw-pl strong{display:block;font:900 18px Poppins,system-ui;margin:3px 0}.kw-pl small{font:600 11px Poppins,system-ui;color:#6b5a3c;line-height:1.4;display:block}
+.kw-pl button{margin-top:8px;width:100%;border:0;border-radius:10px;padding:8px;background:#1d1408;color:#F5C451;font:800 11.5px Poppins,system-ui}
+.qm-coin2{background:#FBF6EC;border:1px solid #F0E6D2;border-radius:12px;padding:9px 10px;font:600 12px Poppins,system-ui;color:#5a4a2f;line-height:1.55}
+</style>
+<script id="v297">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const T=m=>{ try{ toast(m); }catch(e){} };
+  const rpc=(f,p)=>window.koRpc?koRpc(f,p):Promise.reject(new Error('offline'));
+  const n2=x=>{ const v=Math.round((+x||0)*100)/100; return String(v); };
+  const RS=x=>'₹'+Math.round(+x||0).toLocaleString('en-IN');
+  const errMsg=e=>{ const m=String(e&&e.message||e); try{ const j=JSON.parse(m); return j.message||m; }catch(_){ return m.slice(0,120); } };
+  const ago=t=>{ const s=(Date.now()-new Date(t))/1000; if(s<60) return 'abhi'; if(s<3600) return Math.floor(s/60)+' min'; if(s<86400) return Math.floor(s/3600)+' ghante'; return Math.floor(s/86400)+' din'; };
+
+  /* ---------- niyam (sabke liye, cache) ---------- */
+  let CF=null, cfP=null;
+  function cfgLoad(force){ if(CF&&!force) return Promise.resolve(CF); if(cfP&&!force) return cfP; cfP=rpc('ko_coin_cfg',{}).then(d=>{ CF=d; window.KO_COIN=d; return d; }).catch(()=>null); return cfP; }
+  window.koCoinCfg=cfgLoad;
+  function catFor(txt){ const C=(CF&&CF.cats)||[]; const s=String(txt||''); for(const c of C){ if(!c.active||c.key==='default') continue; for(const k of String(c.keys||'').split(',')){ const kk=k.trim(); if(!kk) continue; const re=new RegExp('(^|[^a-z0-9])'+kk.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'); if(re.test(s)) return c; } } return C.find(c=>c.key==='default')||{label:'Baaki sab',pool:5,win:2,icon:'📌'}; }
+  window.koCoinCat=catFor;
+  function shares(pool,cfg){ const fp=+(cfg&&cfg.fast_pct)||0, cap=+(cfg&&cfg.solo_cap)||0; return [1,2,3,4,5].slice(0,+(cfg&&cfg.max_vendors)||5).map(n=>{ let s=pool/n; if(n===1&&cap>0) s=Math.min(s,cap); return {n,s:Math.round(s*100)/100,f:Math.round(s*(1-fp/100)*100)/100}; }); }
+
+  /* =================== ADMIN: 🪙 Coin & Kamai =================== */
+  try{ if(!AD_NAV[1][1].some(x=>x[0]==='coin')) AD_NAV[1][1].unshift(['coin','🪙','Coin & Kamai']); }catch(e){}
+  const KC={t:'kam',d:null,busy:0,err:'',cfg:null,cats:null,sim:null,dirty:0};
+  const pin=()=>sessionStorage.getItem('ko_pin')||'';
+  function kcLoad(){ if(!pin()){ KC.err='pin'; return; } if(KC.busy) return; KC.busy=1; KC.err='';
+    rpc('ko_admin_coin',{p_pin:pin()}).then(d=>{ KC.d=d; if(!KC.dirty){ KC.cfg=JSON.parse(JSON.stringify(d.cfg||{})); KC.cats=JSON.parse(JSON.stringify(d.cats||[])); } KC.busy=0; CF={cfg:d.cfg,cats:d.cats}; re(); })
+      .catch(e=>{ KC.busy=0; KC.err=/PIN/i.test(errMsg(e))?'pin':'net'; KC.em=errMsg(e); re(); }); }
+  const re=()=>{ try{ adRender(); }catch(e){} };
+  window.kcT=t=>{ KC.t=t; re(); setTimeout(()=>{ const b=document.querySelector('.kc-seg .on'); if(b) try{ b.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} },30); };
+  window.kcRe=()=>{ KC.d=null; KC.dirty=0; kcLoad(); re(); };
+  window.kcPin=()=>{ const v=($('kcPinI')||{}).value||''; if(v.length<4){ T('PIN daalein'); return; } sessionStorage.setItem('ko_pin',v); kcRe(); };
+  const num=(k,l,s,step)=>`<label>${l}<input type="number" step="${step||'any'}" value="${E(KC.cfg[k]??'')}" oninput="kcSet('${k}',this.value)"><small>${s}</small></label>`;
+  window.kcSet=(k,v,raw)=>{ KC.dirty=1; if(raw) KC.cfg[k]=v; else if(typeof v==='boolean') KC.cfg[k]=v; else KC.cfg[k]=v===''?null:+v; };
+  window.kcSub=(k,sub,v)=>{ KC.dirty=1; KC.cfg[k]=Object.assign({},KC.cfg[k]||{}); KC.cfg[k][sub]=+v; };
+  window.kcArr=(k,i,sub,v)=>{ KC.dirty=1; KC.cfg[k]=(KC.cfg[k]||[]).map(x=>Object.assign({},x)); KC.cfg[k][i][sub]=isNaN(+v)||v===''?v:+v; };
+  window.kcCat=(i,k,v)=>{ KC.dirty=1; const c=KC.cats[i]; c[k]=(k==='pool'||k==='win'||k==='sort')?+v:v; if(k==='active') re(); };
+  window.kcCatAdd=()=>{ KC.dirty=1; KC.cats.push({key:'nayi'+Date.now()%10000,label:'Nayi category',icon:'🛠️',keys:'',pool:5,win:2,active:true,sort:70}); re(); };
+  window.kcCatDel=i=>{ const c=KC.cats[i]; if(c.key==='default'){ T('"Baaki sab" hata nahi sakte'); return; } KC.dirty=1; c.del='1'; re(); };
+  window.kcSave=async what=>{ try{ T('⏳ Save ho raha hai…'); const d=await rpc('ko_coin_cfg_set',{p_pin:pin(),p_cfg:what==='cat'?null:KC.cfg,p_cats:what==='cat'?KC.cats:null}); KC.dirty=0; KC.cats=d.cats; KC.cfg=d.cfg; CF=d; T('✅ Niyam save — turant lagu'); try{ koChime&&koChime('ok'); }catch(e){} kcRe(); }catch(e){ T('❌ '+errMsg(e)); } };
+  window.kcAdd=async()=>{ const ph=($('kcPh')||{}).value||'', c=+(($('kcCo')||{}).value||0), nt=($('kcNt')||{}).value||''; if(String(ph).replace(/\D/g,'').length<10||!c){ T('Mobile aur coin daalein'); return; }
+    try{ await rpc('ko_admin_coin_add',{p_pin:pin(),p_phone:ph,p_coins:c,p_note:nt}); T(`✅ ${c} coin ${c>0?'diye':'kaate'}`); kcRe(); }catch(e){ T('❌ '+errMsg(e)); } };
+  window.kcBuy=async(id,ok)=>{ try{ await rpc('ko_admin_buy_set',{p_pin:pin(),p_id:id,p_ok:ok}); T(ok?'✅ Coin wallet me daal diye':'Request radd'); kcRe(); }catch(e){ T('❌ '+errMsg(e)); } };
+  window.kcSim=async()=>{ const svc=($('kcSv')||{}).value||'Pant silai', n=+(($('kcSn')||{}).value||3), pk=+(($('kcSp')||{}).value||0); const rp=[...document.querySelectorAll('.kc-rp:checked')].map(x=>+x.value);
+    KC.sim={busy:1}; re(); try{ KC.sim=await rpc('ko_admin_coin_sim',{p_pin:pin(),p_svc:svc,p_n:n,p_pick:pk,p_reply:rp}); }catch(e){ KC.sim={err:errMsg(e)}; } re(); };
+  const KIND={charge:'Lead ka hissa',win:'Jeet ka coin',reopen:'Dobara baat',refund:'Ghost lead (bacha hissa)',penalty:'Jurmana'};
+
+  window.adS_coin=function(){ if(!KC.d&&!KC.err&&!KC.busy) kcLoad();
+    if(KC.err==='pin') return `<div class="ad-cd"><h4>🔑 Admin PIN</h4><p style="color:#6b7280;font-size:13px">Coin ke niyam aur kamai dekhne ke liye PIN daalein</p><div style="display:flex;gap:8px"><input id="kcPinI" type="password" inputmode="numeric" placeholder="PIN" class="kc-in" style="flex:1"><button class="ad-btn dk" onclick="kcPin()">Kholein</button></div></div>`;
+    if(!KC.d) return `<div class="ad-cd">${KC.err?`❌ ${E(KC.em||'Net check karein')} <button class="ad-btn" onclick="kcRe()">Dobara</button>`:'⏳ La rahe hain…'}</div>`;
+    const D=KC.d, c=KC.cfg, rs=+c.coin_rs||10;
+    const tab=(k,l)=>`<button class="${KC.t===k?'on':''}" onclick="kcT('${k}')">${l}</button>`;
+    let b='';
+    if(KC.t==='kam'){ const ea=D.earn||{}, tot=Object.values(ea).reduce((a,x)=>a+(+x||0),0); const pend=(D.buys||[]).filter(x=>x.s==='pending');
+      b=`<div class="kc-kp"><div class="hl"><small>Aaj ki kamai</small><b>${n2(D.earn_today)} 🪙</b><small>${RS(D.earn_today*rs)}</small></div><div class="hl"><small>30 din</small><b>${n2(D.earn30)} 🪙</b><small>${RS(D.earn30*rs)}</small></div><div><small>Kul kamai</small><b>${n2(tot)} 🪙</b><small>${RS(tot*rs)}</small></div><div><small>Abhi roke hue (held)</small><b>${n2(D.held)}</b><small>hisaab baaki</small></div><div><small>Vendors ke wallet</small><b>${n2(D.wallets)}</b><small>${RS(D.wallets*rs)} ka maal</small></div><div><small>Grahak wallet</small><b>${n2(D.cust_wallets)}</b><small>swagat + reward</small></div></div>
+        ${pend.length?`<div class="kc-note">🔔 ${pend.length} coin kharid request jaanch ke liye ruki hai — <a href="#" onclick="kcT('wal');return false">Wallet tab me dekhein ›</a></div>`:''}
+        <div class="kc-h">KAMAI KAHAN SE AAYI</div><div class="kc-ls">${Object.keys(ea).length?Object.entries(ea).map(([k,v])=>`<div class="kc-r"><div><b>${E(KIND[k]||k)}</b></div><em>${n2(v)} 🪙 · ${RS(v*rs)}</em></div>`).join(''):'<p style="color:#6b7280;font-size:13px">Abhi asli kamai nahi — "🧪 Jaanch" tab se test karke dekhein (test kamai yahan nahi judti)</p>'}</div>
+        <div class="kc-h">KAMAI KE SAARE RASTE (niyam)</div><div class="kc-ls">
+          ${[['🪙','Lead coin (Quick Service)',`Category ke hisaab se ${Math.min(...KC.cats.map(x=>+x.pool))}–${Math.max(...KC.cats.map(x=>+x.pool))} coin / request`,'✅ chalu'],['🏆','Jeet ka coin','Kaam poora hone par chune gaye vendor se','✅ chalu'],['↺','Dobara baat','Vendor '+c.reopen_vendor+' + grahak '+c.reopen_customer+' coin','✅ chalu'],['💳','Coin pack bikri',(c.packs||[]).map(p=>p.c+' = ₹'+p.rs).join(' · '),'✅ chalu'],
+             ['🏪','Dukaan ka kiraya',(c.dukaan_plans||[]).map(p=>p.n+' ₹'+p.rs).join(' · '),'🕐 jald'],['🛍️','Order commission (All Shops)',`₹${(c.commission||{}).upto} tak ₹${(c.commission||{}).flat}, upar ${(c.commission||{}).pct}%`,'🕐 order server par aane ke baad'],['🛵','Delivery margin','₹'+c.delivery_margin+' / delivery','🕐 jald'],['📈','Upar dikho (Boost)','₹'+c.boost_day+' / din','🕐 jald'],['✓','Verified badge','₹'+c.badge_fee+' ek baar','🕐 jald'],['🖨️','QR stand','₹'+c.qr_fee,'🕐 jald']]
+             .map(x=>`<div class="kc-r"><span style="font-size:20px">${x[0]}</span><div><b>${x[1]}</b><small>${E(x[2])}</small></div><em>${x[3]}</em></div>`).join('')}</div>`; }
+    if(KC.t==='niyam'){ b=`<div class="kc-note">Yahan badlo → <b>turant</b> sab app me lagu. App update ki zaroorat nahi.</div>
+      <div class="kc-h">COIN KA BANTWARA</div><div class="kc-f">
+        ${num('coin_rs','1 coin = ₹','Coin ki keemat — hamesha ek jaisi rakhein')}
+        ${num('max_vendors','Ek request me max vendor','5 se zyada nahi')}
+        ${num('join_hours','Judne ka samay (ghante)','Itne ghante baad naya vendor nahi jud sakta')}
+        ${num('fast_min','Jaldi jawab (minute)','Itne minute me judne wale ko chhoot')}
+        ${num('fast_pct','Jaldi chhoot %','Jaldi wale ka hissa itna % kam (0 = band)')}
+        ${num('solo_cap','Akele vendor ki seema','Sirf 1 vendor juda to max itne coin (0 = seema nahi)')}
+        ${num('ghost_refund_pct','Ghost lead wapsi %','Grahak ne baat hi nahi ki → itna % coin wapas')}
+        ${num('festival_plus','Tyohaar +coin','Har request par itne coin zyada (0 = normal)')}
+      </div>
+      <div class="kc-h">DOBARA BAAT & CHAT</div><div class="kc-f">
+        ${num('reopen_vendor','Vendor ka coin','Band vendor dobara jude to')}
+        ${num('reopen_customer','Grahak ka coin','Grahak dobara khole to')}
+        <label class="ck"><input type="checkbox" ${c.reopen_free_first?'checked':''} onchange="kcSet('reopen_free_first',this.checked)"><span>Grahak ki pehli baar FREE<small style="display:block">Doosri baar se coin lage</small></span></label>
+        ${num('max_switch','Max badlaav / request','Itni baar se zyada vendor nahi badal sakte')}
+        ${num('chat_days','Chune gaye vendor ki chat (din)','Return / refund / exchange ke liye')}
+        ${num('welcome_coins','Naye grahak ko swagat coin','Ek baar milte hain')}
+      </div>
+      <div class="kc-h">COIN PACK (vendor kharidta hai)</div><div class="kc-f">${(c.packs||[]).map((p,i)=>`<label>Pack ${i+1}<span style="display:flex;gap:6px"><input type="number" value="${p.c}" oninput="kcArr('packs',${i},'c',this.value)" placeholder="coin"><input type="number" value="${p.rs}" oninput="kcArr('packs',${i},'rs',this.value)" placeholder="₹"></span><small>${p.c} coin = ₹${p.rs} (1 coin ₹${n2(p.rs/p.c)})</small></label>`).join('')}
+        <label>Coin ke paise kis UPI par?<input type="text" value="${E(c.pay_upi||'')}" oninput="kcSet('pay_upi',this.value,1)" placeholder="filipra@upi"><small>Vendor yahi UPI par pay karke UTR bhejega</small></label></div>
+      <div class="kc-h">DUKAAN / ORDER / AUR KAMAI</div><div class="kc-f">
+        <label>Order commission<span style="display:flex;gap:6px"><input type="number" value="${(c.commission||{}).upto}" oninput="kcSub('commission','upto',this.value)" title="tak"><input type="number" value="${(c.commission||{}).flat}" oninput="kcSub('commission','flat',this.value)" title="₹"><input type="number" value="${(c.commission||{}).pct}" oninput="kcSub('commission','pct',this.value)" title="%"></span><small>₹(1) tak ke order par ₹(2) flat, upar (3)%</small></label>
+        ${num('delivery_margin','Delivery margin ₹','Rider ke upar grahak se')}${num('return_fee','Return label ₹','Har return par')}${num('boost_day','Boost ₹ / din','Vendor upar dikhe')}${num('badge_fee','Verified badge ₹','Ek baar')}${num('qr_fee','QR stand ₹','Chhapai')}${num('noshow_penalty','No-show jurmana (coin)','Vendor nahi aaya')}${num('noshow_coupon','No-show coupon ₹','Grahak ko')}
+        ${(c.dukaan_plans||[]).map((p,i)=>`<label>🏪 ${E(p.n)}<input type="number" value="${p.rs}" oninput="kcArr('dukaan_plans',${i},'rs',this.value)"><small>${E(p.f)}</small></label>`).join('')}
+        ${(c.vendor_plans||[]).map((p,i)=>`<label>⭐ ${E(p.n)}<span style="display:flex;gap:6px"><input type="number" value="${p.rs}" oninput="kcArr('vendor_plans',${i},'rs',this.value)" title="₹"><input type="number" value="${p.coins}" oninput="kcArr('vendor_plans',${i},'coins',this.value)" title="coin"></span><small>₹ · coin — ${E(p.f)}</small></label>`).join('')}
+      </div><div class="kc-bar"><button class="ad-btn" style="flex:1" onclick="kcSave('cfg')">💾 Niyam save karein</button><button class="ad-btn dk" onclick="kcRe()">↺ Raddh</button></div>`; }
+    if(KC.t==='cat'){ b=`<div class="kc-note">Har category ka <b>pool</b> = ek request par kul coin, jo judne wale vendors me <b>baraabar baTte</b> hain. <b>Jeet</b> = kaam poora hone par chune gaye vendor se. <b>Shabd</b> = service ke naam me ye shabd ho to ye category (comma se).<br>⚡ = ${c.fast_min} min me jawab dene wale ka hissa (${c.fast_pct}% chhoot)</div>
+      <div class="kc-ct">${KC.cats.map((x,i)=>x.del?'':`<div class="kc-cr ${x.active?'':'off'}"><input class="ic" value="${E(x.icon)}" oninput="kcCat(${i},'icon',this.value)"><input value="${E(x.label)}" oninput="kcCat(${i},'label',this.value)" placeholder="Naam"><input type="number" step="0.5" value="${x.pool}" oninput="kcCat(${i},'pool',this.value)" title="Pool coin"><input type="number" step="0.5" value="${x.win}" oninput="kcCat(${i},'win',this.value)" title="Jeet coin"><button onclick="${x.key==='default'?'':`kcCatDel(${i})`}" title="Hatao">${x.key==='default'?'🔒':'🗑'}</button>
+        <input class="k" value="${E(x.keys)}" oninput="kcCat(${i},'keys',this.value)" placeholder="${x.key==='default'?'Jo kisi category me na aaye':'shabd: silai, tailor, darzi'}" ${x.key==='default'?'disabled':''}>
+        <div class="sp"><span class="c">Pool ${x.pool} · Jeet ${x.win} · ${RS(x.pool*rs)}</span>${shares(+x.pool,c).map(s=>`<span>${s.n} vendor: ${s.s}${c.fast_pct?` (⚡${s.f})`:''}</span>`).join('')}<label style="margin-left:auto;font-size:11px;font-weight:800;display:flex;gap:5px;align-items:center"><input type="checkbox" ${x.active?'checked':''} onchange="kcCat(${i},'active',this.checked)">chalu</label></div></div>`).join('')}</div>
+      <div class="kc-bar"><button class="ad-btn dk" onclick="kcCatAdd()">＋ Nayi category</button><button class="ad-btn" style="flex:1" onclick="kcSave('cat')">💾 Category save</button></div>`; }
+    if(KC.t==='wal'){ const pend=(D.buys||[]);
+      b=`<div class="kc-h">COIN DEIN / KAATEIN</div><div class="kc-f"><label>Vendor mobile<input id="kcPh" type="text" inputmode="numeric" placeholder="98xxxxxxxx"></label><label>Coin (− = kaatein)<input id="kcCo" type="number" step="0.5" placeholder="10"></label><label>Wajah<input id="kcNt" type="text" placeholder="Free coin / offer"></label></div><button class="ad-btn" style="margin-top:8px" onclick="kcAdd()">✓ Lagu karein</button>
+        <div class="kc-h">COIN KHARID REQUEST (UPI + UTR)</div><div class="kc-ls">${pend.length?pend.map(x=>`<div class="kc-r"><div><b>${E(x.phone)} · ${n2(x.c)} coin · ${RS(x.rs)}</b><small>UTR: ${E(x.utr)} · ${ago(x.t)} pehle</small></div>${x.s==='pending'?`<button class="ok" onclick="kcBuy(${x.id},true)">✓ Paisa aaya</button><button class="no" onclick="kcBuy(${x.id},false)">✕</button>`:`<em>${x.s==='ok'?'✅ diye':'✕ radd'}</em>`}</div>`).join(''):'<p style="color:#6b7280;font-size:13px">Koi request nahi</p>'}</div>
+        <div class="kc-h">VENDOR WALLET</div><div class="kc-ls">${(D.vendors||[]).map(x=>`<div class="kc-r"><span style="font-size:18px">🏪</span><div><b>${E(x.name||x.phone)}</b><small>${E(x.phone)}${x.on?' · 🟢 online':''}</small></div><em>${n2(x.w)} 🪙${+x.h?` · ⏳${n2(x.h)}`:''}</em></div>`).join('')||'<p style="color:#6b7280;font-size:13px">Koi vendor nahi</p>'}</div>`; }
+    if(KC.t==='lead'){ b=`<div class="kc-ls">${(D.leads||[]).map(l=>`<div class="kc-r" style="align-items:flex-start"><span style="font-size:18px">${l.test?'🧪':'📋'}</span><div><b>#${l.id} ${E(l.svc)}</b><small>${E(l.cat||'—')} · pool ${n2(l.pool)} · jeet ${n2(l.win)} · ${E(l.st)}${l.settled?' · ✓ hisaab':' · ⏳ khula'}${l.sw?` · ↺${l.sw}`:''} · ${ago(l.t)} pehle</small>
+        <div class="kc-m">${(l.m||[]).map(m=>`<span class="${E(m.st)}">${E(m.v)}: ${l.settled?`kata ${n2(m.ch)}`:`roka ${n2(m.h)}`}${m.f?' ⚡':''}${m.r?' 💬':''}${m.st==='won'?' 🏆':''}</span>`).join('')||'<span>Koi vendor nahi juda</span>'}</div></div></div>`).join('')||'<p style="color:#6b7280">Abhi koi request nahi</p>'}</div>`; }
+    if(KC.t==='test'){ const S=KC.sim;
+      b=`<div class="kc-note">🧪 Asli paisa nahi — test vendor (TEST1–5) aur test grahak se poora hisaab chala kar dekhein. Ye kamai me nahi judta.</div>
+      <div class="kc-f"><label>Service<input id="kcSv" type="text" value="Pant Pajama silai"><small>Isi se category chunegi</small></label><label>Kitne vendor jude<input id="kcSn" type="number" min="1" max="5" value="3"></label><label>Kise chunein (0 = kisi ko nahi)<input id="kcSp" type="number" min="0" max="5" value="2"></label>
+      <label>Grahak ne kisse baat ki<span style="display:flex;gap:10px">${[1,2,3,4,5].map(i=>`<span><input type="checkbox" class="kc-rp" value="${i}" ${i<=2?'checked':''}> V${i}</span>`).join('')}</span><small>Jisse baat nahi ki uska coin wapas</small></label></div>
+      <button class="ad-btn" style="margin-top:10px" onclick="kcSim()">▶ Chala kar dekhein</button>
+      ${S?S.busy?'<p>⏳ chal raha hai…</p>':S.err?`<p style="color:#B91C1C">❌ ${E(S.err)}</p>`:`<div class="kc-st">${(S.steps||[]).map(s=>`<div>${E(s.s)}${s.m?`<p>${s.m.map(m=>`<span>${E(m.v)}: ${m.h!=null?'roka '+n2(m.h):'kata '+n2(m.ch)}${m.r===false?' (baat nahi → wapas)':''}${m.st==='won'?' 🏆':''}</span>`).join('')}</p>`:''}</div>`).join('')}<div style="border-color:#16A34A;background:#E8F7EF">🏢 Company ko is request se: <b>${n2(S.company)} coin = ${RS(S.company*rs)}</b></div></div>`:''}`; }
+    return `<div class="ad-cd"><div class="ad-seg kc-seg" style="margin-bottom:12px;overflow-x:auto;scrollbar-width:none">${tab('kam','💰 Kamai')}${tab('niyam','📐 Niyam')}${tab('cat','🗂️ Category coin')}${tab('wal','👛 Wallet')}${tab('lead','📋 Requests')}${tab('test','🧪 Jaanch')}</div>${b}</div>`; };
+
+  /* =================== VENDOR: 🪙 Coin Wallet =================== */
+  const W={d:null,pk:-1,busy:0,err:''};
+  const sess=()=>{ try{ return (window.koMyShop&&koMyShop())||null; }catch(e){ return null; } };
+  const TXI={hold:['⏳','Lead li — coin roke'],adj:['↩️','Hissa kam hua — wapas'],charge:['✓','Lead ka hissa kata'],refund:['💚','Grahak ne baat nahi ki — wapas'],win:['🏆','Kaam poora — jeet ka coin'],reopen:['↺','Dobara baat'],buy:['💳','Coin kharide'],admin:['🎁','Karo Online ki taraf se'],welcome:['🎉','Swagat coin'],penalty:['⚠️','Jurmana']};
+  function kwLoad(){ const S=sess(); if(!S||!S.pin){ W.err='login'; kwR(); return; } W.busy=1; W.err=''; kwR();
+    Promise.all([rpc('ko_wallet_shop',{p_phone:S.phone,p_pin:S.pin}),cfgLoad()]).then(([d])=>{ W.d=d; W.busy=0; kwR(); }).catch(e=>{ W.busy=0; W.err=errMsg(e); kwR(); }); }
+  window.kwOpen=function(){ let o=$('kwOv'); if(!o){ o=document.createElement('div'); o.id='kwOv'; o.onclick=e=>{ if(e.target===o) kwClose(); }; document.body.appendChild(o); } o.classList.add('on'); W.pk=-1; kwLoad(); };
+  window.kwClose=()=>{ const o=$('kwOv'); if(o) o.classList.remove('on'); };
+  window.kwPk=i=>{ W.pk=i; kwR(); setTimeout(()=>{ const b=document.querySelector('.kw-buy'); if(b) b.scrollIntoView({block:'center',behavior:'smooth'}); },50); };
+  window.kwBuy=async()=>{ const S=sess(); const u=(($('kwUtr')||{}).value||'').trim(); if(u.length<6){ T('UTR / transaction number daalein'); return; }
+    try{ W.d=await rpc('ko_coin_buy',{p_phone:S.phone,p_pin:S.pin,p_pack:W.pk,p_utr:u}); W.pk=-1; T('✅ Request gayi — jaanch ke baad coin aa jayenge'); kwR(); }catch(e){ T('❌ '+errMsg(e)); } };
+  window.kwPlan=n=>{ T('📞 '+n+' plan ke liye team aapko call karegi'); try{ koChime&&koChime('ok'); }catch(e){} };
+  const DEFC={coin_rs:10,max_vendors:5,fast_min:5,fast_pct:20,ghost_refund_pct:100,reopen_vendor:1,packs:[{c:10,rs:100},{c:50,rs:450},{c:200,rs:1600}],vendor_plans:[]};
+  function kwR(){ const o=$('kwOv'); if(!o) return; const c=Object.assign({},DEFC,(CF&&CF.cfg)||{}), rs=+c.coin_rs||10; let h='';
+    if(W.err==='login') h=`<div class="kw-s"><div class="kw-how">🔑 Wallet dekhne ke liye pehle apni dukaan me mobile + PIN se login karein.</div><button class="kw-go" style="margin-top:10px" onclick="kwClose();kjOpen(1)">Login / dukaan kholein</button></div>`;
+    else if(W.err) h=`<div class="kw-s"><div class="kw-how">❌ ${E(W.err)}</div><button class="kw-go" style="margin-top:10px" onclick="kwOpen()">Dobara</button></div>`;
+    else if(!W.d) h='<div class="kw-s"><div class="kw-how">⏳ Wallet la rahe hain…</div></div>';
+    else { const d=W.d, P=c.packs||[], pend=(d.buys||[]).filter(x=>x.s==='pending'); const C=(CF&&CF.cats)||[];
+      h=`<div class="kw-bal"><small>Aapke coin</small><b>${n2(d.wallet)} 🪙</b><small>${RS(d.wallet*rs)} ke barabar · 1 coin = ₹${rs}</small><div class="rw"><span>⏳ Roke hue: <b>${n2(d.held)}</b></span><span>30 din kharch: <b>${n2(d.spent30)}</b></span><span>Wapas: <b>${n2(d.back30)}</b></span></div></div>
+      ${pend.length?`<div class="kw-s"><div class="kw-how">🕐 ${pend.map(x=>n2(x.c)+' coin (₹'+x.rs+')').join(', ')} ki request jaanch me hai — paisa milte hi wallet me</div></div>`:''}
+      <div class="kw-s"><h5>COIN KHARIDEIN</h5><div class="kw-pk">${P.map((p,i)=>{ const per=p.rs/p.c, save=Math.round((1-per/rs)*100); return `<button class="${W.pk===i?'on':''}" onclick="kwPk(${i})"><b>${p.c} 🪙</b><small>${RS(p.rs)}</small>${save>0?`<i>${save}% bachat</i>`:'<i>&nbsp;</i>'}</button>`; }).join('')}</div>
+        ${W.pk>=0?`<div class="kw-buy"><p>1️⃣ ${RS(P[W.pk].rs)} pay karein${c.pay_upi?` — UPI: <b>${E(c.pay_upi)}</b>`:''}<br>2️⃣ UTR / transaction number neeche daalein · team jaanch kar coin daal degi</p>
+          ${c.pay_upi?`<a class="kw-go" href="upi://pay?pa=${encodeURIComponent(c.pay_upi)}&pn=${encodeURIComponent('Karo Online')}&am=${P[W.pk].rs}&cu=INR&tn=${encodeURIComponent(P[W.pk].c+' coin')}">📲 UPI se ${RS(P[W.pk].rs)} pay karein</a><div style="height:8px"></div>`:''}
+          <input id="kwUtr" inputmode="numeric" placeholder="UTR / transaction number (12 ank)"><button class="kw-go dk" onclick="kwBuy()">✓ Pay kar diya — coin bhejein</button></div>`:''}</div>
+      <div class="kw-s"><h5>PLAN — SASTE COIN</h5><div class="kw-pl">${(c.vendor_plans||[]).map(p=>`<div class="${p.k==='gold'?'g':''}"><b>${E(p.n)}</b><strong>${p.rs?RS(p.rs)+'/mahina':'Free'}</strong><small>${E(p.f)}</small>${p.rs?`<button onclick="kwPlan('${E(p.n)}')">Chahiye</button>`:''}</div>`).join('')}</div></div>
+      <div class="kw-s"><h5>COIN KAISE KATTE HAIN</h5><div class="kw-how">📋 Har request ke coin fix hain — <b>jitne vendor judein, utne me baraabar baT jaate hain</b> (max ${c.max_vendors||5}).<br>⚡ ${c.fast_min} minute me judein → aapka hissa <b>${c.fast_pct}% kam</b>.<br>💚 Grahak ne aapse baat hi nahi ki → ${c.ghost_refund_pct}% coin <b>wapas</b>.<br>🏆 Chune gaye aur kaam poora → jeet ka coin.<br>↺ Band hone ke baad dobara baat → ${c.reopen_vendor} coin.
+        <table><tr><th>Kaam</th><th>Kul</th><th>1</th><th>2</th><th>3</th><th>5 vendor</th><th>Jeet</th></tr>${C.filter(x=>x.active).map(x=>{ const s=shares(+x.pool,c); const g=k=>(s.find(y=>y.n===k)||{}).s??'—'; return `<tr><td>${E(x.icon)} ${E(x.label)}</td><td><b>${n2(x.pool)}</b></td><td>${g(1)}</td><td>${g(2)}</td><td>${g(3)}</td><td>${g(5)}</td><td>${n2(x.win)}</td></tr>`; }).join('')}</table></div></div>
+      <div class="kw-s"><h5>HISAAB</h5><div class="kw-tx">${(d.tx||[]).map(t=>{ const I=TXI[t.k]||['•',t.k]; const a=+t.a, hd=+t.h; const cls=a>0?'p':(a<0||t.k==='charge')?'m':'h'; const val=a?((a>0?'+':'')+n2(a)):(t.k==='charge'?('−'+n2(Math.abs(hd))):(hd?('⏳ '+n2(Math.abs(hd))):'—')); return `<div class="kw-t"><i>${I[0]}</i><div><b>${E(t.n||I[1])}</b><small>${t.l?'Request #'+t.l+' · ':''}${ago(t.t)} pehle</small></div><u class="${cls}">${val}</u></div>`; }).join('')||'<div class="kw-how">Abhi koi len-den nahi</div>'}</div></div>`; }
+    o.innerHTML=`<div class="kw"><div class="kw-hd"><span style="font-size:22px">🪙</span><b>Coin Wallet</b><button onclick="kwOpen()" title="Taaza">↻</button><button onclick="kwClose()">✕</button></div>${h}</div>`; }
+
+  /* Shop Menu me "Coin Wallet" */
+  function addRow(){ const sh=$('sdSh'); if(!sh) return; const hd=sh.querySelector('.sx-hd h3'); if(!hd||!/Shop Menu/.test(hd.textContent)) return; if(sh.querySelector('.kw-row')) return; const base=sh.querySelector('.kx-row')||sh.querySelector('.sx-row'); if(!base) return;
+    const r=base.cloneNode(true); r.classList.add('kx-row','kw-row'); r.setAttribute('onclick','sdShClose();kwOpen()'); const sv=r.querySelector('.ic'); if(sv) sv.innerHTML='<span style="font-size:19px">🪙</span>'; const b=r.querySelector('b'); if(b) b.textContent='Coin Wallet'; const sm=r.querySelector('small'); if(sm) sm.textContent='Coin kharidein · kitne kate, kitne wapas · niyam'; base.parentElement.insertBefore(r,base); }
+  try{ const _m=window.sdShopMenu; window.sdShopMenu=sdShopMenu=function(){ const r=_m.apply(this,arguments); try{ addRow(); }catch(e){} return r; }; }catch(e){}
+
+  /* =================== Quote Room: asli niyam se coin =================== */
+  cfgLoad();
+  try{ const _vv=window.qmVendorView; window.qmVendorView=function(){ _vv.apply(this,arguments); try{ const box=document.querySelector('.qm-cf:last-child>div'); if(!box||!CF) return; const t=(document.querySelector('.qm-hd b')||{}).textContent||''; const c=catFor(t), cfg=CF.cfg||{}; const J=document.querySelectorAll('.qm-t:not(.all):not(.wait)').length||1; const s=shares(+c.pool,cfg);
+      const old=box.querySelector('.qm-coin'); const prevP=old&&old.previousElementSibling; if(prevP&&/Coin ka hisaab/.test(prevP.textContent)) prevP.remove(); if(old) old.remove();
+      const mine=(s.find(x=>x.n===Math.min(J,s.length))||s[0]);
+      box.querySelector('h4').insertAdjacentHTML('afterend',`<div class="qm-coin2">🪙 <b>${E(c.icon)} ${E(c.label)}</b> — is request ke <b>${n2(c.pool)} coin</b> (₹${Math.round(c.pool*(+cfg.coin_rs||10))}) jitne vendor judein unme baraabar baTte hain. Abhi ${J} vendor → <b>${mine.s} coin</b> har ek${cfg.fast_pct?` · ⚡ ${cfg.fast_min} min me judne wale ka ${mine.f}`:''} · 🏆 jeet +${n2(c.win)} · 💚 grahak ne baat nahi ki to wapas</div><div class="qm-coin">${s.map(x=>`<span class="${x.n===mine.n?'on':''}">${x.n} vendor: ${x.s}</span>`).join('')}</div>`);
+      box.querySelectorAll('.qm-ph .hint').forEach(hn=>{ hn.innerHTML=hn.innerHTML.replace(/🪙 Is lead ka kharcha: [^<]*/,'🪙 Is lead ka kharcha: '+mine.s+' coin'); }); }catch(e){} }; }catch(e){}
+})();
+</script>
+
 
 
 
