@@ -26641,7 +26641,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=295;
+window.KO_V=296;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -30878,6 +30878,27 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
 /* My Orders card par Quote Room button */
 .qm-btn{display:flex;align-items:center;gap:8px;margin:10px 0 0;width:100%;border:0;border-radius:14px;padding:10px 12px;background:linear-gradient(135deg,#1d1408,#3b2a12);color:#F5E6C8;font:800 12.5px Poppins,system-ui;cursor:pointer}
 .qm-btn span{flex:1;text-align:left}.qm-btn em{font-style:normal;background:#F5C451;color:#1d1408;border-radius:99px;padding:2px 8px;font-size:11px}
+.qm-dots{display:none!important}
+.od-vw:not(.qv) .od-vl{display:none}.od-vw:not(.qv) .od-vs{zoom:.68;margin-top:8px}.od-vw:not(.qv) .od-v>span{display:none}
+.od-vw.qv{margin-top:10px}
+.qv-r{display:flex;align-items:center;gap:6px}
+.qv-s{flex:1;min-width:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}.qv-s::-webkit-scrollbar{display:none}
+.qv-v{flex:none;display:flex;flex-direction:column;align-items:center;width:42px;border:0;background:none;padding:3px 0 0;cursor:pointer}
+.qv-v .a{position:relative;width:30px;height:30px;border-radius:50%;background:#FFF3E2;display:grid;place-items:center;font-size:15px;box-shadow:0 0 0 2px #F59E0B}
+.qv-v.won .a{box-shadow:0 0 0 2px #16A34A}
+.qv-v.lost .a,.qv-v.wait .a{box-shadow:0 0 0 2px #E5DCCB;filter:grayscale(1);opacity:.5}
+.qv-v .a u{position:absolute;top:-4px;right:-5px;min-width:14px;height:14px;border-radius:99px;background:#EE6A0D;color:#fff;font:800 9px/14px Poppins,system-ui;text-decoration:none;padding:0 3px}
+.qv-v .a i{position:absolute;right:-2px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:#16A34A;border:2px solid #fff}
+.qv-v b{font:700 9.5px Poppins,system-ui;color:#6b5a3c;margin-top:3px;max-width:42px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qv-v.lost b,.qv-v.wait b{color:#b9ab90}
+.qv-go{flex:none;display:flex;align-items:center;gap:5px;border:0;border-radius:99px;padding:7px 11px;background:#1d1408;color:#F5E6C8;font:800 11px Poppins,system-ui;cursor:pointer}
+.qv-go em{font-style:normal;color:#F5C451}
+.qm-lk{flex:none;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));background:#F7F1E6;border-top:1px solid #EADFCB;display:flex;flex-direction:column;gap:8px;font:600 12px Poppins,system-ui;color:#6b5a3c;text-align:center}
+.qm-lk button{border:1.5px solid #1d1408;background:#fff;border-radius:12px;padding:10px;font:800 13px Poppins,system-ui;color:#1d1408}
+.qm-rq{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FFF4E0;border:1.5px solid #F5C451;border-radius:14px;padding:10px 12px;margin-bottom:10px;font:600 12.5px Poppins,system-ui;color:#5a3a05;animation:qmNew .4s ease}
+.qm-rq span{flex:1 1 180px}.qm-rq button{border:0;border-radius:10px;padding:8px 12px;font:800 12px Poppins,system-ui}
+.qm-rq .y{background:#16A34A;color:#fff}.qm-rq .n{background:#fff;color:#5a4a2f;border:1px solid #EADFCB}
+.qm-coin{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.qm-coin span{background:#FBF6EC;border:1px solid #F0E6D2;border-radius:10px;padding:5px 8px;font:700 11px Poppins,system-ui;color:#5a4a2f}.qm-coin span.on{background:#1d1408;color:#F5C451;border-color:#1d1408}
 </style>
 <script id="v295">
 (function(){
@@ -30922,57 +30943,68 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   function qcard(r,v,q,best,fast){ const tag=best?'<span class="tag">💰 Sabse sasta</span>':fast?'<span class="tag fast">⚡ Sabse jaldi</span>':''; const won=r.won!=null;
     return `<div class="qm-q${best?' best':''}">${tag}<div class="r1"><span class="av">${v.e}</span><div class="who"><b>${E(v.n)}</b><small>⭐ ${v.r} · ${E(q.eta)}</small><div class="tm">⏳ ${left(v.at+24*H-now())} window</div></div><div class="pr"><b>${R(q.price)}</b>${q.old?`<s>${R(q.old)}</s>`:''}</div></div>
       <div class="inc">${(q.inc||[]).map(x=>`<span>✓ ${E(x)}</span>`).join('')}</div>
-      ${won?'':`<div class="ac"><button onclick="qmTab(${v.k})">💬 Chat</button><button class="go" onclick="qmPick(${v.k})">✓ Isse chunein</button></div>`}</div>`; }
+      ${v.st==='won'?`<div class="ac"><button class="go" onclick="qmTab(${v.k})">💬 Chat kholein</button></div>`:v.st==='in'?`<div class="ac"><button onclick="qmTab(${v.k})">💬 Chat</button><button class="go" onclick="qmPick(${v.k})">✓ Isse chunein</button></div>`:''}</div>`; }
   function allView(r){ const J=joined(r).filter(v=>v.st!=='lost'); let L=J.map(v=>({v,q:quoteOf(r,v.k)})).filter(x=>x.q);
     const minP=Math.min(...L.map(x=>x.q.price)); const fastV=(L.find(x=>/2 ghante|Aaj/.test(x.q.eta))||{}).v;
     if(r.sort==='price') L.sort((a,b)=>a.q.price-b.q.price); else if(r.sort==='rate') L.sort((a,b)=>b.v.r-a.v.r); else L.sort((a,b)=>(/Aaj/.test(b.q.eta)?1:0)-(/Aaj/.test(a.q.eta)?1:0));
     const waiting=r.V.filter(v=>v.st==='wait').length;
     const bc=r.M.filter(m=>m.f==='c'&&m.to==='all');
-    return `<div class="qm-pv">🔒 Vendors ek-doosre ko nahi dekh sakte — sirf aap sabke quote dekh rahe hain</div>
-      ${r.won!=null?`<div class="qm-sys ok"><span>🎉 ${E(r.V[r.won].n)} ko order mila · baaki vendors band</span></div>`:''}
+    return `${rqHTML(r)}<div class="qm-pv">🔒 Vendors ek-doosre ko nahi dekh sakte — sirf aap sabke quote dekh rahe hain</div>
+      ${r.won!=null?`<div class="qm-sys ok"><span>🎉 ${E(r.V[r.won].n)} ko order mila · baaki ki chat dono taraf se band</span></div>`:''}
       <div class="qm-sort">${[['price','💰 Sasta'],['fast','⚡ Jaldi'],['rate','⭐ Rating']].map(([k,l])=>`<button class="${r.sort===k?'on':''}" onclick="qmSort('${k}')">${l}</button>`).join('')}</div>
       ${L.map(x=>qcard(r,x.v,x.q,x.q.price===minP&&L.length>1,x.v===fastV&&x.q.price!==minP)).join('')}
       ${waiting&&r.won==null?`<div class="qm-wt"><i></i><span>${waiting} aur vendor aa rahe hain — har ek ka 24 ghante ka samay alag chalega</span></div>`:''}
       <div class="qm-h">📣 SABKO BHEJE GAYE MESSAGE</div>
       ${bc.map(m=>{ const rep=r.M.filter(x=>x.f==='v'&&x.at>m.at&&x.at<m.at+60*6e4).map(x=>x.v); const n=new Set(rep).size; return `<div class="qm-m me"><span class="bc">📣 ${joined(r).length} vendors ko</span><div>${E(m.t)}</div><small>${tm(m.at)} · ${n} ne jawab diya</small></div>`; }).join('')}`; }
   function vView(r,k){ const v=r.V[k], q=quoteOf(r,k); const won=r.won!=null;
-    const list=r.M.filter(m=>(m.f==='c'&&(m.to==='all'||m.to===k))||(m.f==='v'&&m.v===k));
-    return `${!won&&v.st==='in'&&q?`<div class="qm-pick"><div class="p">${E(v.n.split(' ')[0])} ka quote <b>${R(q.price)}</b> · ${E(q.eta)}</div><button onclick="qmPick(${k})">✓ Chunein</button></div>`:''}
-      ${v.st==='lost'?'<div class="qm-sys no"><span>Band — aapne kisi aur ko chuna</span></div>':''}${v.st==='won'?'<div class="qm-sys ok"><span>✓ Aapne inhe chuna — ab order shuru</span></div>':''}
-      <div class="qm-sys"><span>⏳ ${left(v.at+24*H-now())} tak chat khuli · ${E(v.n.split(' ')[0])} 24 ghante pehle juda</span></div>
-      ${list.map(m=>{ if(m.q) return `<div class="qm-m qc"><div class="h">🧾 QUOTE</div><div class="b"><b>${R(m.price)}</b>${m.old?` <s style="opacity:.5">${R(m.old)}</s>`:''}<span>🕐 ${E(m.eta)}</span><span>${(m.inc||[]).map(x=>'✓ '+E(x)).join(' · ')}</span></div></div>`;
-        const mm=(m.f==='v'&&!won)?mask(m.t):{t:m.t,hit:false};
+    const list=r.M.filter(m=>(m.f==='c'&&(m.to==='all'||m.to===k))||((m.f==='v'||m.f==='s')&&m.v===k));
+    return `${r.req===k?rqHTML(r):''}${v.st==='in'&&q?`<div class="qm-pick"><div class="p">${E(v.n.split(' ')[0])} ka quote <b>${R(q.price)}</b> · ${E(q.eta)}</div><button onclick="qmPick(${k})">✓ Chunein</button></div>`:''}
+      ${v.st==='lost'?`<div class="qm-sys no"><span>🔒 Band — aapne ${E(r.V[r.won].n.split(' ')[0])} ko chuna · na aap likh sakte, na ye</span></div>`:''}${v.st==='won'?'<div class="qm-sys ok"><span>✓ Aapne inhe chuna — ab order shuru</span></div>':''}
+      ${v.st==='in'?`<div class="qm-sys"><span>⏳ ${left(v.at+24*H-now())} tak chat khuli rahegi</span></div>`:''}
+      ${list.map(m=>{ if(m.f==='s') return `<div class="qm-sys"><span>${E(m.t)}</span></div>`; if(m.q) return `<div class="qm-m qc"><div class="h">🧾 QUOTE</div><div class="b"><b>${R(m.price)}</b>${m.old?` <s style="opacity:.5">${R(m.old)}</s>`:''}<span>🕐 ${E(m.eta)}</span><span>${(m.inc||[]).map(x=>'✓ '+E(x)).join(' · ')}</span></div></div>`;
+        const mm=(m.f==='v'&&v.st!=='won')?mask(m.t):{t:m.t,hit:false};
         return `<div class="qm-m ${m.f==='c'?'me':''}">${m.f==='c'&&m.to==='all'?'<span class="bc">📣 sabko</span>':''}<div>${E(mm.t)}</div>${mm.hit?'<span class="mask">🔒 Number chunne ke baad dikhega</span>':''}<small>${tm(m.at)}${m.f==='c'?' ✓✓':''}</small></div>`; }).join('')}`; }
-  function foot(r){ if(r.won!=null) return `<div class="qm-done">✓ ${E(r.V[r.won].n)} ke saath order shuru — chat ab unke tab me</div>`;
-    const one=r.tab!=='all'; const v=one?r.V[r.tab]:null; if(one&&v.st!=='in') return '';
-    const Q=one?['Thoda kam karoge?','Kal aa sakte ho?','Photo bhejiye','Final rate?']:['Sabse kam rate batayein','Kal subah chahiye','Guarantee kitni?','Pehle dekh kar rate'];
-    return `<div class="qm-ft"><div class="qm-chips">${Q.map(q=>`<button onclick="qmSend(this.textContent)">${q}</button>`).join('')}</div><div class="qm-in"><span class="qm-to ${one?'one':''}">${one?'Sirf '+E(v.n.split(' ')[0]):'📣 Sabko'}</span><input id="qmI" placeholder="${one?'Sirf inko likhein…':'Sabhi vendors ko likhein…'}" onkeydown="if(event.key==='Enter')qmSend()"><button class="sd" onclick="qmSend()">➤</button></div></div>`; }
+  function foot(r){ const one=r.tab!=='all'; const v=one?r.V[r.tab]:null; const W=r.won!=null?r.V[r.won]:null;
+    if(!one&&W) return `<div class="qm-done" onclick="qmTab(${W.k})">✓ ${E(W.n.split(' ')[0])} se baat unke tab me › · baaki band</div>`;
+    if(one&&v.st==='lost') return `<div class="qm-lk"><span>🔒 Chat band — aapne ${E(W?W.n.split(' ')[0]:'kisi aur')} ko chuna. Na aap likh sakte, na ${E(v.n.split(' ')[0])}.</span><button onclick="qmReopen(${v.k})">↺ Dobara baat karein · ₹10</button></div>`;
+    if(one&&v.st==='wait') return '';
+    const Q=one?(v.st==='won'?['Kab tak aaoge?','Location bhejun?','Payment kaise karun?','Photo bhejiye']:['Thoda kam karoge?','Kal aa sakte ho?','Photo bhejiye','Final rate?']):['Sabse kam rate batayein','Kal subah chahiye','Guarantee kitni?','Pehle dekh kar rate'];
+    return `<div class="qm-ft"><div class="qm-chips">${Q.map(q=>`<button onclick="qmSend(this.textContent)">${q}</button>`).join('')}</div><div class="qm-in"><span class="qm-to ${one?'one':''}">${one?(v.st==='won'?'✓ ':'Sirf ')+E(v.n.split(' ')[0]):'📣 Sabko'}</span><input id="qmI" placeholder="${one?'Sirf inko likhein…':'Sabhi vendors ko likhein…'}" onkeydown="if(event.key==='Enter')qmSend()"><button class="sd" onclick="qmSend()">➤</button></div></div>`; }
+  function rqHTML(r){ if(r.req==null) return ''; const v=r.V[r.req]; return `<div class="qm-rq"><span>🙋 <b>${E(v.n.split(' ')[0])}</b> aapse dobara baat karna chahte hain${r.won!=null?' (aapka order '+E(r.V[r.won].n.split(' ')[0])+' ke paas hai)':''}</span><button class="y" onclick="qmReqOk(${v.k})">Haan, khol do</button><button class="n" onclick="qmReqNo()">Nahi</button></div>`; }
+  function rowPaint(i){ document.querySelectorAll(`.od-vw[data-oi="${i}"]`).forEach(w=>{ try{ w.outerHTML=vendorsHTML(i); }catch(e){} }); }
   function paint(){ const r=CUR, b=$('qmB'); if(!r||!b) return; const sc=(b.querySelector('.qm-bd')||{}).scrollTop;
     b.innerHTML=head(r)+tabs(r)+`<div class="qm-bd" id="qmBd">${r.tab==='all'?allView(r):vView(r,r.tab)}</div>`+foot(r);
-    const bd=$('qmBd'); if(bd) bd.scrollTop=r.tab==='all'?(sc||0):bd.scrollHeight; const on=b.querySelector('.qm-t.on'); if(on) try{ on.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} }
+    rowPaint(r.i); const bd=$('qmBd'); if(bd) bd.scrollTop=r.tab==='all'?(sc||0):bd.scrollHeight; const on=b.querySelector('.qm-t.on'); if(on) try{ on.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} }
   /* ---------- bhejna: sabko ya ek ko ---------- */
   window.qmSend=function(t){ const r=CUR; const i=$('qmI'); t=String(t||(i&&i.value)||'').trim(); if(!t) return; const to=r.tab==='all'?'all':r.tab; r.M.push({f:'c',to,t,at:now()}); paint();
     const targets=(to==='all'?joined(r).filter(v=>v.st==='in'):[r.V[to]]); if(to==='all') T(`📣 ${targets.length} vendors ko gaya — har ek ko alag dikhega`);
-    targets.forEach((v,n)=>{ setTimeout(()=>{ if(r.won!=null) return; const cut=/kam|sasta|final|rate/i.test(t); const q=quoteOf(r,v.k);
+    targets.forEach((v,n)=>{ setTimeout(()=>{ if(v.st!=='in'&&v.st!=='won') return; const cut=v.st==='in'&&/kam|sasta|final|rate/i.test(t); const q=quoteOf(r,v.k);
       if(cut&&q&&q.price>150){ const np=q.price-(20+10*(v.k%3)); r.M.push({f:'v',v:v.k,t:['Aapke liye thoda kam kar deta hoon 🙏','Theek hai ji, ye mera final rate','Chaliye, ye le lijiye'][v.k%3],at:now()},{f:'v',v:v.k,q:1,price:np,old:q.price,eta:q.eta,inc:q.inc,at:now()+1}); v.price=np; }
-      else r.M.push({f:'v',v:v.k,t:['Ji haan, ho jayega','Bilkul ji 👍','Main abhi bata deta hoon','Ji, kal subah pakka'][(v.k+n)%4],at:now()});
+      else r.M.push({f:'v',v:v.k,t:v.st==='won'?['Ji, samay par pahunch jaunga 🙏','Haan ji, bhej dijiye','UPI ya cash — jaisa aapko theek lage','Ji, abhi bhejta hoon'][(v.k+n+r.M.length)%4]:['Ji haan, ho jayega','Bilkul ji 👍','Main abhi bata deta hoon','Ji, kal subah pakka'][(v.k+n)%4],at:now()});
       if(r.tab!==v.k) v.un=(v.un||0)+1; if(CUR===r) paint(); try{ koChime&&koChime('note'); }catch(e){} },1500+n*1300+Math.random()*900); }); };
   /* ---------- ek ko chunna → baaki band ---------- */
   window.qmPick=function(k){ const r=CUR, v=r.V[k], q=quoteOf(r,k); const others=joined(r).filter(x=>x.k!==k&&x.st==='in').length+r.V.filter(x=>x.st==='wait').length;
     const b=$('qmB'); const d=document.createElement('div'); d.className='qm-cf'; d.onclick=e=>{ if(e.target===d) d.remove(); };
-    d.innerHTML=`<div><h4>${v.e} ${E(v.n)} ko chunein?</h4><p><b>${R(q.price)}</b> · ${E(q.eta)} · ⭐ ${v.r}</p><p>✓ Inka number aur call ab khul jayega<br>✓ Order, PIN aur payment shuru hoga<br>✕ Baaki <b>${others}</b> vendor band ho jayenge — unhe sirf “kisi aur ko mila” dikhega, aapka rate ya naam nahi</p><button class="go" onclick="qmWin(${k})">✓ Haan, ${E(v.n.split(' ')[0])} ko chunein</button><button class="x" onclick="this.closest('.qm-cf').remove()">Abhi nahi</button></div>`; b.appendChild(d); };
+    d.innerHTML=`<div><h4>${v.e} ${E(v.n)} ko chunein?</h4><p><b>${R(q.price)}</b> · ${E(q.eta)} · ⭐ ${v.r}</p><p>✓ Inka number aur call ab khul jayega<br>✓ Order, PIN aur payment shuru hoga<br>✕ Baaki <b>${others}</b> vendor ki chat <b>dono taraf se</b> band — unhe sirf “kisi aur ko mila” dikhega, aapka rate ya naam nahi</p><button class="go" onclick="qmWin(${k})">✓ Haan, ${E(v.n.split(' ')[0])} ko chunein</button><button class="x" onclick="this.closest('.qm-cf').remove()">Abhi nahi</button></div>`; b.appendChild(d); };
   window.qmWin=function(k){ const r=CUR; r.won=k; r.tmr.forEach(clearTimeout); r.V.forEach(v=>{ v.st=v.k===k?'won':'lost'; v.un=0; }); r.tab=k; r.M.push({f:'v',v:k,t:'Shukriya ji 🙏 mera number 98765 43210 — main samay par pahunch jaunga',at:now()});
-    paint(); T('🎉 '+r.V[k].n.split(' ')[0]+' ko order mila · baaki vendors band'); try{ koChime&&koChime('open'); }catch(e){} };
+    r.req=null; paint(); T('🎉 '+r.V[k].n.split(' ')[0]+' ko order mila · baaki vendors band');
+    const lz=r.V.find(x=>x.st==='lost'); if(lz) r.tmr.push(setTimeout(()=>{ if(lz.st!=='lost') return; r.req=lz.k; r.M.push({f:'s',v:lz.k,t:'🙋 '+lz.n.split(' ')[0]+' ne dobara baat ki request bheji',at:now()}); T('🙋 '+lz.n.split(' ')[0]+' dobara baat karna chahte hain'); try{ koChime&&koChime('note'); }catch(e){} if(CUR===r) paint(); },7000)); try{ koChime&&koChime('open'); }catch(e){} };
+  function reopen(r,k,why){ const v=r.V[k]; v.st='in'; v.at=now(); v.un=0; r.req=null; r.M.push({f:'s',v:k,t:why,at:now()}); r.tab=k; paint(); try{ koChime&&koChime('open'); }catch(e){} }
+  window.qmReopen=function(k){ const r=CUR, v=r.V[k]; const b=$('qmB'); const d=document.createElement('div'); d.className='qm-cf'; d.onclick=e=>{ if(e.target===d) d.remove(); };
+    d.innerHTML=`<div><h4>↺ ${v.e} ${E(v.n)} se dobara baat?</h4><p>✓ Chat dono taraf se phir khul jayegi · nayi 24 ghante ki window<br>✓ Pasand aaye to inhe bhi chun sakte hain<br>💳 Iske liye aapke wallet se <b>₹10</b> lagenge</p><button class="go" onclick="this.closest('.qm-cf').remove();qmReopenGo(${k})">₹10 de kar chat kholein</button><button class="x" onclick="this.closest('.qm-cf').remove()">Abhi nahi</button></div>`; b.appendChild(d); };
+  window.qmReopenGo=k=>{ reopen(CUR,k,'↺ Aapne dobara baat shuru ki · ₹10 laga'); T('↺ Chat phir khul gayi'); };
+  window.qmReqOk=k=>{ reopen(CUR,k,'✓ Aapne inki request maani · aapka kuch nahi laga (vendor ka 1 coin)'); T('✓ Chat khul gayi'); };
+  window.qmReqNo=()=>{ CUR.req=null; paint(); T('Theek hai — request hata di'); };
   /* ---------- vendor ko kaisa dikhta hai (discussion ke liye) ---------- */
   window.qmVendorView=function(){ const r=CUR; const J=joined(r); const a=J[0], b2=J[1]||J[0]; const cm=r.M.filter(m=>m.f==='c'&&m.to==='all').slice(-2);
-    const ph=(v,lost)=>`<div class="qm-ph"><div class="t">${v.e} ${E(v.n.split(' ')[0])} ka phone</div><div class="c"><div class="hint">👤 Naya grahak · ${E(r.o[0])}<br>Aap akele nahi — achha quote dein</div>${cm.map(m=>`<div class="m">${E(m.t)}</div>`).join('')}<div class="m me">Mera rate ${R((quoteOf(r,v.k)||{}).price||v.price)}</div>${lost?'<div class="lost">Grahak ne is baar kisi aur ko chuna 🙏<br><span style="font-weight:600">(kaun, kitne me — nahi dikhta)</span></div>':''}</div></div>`;
+    const N=Math.max(1,J.length), sh=+(5/N).toFixed(2); const ph=(v,lost)=>`<div class="qm-ph"><div class="t">${v.e} ${E(v.n.split(' ')[0])} ka phone</div><div class="c"><div class="hint">👤 Naya grahak · ${E(r.o[0])}<br>Aap akele nahi — achha quote dein<br>🪙 Is lead ka kharcha: ${sh} coin</div>${cm.map(m=>`<div class="m">${E(m.t)}</div>`).join('')}<div class="m me">Mera rate ${R((quoteOf(r,v.k)||{}).price||v.price)}</div>${lost?'<div class="lost">Grahak ne is baar kisi aur ko chuna 🙏<br><span style="font-weight:600">(kaun, kitne me — nahi dikhta)</span><br>🔒 Chat band · [🙋 Dobara baat ki request — 1 coin]</div>':''}</div></div>`;
     const bx=$('qmB'); const d=document.createElement('div'); d.className='qm-cf'; d.onclick=e=>{ if(e.target===d) d.remove(); };
-    d.innerHTML=`<div><h4>👁 Vendor ko kaisa dikhta hai</h4><p>Har vendor ko sirf <b>grahak aur apni chat</b> dikhti hai. Doosre vendor, unke rate, unke naam — kuch nahi.</p><div class="qm-vp">${ph(a,false)}${ph(b2,true)}</div><button class="x" onclick="this.closest('.qm-cf').remove()">Samajh gaya</button></div>`; bx.appendChild(d); };
+    d.innerHTML=`<div><h4>👁 Vendor ko kaisa dikhta hai</h4><p>Har vendor ko sirf <b>grahak aur apni chat</b> dikhti hai. Doosre vendor, unke rate, unke naam — kuch nahi.</p><p>🪙 <b>Coin ka hisaab:</b> har request ke <b>5 coin</b> fix — jitne vendor judein unme barabar bat jaate hain. Abhi ${N} vendor → <b>${sh} coin</b> har ek.</p><div class="qm-coin">${[1,2,3,4,5].map(n=>`<span class="${n===N?'on':''}">${n} vendor: ${+(5/n).toFixed(2)}</span>`).join('')}</div><div class="qm-vp">${ph(a,false)}${ph(b2,true)}</div><button class="x" onclick="this.closest('.qm-cf').remove()">Samajh gaya</button></div>`; bx.appendChild(d); };
   /* ---------- My Orders: vendor dabao → Quote Room; card par button ---------- */
   try{ window.odvTap=function(i,k){ qrmOpen(i,k); }; }catch(e){}
-  function btns(){ document.querySelectorAll('.od-vw[data-oi]').forEach(w=>{ if(w.querySelector('.qm-btn')) return; const i=+w.dataset.oi; const o=ORDERS[i]; if(!o||!o[5]) return; const r=RM[i]; const n=r?joined(r).length:1;
-      const b=document.createElement('button'); b.className='qm-btn'; b.innerHTML=`<span>📣 Quote Room — sabke rate ek jagah</span><em>${n}/5</em>`; b.onclick=e=>{ e.stopPropagation(); qrmOpen(i); }; w.appendChild(b); }); }
-  setInterval(btns,1200);
+  try{ const _vh=vendorsHTML; vendorsHTML=function(i){ const o=ORDERS[i]; if(!o||!o[5]) return _vh(i); const r=room(i); const J=joined(r); const W=r.won!=null?r.V[r.won]:null;
+      const qs=r.V.filter(v=>v.st==='in').map(v=>quoteOf(r,v.k)).filter(Boolean); const lab=W?'✓ '+E(W.n.split(' ')[0]):qs.length?R(Math.min(...qs.map(q=>q.price)))+' se':J.length+'/5';
+      return `<div class="od-vw qv" data-oi="${i}"><div class="qv-r"><div class="qv-s">${r.V.map(v=>`<button class="qv-v ${v.st}" onclick="event.stopPropagation();qrmOpen(${i},${v.k})"><span class="a">${v.e}${v.st==='in'||v.st==='won'?'<i></i>':''}${v.un?`<u>${v.un}</u>`:''}</span><b>${E(v.n.split(' ')[0])}</b></button>`).join('')}</div><button class="qv-go" onclick="event.stopPropagation();qrmOpen(${i})">📣 <em>${lab}</em> ›</button></div></div>`; }; }catch(e){}
   setInterval(()=>{ const o=$('qrmOv'); if(o&&o.classList.contains('on')&&CUR&&CUR.tab==='all') paint(); },30000);
 })();
 </script>
