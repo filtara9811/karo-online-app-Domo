@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=291;
+window.KO_V=292;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -30484,6 +30484,183 @@ body.ko-both2 #nfPanel{box-shadow:0 -10px 26px rgba(10,60,55,.10),0 -1px 0 rgba(
   setInterval(sync,900); setTimeout(sync,300); addEventListener('resize',()=>setTimeout(sync,100));
 })();
 </script>
+<style id="v292-css">
+/* 1) Quick | All Shops patti — chhoti */
+.kqs{gap:18px!important;padding:6px 0 0!important}
+.kqs button{font-size:10.5px!important;padding:1px 1px 5px!important;letter-spacing:.05em!important}
+.kqs i{height:1.5px!important}
+.kqs:after{left:-10px!important;right:-10px!important;background:rgba(120,100,70,.10)!important}
+/* 2) sheet ka upar wala kinara map me ghule (gradient), alag na dikhe */
+body.ko-both2 .home-sheet,body.ko-both2 #nfPanel{box-shadow:0 -14px 28px -6px rgba(60,40,10,.16)!important}
+.k92-fade{position:absolute;left:0;right:0;top:-34px;height:36px;pointer-events:none;background:linear-gradient(to bottom,rgba(243,236,221,0),rgba(243,236,221,.55) 55%,rgba(243,236,221,.92));border-radius:26px 26px 0 0;z-index:0}
+#nfPanel .k92-fade{background:linear-gradient(to bottom,rgba(250,246,236,0),rgba(250,246,236,.6) 55%,rgba(250,246,236,.95))}
+/* 3) beech ka 🎤 — chhota aur premium */
+body.ko-one .ko-micc .c{width:60px!important;height:60px!important;background:radial-gradient(120% 120% at 30% 20%,#FFB259 0%,#F47B20 45%,#D4520A 100%)!important;color:#fff!important;box-shadow:0 10px 22px rgba(212,82,10,.38),inset 0 1px 0 rgba(255,255,255,.45),0 0 0 3px rgba(255,255,255,.9)!important;gap:0!important}
+body.ko-one .ko-micc .c svg{width:22px;height:22px}
+body.ko-one .ko-micc b{display:none!important}
+body.ko-one .ko-micc .r{width:60px!important;height:60px!important;margin:-30px 0 0 -30px!important;border:1.5px solid rgba(244,123,32,.5)!important;animation:k92Ring 2.4s ease-out infinite!important}
+body.ko-one .ko-micc .r:after{content:'';position:absolute;inset:-1.5px;border-radius:50%;border:1.5px solid rgba(244,123,32,.35);animation:k92Ring 2.4s ease-out 1.2s infinite}
+@keyframes k92Ring{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.55);opacity:0}}
+body.ko-one #shopsOv .ko-micc .c{background:radial-gradient(120% 120% at 30% 20%,#3CC6B4 0%,#0F766E 55%,#0A5550 100%)!important;box-shadow:0 10px 22px rgba(10,85,80,.38),inset 0 1px 0 rgba(255,255,255,.4),0 0 0 3px rgba(255,255,255,.9)!important}
+body.ko-one #shopsOv .ko-micc .r,body.ko-one #shopsOv .ko-micc .r:after{border-color:rgba(15,118,110,.45)!important}
+body.k92-on .ko-micc .c{animation:k92Beat .9s ease-in-out infinite}
+@keyframes k92Beat{50%{transform:scale(1.07)}}
+/* 4) bolte hi wahin natije */
+.k92{margin:8px 14px 2px;background:#fff;border:1px solid #EFE3C8;border-radius:18px;box-shadow:0 10px 24px rgba(120,80,20,.10);overflow:hidden;animation:k92In .25s ease}
+@keyframes k92In{from{opacity:0;transform:translateY(-6px)}}
+#nfPanel .k92{border-color:#D7EFEA}
+.k92-h{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #F4ECDC}
+.k92-eq{display:flex;gap:3px;align-items:flex-end;height:18px;width:22px}
+.k92-eq i{flex:1;background:#F47B20;border-radius:2px;height:30%;font-style:normal}
+.k92.lis .k92-eq i{animation:k92Eq .8s ease-in-out infinite}.k92.lis .k92-eq i:nth-child(2){animation-delay:.15s}.k92.lis .k92-eq i:nth-child(3){animation-delay:.3s}.k92.lis .k92-eq i:nth-child(4){animation-delay:.45s}
+#nfPanel .k92-eq i{background:#0F766E}
+@keyframes k92Eq{50%{height:100%}}
+.k92-t{flex:1;min-width:0;font:700 14px Poppins,system-ui;color:#2a2418;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.k92-t small{display:block;font:600 10.5px Poppins,system-ui;color:#9a8460;letter-spacing:.04em}
+.k92-x{border:0;background:#F6F0E4;width:30px;height:30px;border-radius:50%;font-size:14px;color:#7d6d50;flex:none}
+.k92-l{max-height:260px;overflow:auto}
+.k92-r{display:flex;align-items:center;gap:11px;width:100%;border:0;background:none;padding:9px 12px;text-align:left;cursor:pointer;font-family:inherit;border-bottom:1px solid #FAF5EA}
+.k92-r:last-child{border-bottom:0}
+.k92-r .ic{width:38px;height:38px;border-radius:12px;background:#FFF3E6;display:grid;place-items:center;font-size:19px;flex:none}
+#nfPanel .k92-r .ic{background:#E9F7F4}
+.k92-r b{display:block;font:700 13.5px Poppins,system-ui;color:#1d1408}
+.k92-r small{font:500 11px Poppins,system-ui;color:#8a7a5a}
+.k92-r em{margin-left:auto;font-style:normal;font:800 10px Poppins,system-ui;border-radius:99px;padding:3px 8px;background:#FFF1E4;color:#C2410C;white-space:nowrap}
+.k92-r em.s{background:#E9F7F4;color:#0F766E}.k92-r em.p{background:#EEF2FF;color:#4338CA}
+.k92-r.top{background:linear-gradient(90deg,#FFF8EE,#fff)}
+.k92-e{padding:14px 12px;font:600 12.5px Poppins,system-ui;color:#8a7a5a;text-align:center}
+.k92-ty{display:flex;gap:8px;padding:10px 12px}.k92-ty input{flex:1;border:1.5px solid #EFE3C8;border-radius:12px;padding:9px 11px;font:600 14px Poppins,system-ui;min-width:0}
+/* 5) map — ungli se zoom / khiskana */
+#mapHdr,#shopMap{touch-action:none}
+.k92-zw{transition:transform .18s ease}
+.k92-zw.drag{transition:none}
+</style>
+<script id="v292">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const T=m=>{ try{ toast(m); }catch(e){} };
+
+  /* ---------- sheet ke upar halka gradient ---------- */
+  function fades(){ [$('homeSheet'),$('nfPanel')].forEach(s=>{ if(s&&!s.querySelector(':scope > .k92-fade')){ const f=document.createElement('div'); f.className='k92-fade'; s.insertBefore(f,s.firstChild); if(getComputedStyle(s).position==='static') s.style.position='relative'; } }); }
+  setInterval(fades,1500); setTimeout(fades,400);
+
+  /* ================= SMART SEARCH (Hindi / Hinglish / English / galat spelling) ================= */
+  const DV={'अ':'a','आ':'a','इ':'i','ई':'i','उ':'u','ऊ':'u','ए':'e','ऐ':'ai','ओ':'o','औ':'au','ऑ':'o','क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'n','च':'ch','छ':'chh','ज':'j','झ':'jh','ञ':'n','ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n','त':'t','थ':'th','द':'d','ध':'dh','न':'n','प':'p','फ':'f','ब':'b','भ':'bh','म':'m','य':'y','र':'r','ल':'l','व':'v','श':'sh','ष':'sh','स':'s','ह':'h','ा':'a','ि':'i','ी':'i','ु':'u','ू':'u','े':'e','ै':'ai','ो':'o','ौ':'au','ॉ':'o','ं':'n','ँ':'n','ः':'','्':'','़':'','ृ':'ri','क़':'k','ख़':'kh','ग़':'g','ज़':'z','ड़':'r','ढ़':'rh','फ़':'f'};
+  const tr=s=>String(s||'').normalize('NFC').replace(/[ऀ-ॿ]/g,c=>DV[c]!=null?DV[c]:'');
+  const norm=s=>tr(String(s||'').toLowerCase()).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+  const ph=w=>{ w=w.replace(/ph/g,'f').replace(/w/g,'v').replace(/z/g,'j').replace(/q/g,'k').replace(/ck/g,'k').replace(/c(?=[eiy])/g,'s').replace(/c/g,'k').replace(/x/g,'ks').replace(/(ee|ea|ii|ie)/g,'i').replace(/(oo|ou|uu)/g,'u').replace(/aa/g,'a').replace(/th/g,'t').replace(/dh/g,'d').replace(/bh/g,'b').replace(/kh/g,'k').replace(/gh/g,'g').replace(/sh/g,'s').replace(/h/g,'');
+    return w[0]+w.slice(1).replace(/[aeiouy]/g,'').replace(/(.)\1+/g,'$1'); };
+  const lev=(a,b)=>{ if(a===b) return 0; const m=a.length,n=b.length; if(!m||!n) return m||n; let p=Array.from({length:n+1},(_,j)=>j); for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; } return p[n]; };
+  /* desi shabd → asli naam */
+  const SYN={
+    'Plumber':'plumber plambar plumbar plamber nal nalka nal wala nalsaaz pipe leak tanki tap tonti',
+    'Electrician':'electrician electrition elctrician eletrician bijli bijli wala light wiring switch fan pankha current mcb',
+    'Carpenter':'carpenter carpentar carpanter badhai barhai badai lakdi furniture darwaza kursi almari bed',
+    'AC repair':'ac aircon air conditioner ac thik ac service thanda cooling',
+    'TV repair':'tv tiivi television led',
+    'Haircut at home':'nai naai barber haircut hair cut baal bal salon cutting shave dadhi',
+    'Beauty parlour':'parlour parlor beauty facial makeup threading wax',
+    'Body massage':'massage malish maalish spa body',
+    'Home cleaning':'cleaning safai saaf ghar ki safai cleaner jhadu pocha maid bai',
+    'Sofa cleaning':'sofa',
+    'Bathroom deep clean':'bathroom toilet washroom',
+    'Pant pajama silai':'silai stitching alter alteration pajama pant',
+    'Tailor near me':'tailor darzi darji tailar taylor dressmaker',
+    'Blouse stitching':'blouse',
+    'Tiffin service':'tiffin tifin dabba khana thali lunch',
+    'Home cooked meals':'ghar ka khana homemade meals',
+    'Cake order':'cake keik birthday',
+    'Animal pet care':'pet vet dog kutta janwar doctor',
+    'Dog grooming':'dog grooming kutte',
+    'Cat food':'cat billi',
+    'Camera service':'photographer photo camera video shoot',
+    'Property papers lawyer':'lawyer vakil vakeel advocate legal kanooni property registry',
+    'Notary service':'notary affidavit stamp',
+    'Tax consultant':'ca tax gst itr chartered accountant',
+    'Loan advisory':'loan karz paisa credit card finance',
+    'Car wash':'car wash gaadi dhulai',
+    'Bike servicing':'bike motorcycle scooty scooter service mistri mechanic',
+    'Puncture repair':'puncture panchar tyre tyer',
+    'Packing tape':'tape packing'
+  };
+  const CATSYN={Clothing:'kapde kapda clothes kurti kurta saree sari suit dress lehenga shirt jeans top dupatta palazzo readymade garments fabric',Salon:'salon parlour',Food:'khana food restaurant dhaba',Pets:'pet',Repair:'repair mistri',Cleaning:'safai',Auto:'gaadi car bike',Finance:'loan',Legal:'vakil',Tailor:'darzi silai'};
+  let IDX=null;
+  function build(){ const L=[];
+    try{ (SUG||[]).forEach(x=>{ const extra=SYN[x[0]]||''; L.push({k:'svc',n:x[0],ic:x[1],d:x[2],w:norm(x[0]+' '+x[2]+' '+extra),cw:''}); }); }catch(e){}
+    try{ SHOPS.forEach((x,i)=>{ const m=x[8]||{}; L.push({k:'shop',n:x[0],ic:x[1],i,d:x[2]+(m.area?' · '+m.area:''),w:norm(x[0]+' '+(m.area||'')),cw:norm(x[2]+' '+(CATSYN[x[2]]||'')),cf:.82}); }); }catch(e){}
+    try{ Object.keys(PROD).forEach(c=>{ (PROD[c]||[]).forEach(p=>{ if(!p||!p[1]) return; const si=Math.max(0,SHOPS.findIndex(s=>s[2]===c)); L.push({k:'prod',n:p[1],ic:p[0],img:p[3],i:si,d:(p[2]||'')+' · '+((SHOPS[si]||[])[0]||c),w:norm(p[1]),cw:norm(c+' '+(CATSYN[c]||'')),cf:.62}); }); }); }catch(e){}
+    L.forEach(r=>{ r.t=r.w.split(' ').filter(Boolean); r.p=r.t.map(ph); r.ct=(r.cw||'').split(' ').filter(Boolean); r.cp=r.ct.map(ph); }); IDX=L; return L; }
+  function m1(t,p,T,P){ let b=0; T.forEach((w,j)=>{ let v=0; if(w===t) v=1; else if(w.startsWith(t)&&t.length>=3) v=.86; else if(t.length>=4&&w.includes(t)) v=.7; else if(P[j]===p&&p.length>=3) v=.78; else if(t.length>=5&&w.length>=5){ const d=lev(t,w); const lim=t.length>=8?2:1; if(d<=lim) v=.74-d*.08; } if(v>b) b=v; }); return b; }
+  function score(r,qt,qp){ let s=0; const nm=norm(r.n);
+    qt.forEach((t,ix)=>{ if(t.length<2) return; const p=qp[ix]; const a=m1(t,p,r.t,r.p), c=r.ct.length?m1(t,p,r.ct,r.cp)*(r.cf||.6):0; s+=Math.max(a,c); });
+    if(qt.length&&nm.startsWith(qt.join(' '))) s+=.4; if(r.k==='svc') s+=.04; return s/Math.max(1,qt.filter(t=>t.length>=2).length); }
+  function search(q,alts){ if(!IDX) build(); const qs=[q].concat(alts||[]).map(norm).filter(Boolean); let best=new Map();
+    qs.forEach((qq,qi)=>{ const qt=qq.split(' ').filter(t=>!/^(ka|ki|ke|wala|wali|chahiye|chaiye|mujhe|please|plz|ek|koi|mere|paas|near|me|the|a|an|for|ko|hai)$/.test(t)); if(!qt.length) return; const qp=qt.map(ph);
+      IDX.forEach((r,ri)=>{ const sc=score(r,qt,qp)-(qi?0.05:0); if(sc>=.55&&(!best.has(ri)||best.get(ri)<sc)) best.set(ri,sc); }); });
+    const A=[...best.entries()].sort((a,b)=>b[1]-a[1]); const top=A.length?A[0][1]:0; return A.filter(x=>x[1]>=Math.max(.6,top*.72)).slice(0,8).map(([ri,sc])=>Object.assign({sc},IDX[ri])); }
+  window.koSmartSearch=search;
+
+  /* ---------- natije wahin (sheet ke andar, search ke neeche) ---------- */
+  const shOpen=()=>{ const o=$('shopsOv'); return !!(o&&o.classList.contains('open')); };
+  function host(){ if(shOpen()){ const nf=$('nfPanel'); if(!nf) return null; const row=[...nf.children].find(c=>c.querySelector&&c.querySelector('input,.hs-in,[class*="srch"],[class*="search"]')&&!c.classList.contains('kqs')); return {sheet:nf,after:row||nf.querySelector('.kqs'),scroll:$('nfScroller')}; }
+    const hs=$('homeSheet'); if(!hs) return null; return {sheet:hs,after:hs.querySelector('.hs-bar'),scroll:hs}; }
+  let PN=null, LAST='';
+  function panel(){ const h=host(); if(!h||!h.after) return null; if(PN&&PN.isConnected&&PN.parentElement===h.after.parentElement) return PN; if(PN) PN.remove();
+    PN=document.createElement('div'); PN.className='k92'; h.after.insertAdjacentElement('afterend',PN); try{ (h.scroll||h.sheet).scrollTop=0; }catch(e){} return PN; }
+  function close(){ stop(); if(PN){ PN.remove(); PN=null; } document.body.classList.remove('k92-on'); }
+  window.k92Close=close;
+  const TAG={svc:['Service',''],shop:['Dukaan','s'],prod:['Product','p']};
+  function paint(state,text,res){ const p=panel(); if(!p) return; p.classList.toggle('lis',state==='lis');
+    const head=`<div class="k92-h"><div class="k92-eq"><i></i><i></i><i></i><i></i></div><div class="k92-t"><small>${state==='lis'?'SUN RAHA HOON…':state==='type'?'LIKHKAR KHOJEIN':'AAPNE KAHA'}</small>${text?'“'+E(text)+'”':(state==='lis'?'Boliye — jaise “plumber”, “kurti”, “bijli wala”':'')}</div><button class="k92-x" onclick="k92Close()" aria-label="Band">✕</button></div>`;
+    let body='';
+    if(state==='type') body=`<div class="k92-ty"><input id="k92In" placeholder="Jaise: plambar, darzi, kurti" oninput="k92Type(this.value)" autocomplete="off"></div>`;
+    if(res) body+=res.length?`<div class="k92-l">${res.map((r,k)=>`<button class="k92-r${k===0?' top':''}" onclick="k92Go(${k})"><span class="ic" style="${r.img?`background:center/cover url('${E(r.img)}')`:''}">${r.img?'':E(r.ic||'🔎')}</span><span><b>${E(r.n)}</b><small>${E(r.d||'')}</small></span><em class="${TAG[r.k][1]}">${TAG[r.k][0]}</em></button>`).join('')}</div>`:(text?`<div class="k92-e">“${E(text)}” se kuch nahi mila — dobara boliye ya likhiye</div>`:'');
+    p.innerHTML=head+body; p._res=res||[]; if(state==='type') setTimeout(()=>{ const i=$('k92In'); if(i){ i.value=text||''; i.focus(); } },50); }
+  window.k92Type=v=>{ const r=search(v); paint('type',v,r); const i=$('k92In'); if(i){ i.value=v; i.focus(); i.setSelectionRange(v.length,v.length); } };
+  window.k92Go=function(k){ const r=PN&&PN._res&&PN._res[k]; if(!r) return; close(); try{ koChime&&koChime('tick'); }catch(e){}
+    if(r.k==='svc'){ if(shOpen()){ try{ closeSm('shopsOv'); }catch(e){} } setTimeout(()=>{ const c=document.createElement('div'); c.className='cs-card'; c.style.display='none'; c.innerHTML=`<h3>${E(r.n)}</h3><div class="cs-card-img">${E(r.ic)}</div><button></button>`; document.body.appendChild(c); try{ openFind(c.querySelector('button')); }catch(e){ T('🔎 '+r.n); } c.remove(); },shOpen()?350:0); }
+    else { try{ openShop(r.i); }catch(e){} } };
+  /* ---------- awaaz: app (native) ya browser ---------- */
+  let REC=null, on=false, partial='', tmr=0;
+  function stop(){ on=false; clearTimeout(tmr); try{ if(window.KoVoice) KoVoice.postMessage('stop'); }catch(e){} try{ REC&&REC.stop(); }catch(e){} REC=null; document.body.classList.remove('k92-on'); }
+  function result(text,alts,final){ partial=text; const r=search(text,alts); paint(final?'done':'lis',text,r);
+    if(final){ on=false; document.body.classList.remove('k92-on'); if(r.length&&r[0].sc>=.95&&r.length===1) setTimeout(()=>{ if(PN&&PN._res===r) k92Go(0); },900); } }
+  window.koVoiceCb=function(t,v){ if(t==='partial') result(v,[],false); else if(t==='final'){ const a=String(v||'').split('|').filter(Boolean); result(a[0]||partial,a.slice(1),true); }
+    else if(t==='error'){ document.body.classList.remove('k92-on'); on=false; if(partial){ result(partial,[],true); return; } paint('type','',null); T(v==='perm'?'🎤 Mic ki ijazat dein — tab tak likhkar khojein':'Awaaz samajh nahi aayi — likhkar khojein'); }
+    else if(t==='end'){ tmr=setTimeout(()=>{ if(on&&partial) result(partial,[],true); },2500); } };
+  function start(){ if(on){ stop(); if(partial) result(partial,[],true); return; } partial=''; on=true; document.body.classList.add('k92-on'); paint('lis','',null); try{ navigator.vibrate&&navigator.vibrate(15); }catch(e){} try{ koChime&&koChime('tick'); }catch(e){}
+    if(window.KoVoice){ try{ KoVoice.postMessage('start:hi-IN'); }catch(e){} tmr=setTimeout(()=>{ if(on&&!partial){ stop(); paint('type','',null); } },9000); return; }
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ on=false; document.body.classList.remove('k92-on'); paint('type','',null); return; }
+    try{ REC=new SR(); REC.lang='hi-IN'; REC.interimResults=true; REC.maxAlternatives=4; REC.continuous=false;
+      REC.onresult=e=>{ let t=''; let fin=false; const alts=[]; for(let i=e.resultIndex;i<e.results.length;i++){ t+=e.results[i][0].transcript; if(e.results[i].isFinal){ fin=true; for(let a=1;a<e.results[i].length;a++) alts.push(e.results[i][a].transcript); } } result(t,alts,fin); };
+      REC.onerror=e=>koVoiceCb('error',e.error==='not-allowed'?'perm':'x'); REC.onend=()=>{ if(on){ on=false; document.body.classList.remove('k92-on'); if(partial) result(partial,[],true); } }; REC.start(); }
+    catch(e){ on=false; paint('type','',null); } }
+  window.k92Start=start;
+  /* beech ka mic ab yahi chalaye (bottom sheet nahi khulega) */
+  document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('.ko-micc'); if(!b) return; e.stopPropagation(); e.preventDefault(); start(); },true);
+
+  /* ================= MAP: do ungli se zoom, ek se khiskana ================= */
+  function zoomable(box,worldSel,pinSel){ if(!box||box._k92) return; box._k92=1; let s=1,tx=0,ty=0; let g=null;
+    const W=()=>box.clientWidth, H=()=>box.clientHeight;
+    const world=()=>[...box.querySelectorAll(worldSel)], pins=()=>[...box.querySelectorAll(pinSel)];
+    function clamp(){ s=Math.max(1,Math.min(3.2,s)); const mx=W()*(s-1)+40, my=H()*(s-1)+40; tx=Math.max(-mx,Math.min(40,tx)); ty=Math.max(-my,Math.min(40,ty)); if(s===1&&Math.abs(tx)<41&&Math.abs(ty)<41){ tx=tx*0; ty=ty*0; } }
+    function apply(drag){ world().forEach(w=>{ w.classList.add('k92-zw'); w.classList.toggle('drag',!!drag); w.style.transformOrigin='0 0'; w.style.transform=`translate(${tx}px,${ty}px) scale(${s})`; });
+      const br=box.getBoundingClientRect(); pins().forEach(p=>{ if(p._bx==null){ const r=p.getBoundingClientRect(); const cur=new DOMMatrix(getComputedStyle(p).transform==='none'?undefined:getComputedStyle(p).transform); p._bx=r.left+r.width/2-br.left-cur.m41; p._by=r.top+r.height/2-br.top-cur.m42; p._bt=p.style.transform||''; }
+        p.classList.add('k92-zw'); p.classList.toggle('drag',!!drag); const dx=p._bx*s+tx-p._bx, dy=p._by*s+ty-p._by; p.style.transform=`translate(${dx}px,${dy}px) ${p._bt}`; }); }
+    const pt=(e,i)=>{ const t=e.touches[i]; const r=box.getBoundingClientRect(); return {x:t.clientX-r.left,y:t.clientY-r.top}; };
+    box.addEventListener('touchstart',e=>{ if(e.target.closest('button,a,input,.location-pill,.cs-zoom,.nf-filter')) return; if(e.touches.length===2){ const a=pt(e,0),b=pt(e,1); g={m:'z',d:Math.hypot(a.x-b.x,a.y-b.y),s0:s,cx:(a.x+b.x)/2,cy:(a.y+b.y)/2,tx0:tx,ty0:ty}; }
+      else if(e.touches.length===1){ const a=pt(e,0); const now=Date.now(); if(box._lt&&now-box._lt<300){ s=s>1.2?1:2; if(s===1){ tx=0; ty=0; } else { tx=-a.x*(s-1); ty=-a.y*(s-1); } clamp(); apply(false); box._lt=0; g=null; return; } box._lt=now; g={m:'p',x:a.x,y:a.y,tx0:tx,ty0:ty}; } },{passive:true});
+    box.addEventListener('touchmove',e=>{ if(!g) return; if(g.m==='z'&&e.touches.length===2){ const a=pt(e,0),b=pt(e,1); const d=Math.hypot(a.x-b.x,a.y-b.y); const ns=Math.max(1,Math.min(3.2,g.s0*d/g.d)); const cx=(a.x+b.x)/2, cy=(a.y+b.y)/2; tx=cx-(g.cx-g.tx0)*ns/g.s0; ty=cy-(g.cy-g.ty0)*ns/g.s0; s=ns; clamp(); apply(true); e.preventDefault(); e.stopPropagation(); }
+      else if(g.m==='p'&&e.touches.length===1&&s>1){ const a=pt(e,0); tx=g.tx0+(a.x-g.x); ty=g.ty0+(a.y-g.y); clamp(); apply(true); e.preventDefault(); e.stopPropagation(); } },{passive:false});
+    box.addEventListener('touchend',()=>{ if(g){ g=null; apply(false); } },{passive:true});
+    box.k92Zoom=f=>{ const cx=W()/2, cy=H()/2; const ns=Math.max(1,Math.min(3.2,s*f)); tx=cx-(cx-tx)*ns/s; ty=cy-(cy-ty)*ns/s; s=ns; clamp(); apply(false); };
+    box.querySelectorAll('.cs-zoom button').forEach((b,k)=>{ b.onclick=ev=>{ ev.stopPropagation(); box.k92Zoom(k===0?1.4:1/1.4); }; }); }
+  function zInit(){ zoomable($('mapHdr'),'#mapSkin','.mini-pin,.pin-wrap'); zoomable($('shopMap'),'.mx-skin','.cs-me,[class*="pin"]:not(.mx-skin)'); }
+  setInterval(zInit,2000); setTimeout(zInit,800);
+})();
+</script>
+
 
 
 

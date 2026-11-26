@@ -97,12 +97,17 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     Future.delayed(const Duration(seconds: 3), _checkUpdate);
+    _voiceCh.setMethodCallHandler((c) async {
+      try { await _c.runJavaScript('window.koVoiceCb&&koVoiceCb(${jsonEncode(c.method)},${jsonEncode('${c.arguments ?? ''}')})'); } catch (_) {}
+      return null;
+    });
     final c = WebViewController(onPermissionRequest: _onPermission)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF3ECDD))
       ..addJavaScriptChannel('KaroApp', onMessageReceived: (m) => _openExternal(m.message))
       ..addJavaScriptChannel('KaroFile', onMessageReceived: (m) => _onFile(m.message))
       ..addJavaScriptChannel('KoAuth', onMessageReceived: (m) => _onAuth(m.message))
+      ..addJavaScriptChannel('KoVoice', onMessageReceived: (m) => _onVoice(m.message))
       ..setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) async {
           await _c.runJavaScript(_bridge);
@@ -448,6 +453,23 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
        ),
       ),
     );
+  }
+
+  /// Bolkar khojna: Android ka apna speech recognizer (WebView me web wala nahi chalta)
+  static const _voiceCh = MethodChannel('ko/voice');
+  Future<void> _onVoice(String m) async {
+    try {
+      if (m.startsWith('start')) {
+        final st = await Permission.microphone.request();
+        if (!st.isGranted) { await _c.runJavaScript("window.koVoiceCb&&koVoiceCb('error','perm')"); return; }
+        final lang = m.contains(':') ? m.split(':')[1] : 'hi-IN';
+        await _voiceCh.invokeMethod('start', {'lang': lang});
+      } else if (m == 'stop') {
+        await _voiceCh.invokeMethod('stop');
+      }
+    } catch (_) {
+      try { await _c.runJavaScript("window.koVoiceCb&&koVoiceCb('error','x')"); } catch (_) {}
+    }
   }
 
   /// Login: SIM wala number, OTP apne-aap, Gmail chunna
