@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=290;
+window.KO_V=291;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -29271,7 +29271,7 @@ body.ko-one .hs-mic{display:none!important}
   const deep=/[?&]shop=/.test(location.search);
   const mode=()=>CFG.mode||(CFG.quick===false?'shops':'both');
   window.koMode=mode;
-  function applyCfg(start){ const m=mode(); CFG.quick=m!=='shops'; document.body.classList.toggle('ko-noquick',m==='shops'); document.body.classList.toggle('ko-onlyquick',m==='quick'); document.body.classList.toggle('ko-one',m!=='both'); micBtns();
+  function applyCfg(start){ const m=mode(); CFG.quick=m!=='shops'; document.body.classList.toggle('ko-noquick',m==='shops'); document.body.classList.toggle('ko-onlyquick',m==='quick'); document.body.classList.toggle('ko-one',true); micBtns();
     if(m==='quick'){ try{ const o=$('shopsOv'); if(o&&o.classList.contains('open')&&!window._ksfDeep){ window._koLeave=1; closeSm('shopsOv'); window._koLeave=0; } }catch(e){} }
     const shOpen=()=>{ const o=$('shopsOv'); return !!(o&&o.classList.contains('open')); }; if(!deep&&((m==='shops'&&!shOpen())||(start&&m==='both'&&CFG.home==='shops'))){ let n=0; const t=setInterval(()=>{ n++; const busy=document.body.classList.contains('splashing')||($('loginScr')&&$('loginScr').classList.contains('on'))||document.querySelector('.sm-ov.open');
         if(!busy){ clearInterval(t); try{ renderShops('All'); openSm('shopsOv'); }catch(e){} } else if(n>60) clearInterval(t); },250); } }
@@ -30436,6 +30436,55 @@ body.kdd-ed #shopBody .se-bar button{padding:8px 11px;font-size:12.5px;margin-le
   window.lfCx=(id,b)=>{ if(b&&!b.dataset.s){ b.dataset.s=1; b.textContent='Pakka cancel? Dobara dabayein'; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.s; b.textContent='✕ Order cancel karein'; } },3500); return; } krClose('lfOv'); try{ ksfCx(id); }catch(e){} };
 })();
 </script>
+<style id="v291-css">
+/* sheet ke upar patli "Quick Service | All Shops" patti (grabber ki jagah) */
+.kqs{display:none;position:relative;justify-content:center;gap:26px;padding:9px 0 0;margin:0 auto;width:max-content;user-select:none;-webkit-user-select:none;z-index:7}
+body.ko-both2 .kqs{display:flex}
+body.ko-both2 .home-sheet::before{opacity:0}
+body.ko-both2 #shopsOv .nf-handle{background:transparent;height:0;margin:0}
+.kqs button{position:relative;border:0;background:none;padding:2px 2px 7px;font:600 11.5px Poppins,system-ui;letter-spacing:.04em;color:rgba(80,60,35,.45);cursor:pointer;transition:color .25s}
+.kqs button.on{color:#3a2c17}
+.kqs i{position:absolute;left:0;bottom:0;height:2px;border-radius:2px;background:#EE6A0D;transition:transform .32s cubic-bezier(.3,.8,.3,1),width .32s;pointer-events:none}
+#shopsOv .kqs i{background:#0F766E}
+.kqs:after{content:'';position:absolute;left:-14px;right:-14px;bottom:0;height:1px;background:rgba(120,100,70,.14)}
+/* halki chhaya upar */
+body.ko-both2 .home-sheet{box-shadow:0 -10px 26px rgba(60,40,10,.10),0 -1px 0 rgba(120,100,70,.06)}
+body.ko-both2 #nfPanel{box-shadow:0 -10px 26px rgba(10,60,55,.10),0 -1px 0 rgba(10,60,55,.06)}
+/* swipe ke waqt halka sarakna */
+.kqs-nudge-l{animation:kqsL .28s ease}.kqs-nudge-r{animation:kqsR .28s ease}
+@keyframes kqsL{50%{transform:translateX(-10px)}}@keyframes kqsR{50%{transform:translateX(10px)}}
+</style>
+<script id="v291">
+(function(){
+  const $=id=>document.getElementById(id);
+  const mode=()=>{ try{ return (window.koMode&&koMode())||((window.KO_CFG||{}).mode)||'both'; }catch(e){ return 'both'; } };
+  const shOpen=()=>{ const o=$('shopsOv'); return !!(o&&o.classList.contains('open')); };
+  const H=on=>`<button data-k="q" class="${on==='q'?'on':''}">Quick Service</button><button data-k="s" class="${on==='s'?'on':''}">All Shops</button><i></i>`;
+  function put(host,before,k){ if(!host) return null; let w=host.querySelector(':scope > .kqs'); if(!w){ w=document.createElement('div'); w.className='kqs'; w.innerHTML=H(k); w.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; e.stopPropagation(); go(b.dataset.k); }); host.insertBefore(w,before||host.firstChild); } return w; }
+  function ind(w){ if(!w) return; const on=w.querySelector('button.on'), i=w.querySelector('i'); if(!on||!i) return; i.style.width=on.offsetWidth+'px'; i.style.transform=`translateX(${on.offsetLeft}px)`; }
+  function sync(){ const both=mode()==='both'; const B=document.body.classList; if(B.contains('ko-both2')!==both) B.toggle('ko-both2',both);
+    /* dono mode me bhi beech me 🎤 */
+    if(both&&!B.contains('ko-one')) B.add('ko-one');
+    if(!both) return;
+    const hs=$('homeSheet'), w1=put(hs,hs&&hs.firstChild,'q'); const nf=$('nfPanel'), hd=$('nfHandle'); const w2=nf?put(nf,hd?hd.nextSibling:nf.firstChild,'s'):null;
+    const k=shOpen()?'s':'q'; [w1,w2].forEach(w=>{ if(!w) return; w.querySelectorAll('button').forEach(b=>{ const on=b.dataset.k===(w===w2?'s':'q'); if(b.classList.contains('on')!==on) b.classList.toggle('on',on); }); ind(w); }); }
+  function go(k){ if(mode()!=='both') return; try{ koChime&&koChime('tick'); }catch(e){}
+    if(k==='s'&&!shOpen()){ try{ openSm('shopsOv'); }catch(e){} }
+    else if(k==='q'&&shOpen()){ try{ closeSm('shopsOv'); }catch(e){} }
+    setTimeout(sync,60); setTimeout(sync,450); }
+  window.koSvcGo=go;
+  /* baayein / daayein swipe */
+  function scrollableX(el){ for(let e=el;e&&e!==document.body;e=e.parentElement){ if(e.scrollWidth>e.clientWidth+4){ const o=getComputedStyle(e).overflowX; if(o==='auto'||o==='scroll') return true; } if(e.matches&&e.matches('.mx-skin,#shopMap,.hb,.hb-track,input,textarea,.ksf,#ksf')) return true; } return false; }
+  let sx=0,sy=0,ok=false,t0=0;
+  document.addEventListener('touchstart',e=>{ ok=false; if(mode()!=='both') return; const t=e.target; const inHome=t.closest&&t.closest('#homeSheet'), inShops=t.closest&&t.closest('#nfPanel'); if(!inHome&&!inShops) return; if(inHome&&shOpen()) return; if(scrollableX(t)) return;
+    if(document.querySelector('.sm-ov.open:not(#shopsOv), .kr-ov.on')) return; const p=e.touches[0]; sx=p.clientX; sy=p.clientY; t0=Date.now(); ok=true; },{passive:true});
+  document.addEventListener('touchend',e=>{ if(!ok) return; ok=false; const p=e.changedTouches[0]; const dx=p.clientX-sx, dy=p.clientY-sy; if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*0.6||Date.now()-t0>700) return;
+    if(dx<0&&!shOpen()){ const s=$('homeSheet'); if(s){ s.classList.add('kqs-nudge-l'); setTimeout(()=>s.classList.remove('kqs-nudge-l'),300); } go('s'); }
+    else if(dx>0&&shOpen()){ const s=$('nfPanel'); if(s){ s.classList.add('kqs-nudge-r'); setTimeout(()=>s.classList.remove('kqs-nudge-r'),300); } go('q'); } },{passive:true});
+  setInterval(sync,900); setTimeout(sync,300); addEventListener('resize',()=>setTimeout(sync,100));
+})();
+</script>
+
 
 
 
