@@ -26640,7 +26640,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=292;
+window.KO_V=293;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -30612,7 +30612,7 @@ body.k92-on .ko-micc .c{animation:k92Beat .9s ease-in-out infinite}
   window.k92Close=close;
   const TAG={svc:['Service',''],shop:['Dukaan','s'],prod:['Product','p']};
   function paint(state,text,res){ const p=panel(); if(!p) return; p.classList.toggle('lis',state==='lis');
-    const head=`<div class="k92-h"><div class="k92-eq"><i></i><i></i><i></i><i></i></div><div class="k92-t"><small>${state==='lis'?'SUN RAHA HOON…':state==='type'?'LIKHKAR KHOJEIN':'AAPNE KAHA'}</small>${text?'“'+E(text)+'”':(state==='lis'?'Boliye — jaise “plumber”, “kurti”, “bijli wala”':'')}</div><button class="k92-x" onclick="k92Close()" aria-label="Band">✕</button></div>`;
+    const head=`<div class="k92-h"><div class="k92-eq"><i></i><i></i><i></i><i></i></div><div class="k92-t"><small>${state==='lis'?'SUN RAHI HOON…':state==='say'?'KARO AI':state==='type'?'LIKHKAR KHOJEIN':'AAPNE KAHA'}</small>${text?(state==='say'?E(text):'“'+E(text)+'”'):(state==='lis'?'Boliye — jaise “plumber”, “kurti”, “bijli wala”':'')}</div><button class="k92-x" onclick="k92Close()" aria-label="Band">✕</button></div>`;
     let body='';
     if(state==='type') body=`<div class="k92-ty"><input id="k92In" placeholder="Jaise: plambar, darzi, kurti" oninput="k92Type(this.value)" autocomplete="off"></div>`;
     if(res) body+=res.length?`<div class="k92-l">${res.map((r,k)=>`<button class="k92-r${k===0?' top':''}" onclick="k92Go(${k})"><span class="ic" style="${r.img?`background:center/cover url('${E(r.img)}')`:''}">${r.img?'':E(r.ic||'🔎')}</span><span><b>${E(r.n)}</b><small>${E(r.d||'')}</small></span><em class="${TAG[r.k][1]}">${TAG[r.k][0]}</em></button>`).join('')}</div>`:(text?`<div class="k92-e">“${E(text)}” se kuch nahi mila — dobara boliye ya likhiye</div>`:'');
@@ -30636,9 +30636,9 @@ body.k92-on .ko-micc .c{animation:k92Beat .9s ease-in-out infinite}
       REC.onresult=e=>{ let t=''; let fin=false; const alts=[]; for(let i=e.resultIndex;i<e.results.length;i++){ t+=e.results[i][0].transcript; if(e.results[i].isFinal){ fin=true; for(let a=1;a<e.results[i].length;a++) alts.push(e.results[i][a].transcript); } } result(t,alts,fin); };
       REC.onerror=e=>koVoiceCb('error',e.error==='not-allowed'?'perm':'x'); REC.onend=()=>{ if(on){ on=false; document.body.classList.remove('k92-on'); if(partial) result(partial,[],true); } }; REC.start(); }
     catch(e){ on=false; paint('type','',null); } }
-  window.k92Start=start;
+  window.k92Start=start; window.k92Paint=(st,t,r)=>{ paint(st,t,r); if(PN) PN.classList.toggle('say',st==='say'); };
   /* beech ka mic ab yahi chalaye (bottom sheet nahi khulega) */
-  document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('.ko-micc'); if(!b) return; e.stopPropagation(); e.preventDefault(); start(); },true);
+  document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('.ko-micc'); if(!b) return; e.stopPropagation(); e.preventDefault(); if(window.k93Greet&&!on) k93Greet(start); else start(); },true);
 
   /* ================= MAP: do ungli se zoom, ek se khiskana ================= */
   function zoomable(box,worldSel,pinSel){ if(!box||box._k92) return; box._k92=1; let s=1,tx=0,ty=0; let g=null;
@@ -30660,6 +30660,57 @@ body.k92-on .ko-micc .c{animation:k92Beat .9s ease-in-out infinite}
   setInterval(zInit,2000); setTimeout(zInit,800);
 })();
 </script>
+<style id="v293-css">
+/* neeche ki patti: dono jagah halka cream, upar halki chhaya */
+.bottom-nav,#shopsOv .bottom-nav,.phone .bottom-nav{background:linear-gradient(180deg,#FFFDF8 0%,#F5ECDB 100%)!important;background-image:linear-gradient(180deg,#FFFDF8 0%,#F5ECDB 100%)!important;box-shadow:0 -10px 26px rgba(90,60,20,.12),0 -1px 0 rgba(170,140,90,.18),inset 0 1px 0 #fff!important;border-radius:22px 22px 0 0!important}
+.bottom-nav .nav-item,.bottom-nav .nav-item *{color:#7a5a2e!important}
+.bottom-nav .nav-item svg path,.bottom-nav .nav-item svg rect,.bottom-nav .nav-item svg circle{stroke:#7a5a2e!important}
+#shopsOv .bottom-nav .nav-item svg path{stroke:#0F5F58!important}
+/* 🎤 ke andar badalte chehre: Mic → AI → Voice AI → bolti lehrein */
+.k93f{position:relative;width:34px;height:26px;display:block}
+.k93f i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;opacity:0;transform:scale(.6);animation:k93Cy 10s infinite}
+.k93f i:nth-child(2){animation-delay:2.5s}.k93f i:nth-child(3){animation-delay:5s}.k93f i:nth-child(4){animation-delay:7.5s}
+@keyframes k93Cy{0%{opacity:0;transform:scale(.6) rotate(-8deg)}3%,24%{opacity:1;transform:none}27%,100%{opacity:0;transform:scale(.6) rotate(8deg)}}
+.k93f b{font:900 13px/1 Poppins,system-ui!important;color:#fff!important;letter-spacing:.02em;display:block!important}
+body.ko-one .ko-micc .k93f b{display:block!important;color:#fff!important}
+.k93f .ai b{font-size:16px!important;text-shadow:0 0 10px rgba(255,236,200,.9)}.k93f .ai b:after{content:'✦';font-size:8px;vertical-align:top;margin-left:1px}
+.k93f .vo b{font-size:8.5px!important;text-align:center;line-height:1.05!important}
+.k93w{display:flex;gap:2px;align-items:center;height:18px}.k93w s{display:block;width:3px;border-radius:2px;background:#fff;height:40%;text-decoration:none;animation:k93W .9s ease-in-out infinite}
+.k93w s:nth-child(2){animation-delay:.12s}.k93w s:nth-child(3){animation-delay:.24s}.k93w s:nth-child(4){animation-delay:.36s}.k93w s:nth-child(5){animation-delay:.48s}
+@keyframes k93W{50%{height:100%}}
+body.ko-one .ko-micc .c>svg{display:none!important}
+/* bolte / sunte waqt sirf lehrein */
+body.k92-on .k93f i{animation:none;opacity:0}body.k92-on .k93f i.wv{opacity:1;transform:none}
+body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;transform:none}
+.k92.say .k92-eq i{animation:k92Eq .6s ease-in-out infinite;background:#7C3AED}
+.k92.say .k92-t{color:#5B21B6}
+</style>
+<script id="v293">
+(function(){
+  const $=id=>document.getElementById(id);
+  const FACES='<i class="mc"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></i><i class="ai"><b>AI</b></i><i class="vo"><b>VOICE<br>AI</b></i><i class="wv"><span class="k93w"><s></s><s></s><s></s><s></s><s></s></span></i>';
+  function faces(){ document.querySelectorAll('.ko-micc .c').forEach(c=>{ if(!c.querySelector('.k93f')){ const f=document.createElement('span'); f.className='k93f'; f.innerHTML=FACES; c.appendChild(f); } }); }
+  setInterval(faces,1500); setTimeout(faces,300);
+  /* naam se swagat: "Haan ji Ashu ji, main aapki kya madad kar sakti hoon?" */
+  function name(){ try{ const c=JSON.parse(localStorage.getItem('ko_cust')||'{}'); if(c.name) return String(c.name).trim().split(/\s+/)[0]; }catch(e){} try{ const s=window.koMyShop&&koMyShop(); if(s&&s.shop&&s.shop.owner_name) return String(s.shop.owner_name).split(/\s+/)[0]; }catch(e){} return ''; }
+  let greeted=false, wait=null, tmo=0;
+  function line(){ const n=name(); if(!greeted){ greeted=true; return {hi:`हाँ जी${n?' '+n+' जी':''}, मैं आपकी क्या मदद कर सकती हूँ?`,show:`Haan ji${n?' '+n+' ji':''}, main aapki kya madad kar sakti hoon?`}; }
+    const L=[['जी, बोलिए…','Ji, boliye…'],['जी, क्या ढूँढूँ?','Ji, kya dhoondhun?'],['बताइए जी, क्या चाहिए?','Bataiye ji, kya chahiye?']]; const x=L[Math.floor(Math.random()*L.length)]; return {hi:x[0],show:x[1]}; }
+  function say(text,done){ clearTimeout(tmo); wait=done; document.body.classList.add('k93-say'); const fin=()=>{ clearTimeout(tmo); document.body.classList.remove('k93-say'); const w=wait; wait=null; if(w) w(); };
+    tmo=setTimeout(fin,6000);
+    if(window.KoVoice){ try{ KoVoice.postMessage('say:'+text); return; }catch(e){} }
+    try{ const S=window.speechSynthesis; if(!S) return fin(); S.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='hi-IN'; u.rate=1.02; u.pitch=1.1;
+      const vs=S.getVoices().filter(v=>/hi[-_]IN/i.test(v.lang)); const fem=vs.find(v=>/female|swara|lekha|kalpana|heera|google/i.test(v.name))||vs[0]; if(fem) u.voice=fem;
+      u.onend=fin; u.onerror=fin; S.speak(u); }catch(e){ fin(); } }
+  window.k93Say=say;
+  /* native ka "bol diya" */
+  try{ const _cb=window.koVoiceCb; window.koVoiceCb=function(t,v){ if(t==='spoken'){ if(wait){ clearTimeout(tmo); document.body.classList.remove('k93-say'); const w=wait; wait=null; setTimeout(w,150); } return; } return _cb.apply(this,arguments); }; }catch(e){}
+  /* mic dabate hi: pehle bole, phir sune */
+  window.k93Greet=function(start){ if(document.body.classList.contains('k92-on')||document.body.classList.contains('k93-say')){ try{ window.speechSynthesis&&speechSynthesis.cancel(); }catch(e){} document.body.classList.remove('k93-say'); wait=null; return start(); }
+    const g=line(); try{ k92Paint('say',g.show,null); }catch(e){} try{ navigator.vibrate&&navigator.vibrate(12); }catch(e){} say(g.hi,()=>start()); };
+})();
+</script>
+
 
 
 

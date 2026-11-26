@@ -466,6 +466,8 @@ class _WebHomeState extends State<WebHome> with WidgetsBindingObserver {
         await _voiceCh.invokeMethod('start', {'lang': lang});
       } else if (m == 'stop') {
         await _voiceCh.invokeMethod('stop');
+      } else if (m.startsWith('say:')) {
+        await _voiceCh.invokeMethod('say', {'text': m.substring(4)});
       }
     } catch (_) {
       try { await _c.runJavaScript("window.koVoiceCb&&koVoiceCb('error','x')"); } catch (_) {}

@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import java.util.Locale
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -13,6 +16,9 @@ class MainActivity : FlutterActivity() {
     private var linkCh: MethodChannel? = null
     private var voiceCh: MethodChannel? = null
     private var sr: SpeechRecognizer? = null
+    private var tts: TextToSpeech? = null
+    private var ttsReady = false
+    private var ttsPending: String? = null
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "ko/accounts").setMethodCallHandler { call, result ->
@@ -30,6 +36,7 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "start" -> { startVoice(call.argument<String>("lang") ?: "hi-IN"); result.success(true) }
                 "stop" -> { try { sr?.stopListening() } catch (e: Exception) {}; result.success(true) }
+                "say" -> { say(call.argument<String>("text") ?: ""); result.success(true) }
                 else -> result.notImplemented()
             }
         }
@@ -82,5 +89,30 @@ class MainActivity : FlutterActivity() {
             } catch (e: Exception) { voiceCh?.invokeMethod("error", "x") }
         }
     }
-    override fun onDestroy() { try { sr?.destroy() } catch (e: Exception) {}; super.onDestroy() }
+    // Bolne wali awaaz (TextToSpeech, Hindi) — khatam hote hi "spoken"
+    private fun speakNow(text: String) {
+        try {
+            tts?.language = Locale("hi", "IN")
+            tts?.setSpeechRate(1.02f); tts?.setPitch(1.08f)
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "ko_say")
+        } catch (e: Exception) { voiceCh?.invokeMethod("spoken", "") }
+    }
+    private fun say(text: String) {
+        runOnUiThread {
+            if (tts == null) {
+                ttsPending = text
+                tts = TextToSpeech(this) { st ->
+                    ttsReady = st == TextToSpeech.SUCCESS
+                    tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                        override fun onStart(id: String?) {}
+                        override fun onDone(id: String?) { runOnUiThread { voiceCh?.invokeMethod("spoken", "") } }
+                        @Deprecated("old") override fun onError(id: String?) { runOnUiThread { voiceCh?.invokeMethod("spoken", "") } }
+                    })
+                    val p = ttsPending; ttsPending = null
+                    if (ttsReady && p != null) speakNow(p) else voiceCh?.invokeMethod("spoken", "")
+                }
+            } else if (ttsReady) speakNow(text) else voiceCh?.invokeMethod("spoken", "")
+        }
+    }
+    override fun onDestroy() { try { sr?.destroy() } catch (e: Exception) {}; try { tts?.shutdown() } catch (e: Exception) {}; super.onDestroy() }
 }
