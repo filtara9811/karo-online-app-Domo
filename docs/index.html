@@ -22362,6 +22362,7 @@ try{ const _pb=posBill; posBill=function(i,back){ const r=_pb.apply(this,argumen
       <div class="tmr">⏳ Window band hone me ${fmt(s.exp-Date.now())} baaki</div>
       <div class="stp"><div><em>📩</em>Aap request bhejein</div><div><em>✅</em>Vendor accept kare</div><div><em>🪙</em>Vendor ka 1 coin kate</div><div><em>💬</em>Chat khul jaye</div></div>
       <button class="go" onclick="odvReq(${i},${k})">📩 ${E(v.n.split(' ')[0])} ko request bhejein</button>`); };
+  window._odvSt=st; window._odvFmt=fmt;
   window.odvReq=function(i,k){ const s=st(i)[k], v=orderVendors(i)[k]; s.s='sent'; v10X(); repaint(i); toast('📩 Request bheji — '+v.n.split(' ')[0]+' ke accept ka intezaar');
     setTimeout(()=>{ s.s='ok'; repaint(i); toast('✅ '+v.n.split(' ')[0]+' ne accept kiya · unka 1 coin kata · ab chat karein'); },3200); };
 
@@ -26640,7 +26641,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=293;
+window.KO_V=294;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -30710,6 +30711,77 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
     const g=line(); try{ k92Paint('say',g.show,null); }catch(e){} try{ navigator.vibrate&&navigator.vibrate(12); }catch(e){} say(g.hi,()=>start()); };
 })();
 </script>
+<style id="v294-css">
+/* chat ke upar Chrome jaise tabs — har vendor ka ek tab */
+#chatOv.cht-on .cat-sheet-handle{display:none}
+#chatOv.cht-on #chAv,#chatOv.cht-on #chName,#chatOv.cht-on #chSub{display:none!important}
+#chatOv.cht-on #chName{display:none}
+#chatOv .cht{display:none}
+#chatOv.cht-on .cht{display:flex;align-items:flex-end;gap:0;overflow-x:auto;scrollbar-width:none;margin:-6px -16px 0 -16px;padding:10px 12px 0;background:linear-gradient(180deg,#EFE5D2,#E8DCC4);border-radius:26px 26px 0 0;position:relative}
+#chatOv .cht::-webkit-scrollbar{display:none}
+#chatOv.cht-on .sm-sheet{position:relative}#chatOv.cht-on .sm-head{position:absolute!important;top:7px;right:8px;z-index:6;padding:0!important;margin:0!important;background:none!important;border:0!important;gap:6px!important;min-height:0!important}
+#chatOv.cht-on .sm-head button,#chatOv.cht-on .sm-head a{width:34px!important;height:34px!important;min-width:34px!important;font-size:14px}
+#chatOv.cht-on .cht{padding-right:92px;margin-bottom:8px}
+#chatOv.cht-on .cht:after{content:'';position:absolute;right:0;top:0;bottom:0;width:96px;background:linear-gradient(90deg,rgba(234,222,200,0),#EADEC8 30%);pointer-events:none;border-radius:0 26px 0 0}
+.cht-t{position:relative;flex:none;display:flex;align-items:center;gap:7px;max-width:150px;height:42px;padding:0 14px 0 8px;margin-right:2px;border:0;background:transparent;border-radius:14px 14px 0 0;font:700 13px Poppins,system-ui;color:#6b5a3c;cursor:pointer;white-space:nowrap}
+.cht-t:not(.on):not(:last-child):after{content:'';position:absolute;right:-1px;top:12px;height:18px;width:1px;background:rgba(107,90,60,.25)}
+.cht-t.on{background:#FFFBF4;color:#1d1408;box-shadow:0 -2px 8px rgba(80,55,20,.06);z-index:2}
+.cht-t.on:before,.cht-t.on:after{content:'';position:absolute;bottom:0;width:14px;height:14px;background:transparent}
+.cht-t.on:before{left:-14px;border-bottom-right-radius:14px;box-shadow:5px 5px 0 4px #FFFBF4}
+.cht-t.on:after{right:-14px;border-bottom-left-radius:14px;box-shadow:-5px 5px 0 4px #FFFBF4}
+.cht-t .a{position:relative;width:28px;height:28px;border-radius:50%;background:#FFF3E2;display:grid;place-items:center;font-size:16px;flex:none;box-shadow:0 0 0 2px #fff}
+.cht-t .a i{position:absolute;right:-3px;bottom:-2px;width:10px;height:10px;border-radius:50%;background:#16A34A;border:2px solid #fff;font-style:normal}
+.cht-t.lk .a i,.cht-t.wn .a i,.cht-t.sn .a i{display:none}
+.cht-t .n{overflow:hidden;text-overflow:ellipsis}
+.cht-t small{font:800 9.5px Poppins,system-ui;color:#B45309;margin-left:-2px}
+.cht-t.lk{opacity:.55}
+.cht-t u{text-decoration:none;min-width:17px;height:17px;border-radius:99px;background:#EE6A0D;color:#fff;font:800 10px/17px Poppins,system-ui;text-align:center;padding:0 4px}
+.cht-t .lkx{font-size:11px}
+/* locked / intezaar wala tab — chat ki jagah card */
+.cht-req{margin:18px 6px;background:#fff;border:1.5px solid #EFE3C8;border-radius:20px;padding:16px;text-align:center;font-family:Poppins,system-ui}
+.cht-req .av{width:64px;height:64px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;font-size:32px;background:#FFF3E2;box-shadow:0 0 0 3px #F59E0B}
+.cht-req b{display:block;font-size:16px}.cht-req small{color:#8a7a5a;font-size:12px}
+.cht-req .tm{display:inline-block;margin:10px 0;padding:6px 12px;border-radius:99px;background:#FFF4E0;color:#B45309;font:800 12.5px Poppins,system-ui}
+.cht-req p{font-size:13px;color:#5a4a2f;margin:8px 0}
+.cht-req button{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;padding:13px;background:linear-gradient(135deg,#F47B20,#E35D0A);color:#fff;font:800 14px Poppins,system-ui}
+.cht-req button.dk{background:#1d1408}
+#chatOv.cht-lock .ch-quick,#chatOv.cht-lock .ch-in,#chatOv.cht-lock .ch-bar,#chatOv.cht-lock .ch-compose{opacity:.35;pointer-events:none}
+</style>
+<script id="v294">
+(function(){
+  const $=id=>document.getElementById(id);
+  const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let CT={i:null,k:0};
+  const idOf=(i,k)=>k===0?'order'+i:'order'+i+'_v'+k;
+  function bar(){ const ov=$('chatOv'); if(!ov) return null; let b=ov.querySelector('.cht'); if(!b){ b=document.createElement('div'); b.className='cht'; const sh=ov.querySelector('.sm-sheet'); const hd=sh&&sh.querySelector('.sm-head'); if(!hd) return null; sh.insertBefore(b,hd); } return b; }
+  function paint(){ const ov=$('chatOv'); if(!ov||CT.i==null) return; const b=bar(); if(!b) return; const i=CT.i, L=orderVendors(i), S=_odvSt(i);
+    b.innerHTML=L.map((v,k)=>{ const s=S[k]||{s:'ok'}; const cls=s.s==='ok'?'':s.s==='lk'?'lk':s.s==='sent'?'sn':'wn';
+      const tail=s.s==='ok'?(s.un?`<u>${s.un}</u>`:''):s.s==='lk'?'<span class="lkx">🔒</span>':s.s==='sent'?'<small>⏳</small>':`<small>${_odvFmt(s.exp-Date.now()).replace(' ','')}</small>`;
+      return `<button class="cht-t ${cls}${k===CT.k?' on':''}" onclick="chtGo(${k})"><span class="a">${v.e}<i></i></span><span class="n">${E(v.n.split(' ')[0])}</span>${tail}</button>`; }).join('');
+    ov.classList.add('cht-on'); const on=b.querySelector('.cht-t.on'); if(on) try{ on.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} }
+  function lockView(){ const i=CT.i,k=CT.k, v=orderVendors(i)[k], s=_odvSt(i)[k], o=ORDERS[i]; const ov=$('chatOv'); ov.classList.add('cht-lock'); const m=$('chMsgs'); if(!m) return;
+    let body='';
+    if(s.s==='lk') body=`<p>🔒 Is vendor ke saath <b>24 ghante ki window band</b> ho gayi.</p><p style="color:#8a7a5a">Dobara chahiye to nayi request daalein.</p><button class="dk" onclick="closeChat();toast('🔁 Category khol kar Find dabayein')">🔁 Nayi request daalein</button>`;
+    else if(s.s==='sent') body=`<p>⏳ Request chali gayi — <b>${E(v.n.split(' ')[0])}</b> ke accept karne ka intezaar…</p>`;
+    else body=`${s.un?`<p>💬 <b>${s.un} naya message</b> — “${E(s.msg)}”</p>`:''}<span class="tm">⏳ ${_odvFmt(s.exp-Date.now())} baaki</span><p>Request bhejein → vendor accept kare → chat yahin khul jayegi</p><button onclick="chtReq()">📩 ${E(v.n.split(' ')[0])} ko request bhejein</button>`;
+    m.innerHTML=`<div class="cht-req"><div class="av">${v.e}</div><b>${E(v.n)}</b><small>⭐ ${v.r} · ${E(o[0])}</small>${body}</div>`; }
+  window.chtGo=function(k){ const i=CT.i; if(i==null) return; CT.k=k; const v=orderVendors(i)[k], s=_odvSt(i)[k]; try{ koChime&&koChime('tick'); }catch(e){}
+    if(s.s==='ok'){ $('chatOv').classList.remove('cht-lock'); s.un=0; openChat(idOf(i,k),v.e,v.n,ORDERS[i][0]); try{ document.querySelectorAll(`.od-vw[data-oi="${i}"]`).length; }catch(e){} }
+    else { lockView(); } paint(); };
+  window.chtReq=function(){ const i=CT.i,k=CT.k; try{ odvReq(i,k); }catch(e){} paint(); lockView();
+    setTimeout(()=>{ if(CT.i===i&&CT.k===k&&$('chatOv').classList.contains('open')) chtGo(k); else paint(); },3400); };
+  /* My Orders me vendor dabaya → chat sheet Chrome tabs ke saath */
+  try{ const _t=window.odvTap; window.odvTap=function(i,k){ CT={i,k}; const s=_odvSt(i)[k];
+      if(s.s==='ok'){ const r=_t.apply(this,arguments); setTimeout(paint,30); return r; }
+      const v0=orderVendors(i)[0]; openChat(idOf(i,0),v0.e,v0.n,ORDERS[i][0]); setTimeout(()=>{ lockView(); paint(); },30); }; }catch(e){}
+  /* doosre raaste se chat khule to tabs hatao */
+  try{ const _oc=window.openChat; window.openChat=openChat=function(key){ const r=_oc.apply(this,arguments); const m=String(key).match(/^order(\d+)(?:_v(\d+))?$/); const ov=$('chatOv');
+      if(!m||CT.i==null||+m[1]!==CT.i){ if(ov) ov.classList.remove('cht-on','cht-lock'); if(!m) CT={i:null,k:0}; } return r; }; }catch(e){}
+  try{ const _cc=window.closeChat; window.closeChat=closeChat=function(){ const r=_cc.apply(this,arguments); setTimeout(()=>{ const ov=$('chatOv'); if(ov&&!ov.classList.contains('open')){ ov.classList.remove('cht-on','cht-lock'); CT={i:null,k:0}; } },400); return r; }; }catch(e){}
+  setInterval(()=>{ const ov=$('chatOv'); if(ov&&ov.classList.contains('cht-on')&&ov.classList.contains('open')) paint(); },15000);
+})();
+</script>
+
 
 
 
