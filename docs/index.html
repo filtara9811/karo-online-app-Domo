@@ -26641,7 +26641,7 @@ new MutationObserver(()=>{ try{ tick(); }catch(e){} }).observe(document.getEleme
 #koUpd button{border:0;border-radius:99px;background:#F47B20;color:#fff;font:inherit;font-weight:900;padding:7px 14px;cursor:pointer}
 </style>
 <script id="v257-js">
-window.KO_V=297;
+window.KO_V=298;
 (function(){
   /* ---- My Orders in shop menu ---- */
   const BAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
@@ -30899,6 +30899,72 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
 .qm-rq span{flex:1 1 180px}.qm-rq button{border:0;border-radius:10px;padding:8px 12px;font:800 12px Poppins,system-ui}
 .qm-rq .y{background:#16A34A;color:#fff}.qm-rq .n{background:#fff;color:#5a4a2f;border:1px solid #EADFCB}
 .qm-coin{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.qm-coin span{background:#FBF6EC;border:1px solid #F0E6D2;border-radius:10px;padding:5px 8px;font:700 11px Poppins,system-ui;color:#5a4a2f}.qm-coin span.on{background:#1d1408;color:#F5C451;border-color:#1d1408}
+
+/* ===== v298: purana chat composer + plus + automation + edit/delete + sunein ===== */
+.qm-ft.qx{padding:0;border-top:0;background:linear-gradient(180deg,rgba(255,251,244,0),#FFFBF4 18%)}
+.qm-ft.qx .qm-chips{padding:6px 12px 0}
+.qm-ft.qx .ch-bar{padding:6px 10px calc(10px + env(safe-area-inset-bottom,0px))}
+.qx-in{display:flex;align-items:center;gap:6px;padding:0 2px 4px}
+.qx-in input{flex:1 1 auto!important;width:auto!important;min-width:0;border:0;outline:0;background:transparent;font:500 15px Poppins,system-ui;color:#1d1408;padding:6px 2px}
+.qm-ft.qx .ch-norm{overflow:hidden}
+.qx-bot .g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}.qx-bot .g button{margin-top:0;padding:8px 9px;font-size:12px}
+.qx-dict{flex:none;width:34px;height:34px;border-radius:50%;border:0;background:#FFF3E2;color:#EE6A0D;font-size:15px;cursor:pointer;display:grid;place-items:center}
+.qx-dict.on{background:#EE6A0D;color:#fff;animation:qmPulse 1.2s infinite}
+.qx-pill{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:46%;height:28px;padding:0 10px 0 3px;border-radius:99px;background:#F6EEDF;font:700 11.5px Poppins,system-ui;color:#3b2f1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qx-pill i{flex:none;width:22px;height:22px;border-radius:50%;background:#FFE7CC;display:grid;place-items:center;font-style:normal;font-size:12px}
+.qx-to{flex:none;font:800 10px Poppins,system-ui;color:#C2410C;background:#FFF1E4;border-radius:99px;padding:4px 8px;white-space:nowrap}
+.qx-to.all{background:#1d1408;color:#F5C451}
+.qx-pl{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px;padding:10px 12px 2px;animation:qmNew .25s ease}
+.qx-pl button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font:700 10.5px Poppins,system-ui;color:#3b2f1c;cursor:pointer;line-height:1.2;text-align:center}
+.qx-pl button i{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-style:normal;font-size:20px;color:#fff;box-shadow:0 4px 10px rgba(80,50,10,.12)}
+.qx-pl button.off{opacity:.38}
+.qx-rec{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #EAD9B0;border-radius:26px;padding:8px 8px 8px 12px;box-shadow:0 4px 18px rgba(80,50,10,.08)}
+.qx-rec .dot{width:10px;height:10px;border-radius:50%;background:#E11D48;animation:qmPulse 1s infinite}
+.qx-rec b{font:800 15px Poppins,system-ui}.qx-rec span{flex:1;font:600 12px Poppins,system-ui;color:#8a7a5a}
+.qx-rec .del{width:40px;height:40px;border-radius:50%;border:0;background:#FDECEC;font-size:16px}
+.qm-m small{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+.qx-say{border:0;background:none;padding:0;font-size:12px;opacity:.65;cursor:pointer;color:inherit;line-height:1}
+.qx-ed{display:block;margin-top:5px;font:600 10.5px Poppins,system-ui;color:#B45309;background:rgba(245,196,81,.14);border-radius:8px;padding:4px 7px}
+.qm-m.me .qx-ed{color:#F5C451;background:rgba(245,196,81,.12)}
+.qm-m.del>div{font-style:italic;opacity:.75}
+.qx-img{display:block;width:210px;max-width:100%;border-radius:12px;margin:-2px -4px 4px}
+.qx-vc{display:flex;align-items:center;gap:8px;min-width:180px}
+.qx-vc button{width:34px;height:34px;border-radius:50%;border:0;background:#EE6A0D;color:#fff;font-size:13px;flex:none}
+.qx-vc em{flex:1;height:22px;background:repeating-linear-gradient(90deg,currentColor 0 2px,transparent 2px 5px);opacity:.35;-webkit-mask:linear-gradient(90deg,#000 0 100%);border-radius:4px;font-style:normal}
+.qx-vc b{font:700 11px Poppins,system-ui}
+.qx-qr{background:#fff;border-radius:12px;padding:8px;text-align:center;color:#1d1408;margin:-2px -4px 4px}
+.qx-qr svg{width:150px;height:150px;display:block;margin:0 auto}
+.qx-qr b{display:block;font:900 18px Poppins,system-ui;margin-top:4px}.qx-qr span{font:600 10.5px Poppins,system-ui;color:#6b5a3c}
+.qx-pay{display:flex;align-items:center;gap:8px;font:800 14px Poppins,system-ui}.qx-pay i{font-style:normal;font-size:20px}
+.qx-ord{background:#fff;border:1.5px solid #CDE9E1;border-radius:16px;padding:10px 12px;margin:8px 0;animation:qmNew .3s ease}
+.qx-ord h6{margin:0 0 8px;font:800 12px Poppins,system-ui;color:#0F5F55}
+.qx-ord ol{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+.qx-ord li{flex:1;text-align:center;font:700 9.5px Poppins,system-ui;color:#8a7a5a}
+.qx-ord li i{display:block;height:5px;border-radius:3px;background:#E8DFCC;margin-bottom:5px}
+.qx-ord li.on{color:#0B7A4B}.qx-ord li.on i{background:#16A34A}
+.qx-bot{max-width:88%;background:#fff;border:1px solid #EFE6D3;border-radius:16px 16px 16px 4px;padding:10px 11px;margin:8px 0;font:600 13px Poppins,system-ui;color:#1d1408;animation:qmNew .3s ease}
+.qx-bot b{font-weight:800}.qx-bot small{display:block;font:600 10.5px Poppins,system-ui;color:#8a7a5a;margin-top:6px}
+.qx-bot button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:1.5px solid #F2CF8E;border-radius:12px;padding:9px 11px;margin-top:7px;background:#FFFBF1;font:800 13px Poppins,system-ui;color:#C2410C;cursor:pointer}
+.qx-bot button u{text-decoration:none;flex:none;width:22px;height:22px;border-radius:7px;background:#1d1408;color:#F5C451;display:grid;place-items:center;font:900 12px Poppins,system-ui}
+.qx-as{display:flex;gap:3px;background:#F3EBDD;border-radius:99px;padding:3px;margin:0 auto 10px;width:max-content;max-width:100%}
+.qx-as button{border:0;border-radius:99px;padding:6px 12px;background:none;font:800 11.5px Poppins,system-ui;color:#6b5a3c;white-space:nowrap}
+.qx-as button.on{background:#1d1408;color:#F5C451}
+.qx-num{display:flex;align-items:center;gap:10px;background:#E8F7EF;border:1px solid #BFE6CF;border-radius:14px;padding:9px 10px 9px 12px;margin:4px 0 10px;font:700 12.5px Poppins,system-ui;color:#0B5F3A}
+.qx-num span{flex:1}.qx-num b{font-weight:900;letter-spacing:.02em}
+.qx-num button{border:0;border-radius:11px;padding:8px 12px;background:#16A34A;color:#fff;font:800 12px Poppins,system-ui}
+.qm-hd .qx-call{background:#E8F7EF!important;color:#0B7A4B}
+.qx-mn{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.qx-mn button{border:1.5px solid #EDE2CB;background:#fff;border-radius:14px;padding:10px 4px;font:700 11px Poppins,system-ui;color:#3b2f1c;display:flex;flex-direction:column;align-items:center;gap:4px}
+.qx-mn button i{font-style:normal;font-size:19px}.qx-mn button.red{color:#B91C1C}
+.qx-q{display:block;margin:10px 0 0;font:800 12px Poppins,system-ui;color:#5a4a2f}.qx-q small{font-weight:600;color:#8a7a5a}
+.qm-cf textarea,.qm-cf .qx-fi{width:100%;box-sizing:border-box;border:1.5px solid #EDE2CB;border-radius:12px;padding:10px;font:500 14px Poppins,system-ui;margin-top:5px;background:#fff}
+.qm-cf textarea{min-height:80px;resize:vertical}
+/* My Orders: aur sundar */
+.qv-v{width:50px}.qv-v .a{width:34px;height:34px;font-size:17px;background:radial-gradient(circle at 30% 30%,#FFF8EC,#FFE7C9)}
+.qv-v s{text-decoration:none;font:800 9.5px Poppins,system-ui;color:#C2410C;margin-top:1px}
+.qv-v.won s{color:#0B7A4B}.qv-v.lost s,.qv-v.wait s{color:#b9ab90}
+.od-vw.qv{background:linear-gradient(180deg,#FFFBF3,#FFF6E8);border:1px solid #F3E6CC;border-radius:16px;padding:8px 8px 8px 6px}
+.qv-go{box-shadow:0 4px 12px rgba(29,20,8,.18)}
 </style>
 <script id="v295">
 (function(){
@@ -30934,7 +31000,7 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   window.qmTab=t=>{ CUR.tab=t; if(t!=='all'){ CUR.V[t].un=0; } paint(); try{ koChime&&koChime('tick'); }catch(e){} };
   window.qmSort=s=>{ CUR.sort=s; paint(); };
   function head(r){ const J=joined(r).length; const w=r.won!=null?r.V[r.won]:null;
-    return `<div class="qm-hd"><span class="ic">${E(r.o[1])}</span><div class="tt"><b>${E(r.o[0])}</b><small>${w?`✓ ${E(w.n.split(' ')[0])} ko chuna · ${R(w.price)}`:`Quote Room · ${J}/5 vendor judd gaye`}</small><div class="qm-dots">${r.V.map(v=>`<i class="${v.st==='won'?'w':v.st!=='wait'?'on':''}"></i>`).join('')}</div></div><button onclick="qmVendorView()" title="Vendor ko kaisa dikhta hai">👁</button><button onclick="qrmClose()">✕</button></div>`; }
+    return `<div class="qm-hd"><span class="ic">${E(r.o[1])}</span><div class="tt"><b>${E(r.o[0])}</b><small>${w?`✓ ${E(w.n.split(' ')[0])} ko chuna · ${R(w.price)}`:`Quote Room · ${J}/5 vendor judd gaye`}</small><div class="qm-dots">${r.V.map(v=>`<i class="${v.st==='won'?'w':v.st!=='wait'?'on':''}"></i>`).join('')}</div></div>${w?'<button class="qx-call" onclick="qmCall()" title="Call">📞</button>':''}<button onclick="qmVendorView()" title="Vendor ko kaisa dikhta hai">👁</button><button onclick="qrmClose()">✕</button></div>`; }
   function tabs(r){ const J=joined(r);
     const all=`<button class="qm-t all${r.tab==='all'?' on':''}" onclick="qmTab('all')"><span class="a">📣</span><span class="nm">Sab<small>${J.length} quote</small></span><span class="fl"></span></button>`;
     return `<div class="qm-tb">${all}${r.V.map(v=>{ const q=quoteOf(r,v.k); const cls=v.st==='wait'?'wait':v.st==='lost'?'lost':v.st==='won'?'won':''; const isOn=r.tab===v.k;
@@ -30956,27 +31022,63 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
       ${waiting&&r.won==null?`<div class="qm-wt"><i></i><span>${waiting} aur vendor aa rahe hain — har ek ka 24 ghante ka samay alag chalega</span></div>`:''}
       <div class="qm-h">📣 SABKO BHEJE GAYE MESSAGE</div>
       ${bc.map(m=>{ const rep=r.M.filter(x=>x.f==='v'&&x.at>m.at&&x.at<m.at+60*6e4).map(x=>x.v); const n=new Set(rep).size; return `<div class="qm-m me"><span class="bc">📣 ${joined(r).length} vendors ko</span><div>${E(m.t)}</div><small>${tm(m.at)} · ${n} ne jawab diya</small></div>`; }).join('')}`; }
-  function vView(r,k){ const v=r.V[k], q=quoteOf(r,k); const won=r.won!=null;
+  const STEPS=['✓ Order pakka','🚶 Raste me','🔧 Kaam chalu','🎉 Poora'];
+  function bubble(r,v,m){ const mi=r.M.indexOf(m), as=r.as||'c', mine=as==='v'?m.f==='v':m.f==='c';
+    if(m.ord!=null) return `<div class="qx-ord" data-mi="${mi}"><h6>📦 Order · ${E(STEPS[m.ord])}</h6><ol>${STEPS.map((x,j)=>`<li class="${j<=m.ord?'on':''}"><i></i>${E(x.replace(/^\S+\s/,''))}</li>`).join('')}</ol></div>`;
+    if(m.q){ return `<div class="qm-m qc ${mine?'me':''}" data-mi="${mi}"><div class="h">🧾 QUOTE</div><div class="b"><b>${R(m.price)}</b>${m.old?` <s style="opacity:.5">${R(m.old)}</s>`:''}<span>🕐 ${E(m.eta)}</span><span>${(m.inc||[]).map(x=>'✓ '+E(x)).join(' · ')}</span><small style="margin-top:4px">${tm(m.at)}<button class="qx-say" onclick="event.stopPropagation();qmSay(${mi})">🔊</button></small></div></div>`; }
+    let body='';
+    if(m.del) body=`<div>🚫 Ye message hata diya gaya</div><span class="qx-ed">🔍 Pehle likha tha: “${E(m.del.t)}”</span>`;
+    else { const mm=(as==='c'&&m.f==='v'&&v.st!=='won')?mask(m.t||''):{t:m.t||'',hit:false};
+      if(m.img) body+=`<img class="qx-img" src="${E(m.img)}" alt="photo">`;
+      if(m.voice) body+=`<div class="qx-vc"><button onclick="event.stopPropagation();qmPlay(${mi})">▶</button><em></em><b>${E(m.voice.dur||'0:03')}</b></div>`;
+      if(m.qr){ const qt='upi://pay?pa='+m.qr.upi+'&am='+m.qr.amt+'&cu=INR'; let sv=''; try{ sv=window.qrSvg?qrSvg(qt):''; }catch(e){} body+=`<div class="qx-qr">${sv||`<div class="qx-qrc" data-qr="${E(qt)}" style="width:150px;height:150px;margin:0 auto;display:grid;place-items:center;font-size:40px">▦</div>`}`; }
+      if(m.qr) body+=`<b>${R(m.qr.amt)}</b><span>UPI: ${E(m.qr.upi)} · scan karke pay karein</span></div>`;
+      if(m.pay) body+=`<div class="qx-pay"><i>✅</i>${R(m.pay)} bhej diye <span style="font:600 10.5px Poppins;opacity:.7">(demo)</span></div>`;
+      if(mm.t) body+=`<div>${E(mm.t)}</div>`;
+      if(mm.hit) body+='<span class="mask">🔒 Number chunne ke baad dikhega</span>';
+      if(m.hist&&m.hist.length) body+=`<span class="qx-ed">✏️ Badla gaya · pehle: ${m.hist.map(h=>'“'+E(h.t)+'”').join(' → ')}</span>`; }
+    const bc=m.f==='c'&&m.to==='all'?'<span class="bc">📣 sabko</span>':'';
+    return `<div class="qm-m ${mine?'me':''}${m.del?' del':''}" data-mi="${mi}">${bc}${body}<small>${tm(m.at)}${mine?' ✓✓':''}${!m.del&&(m.t||m.voice||m.q)?`<button class="qx-say" onclick="event.stopPropagation();qmSay(${mi})" title="Sunein">🔊</button>`:''}</small></div>`; }
+  function botCard(r,v){ if(r.bot===false||!(v.st==='in'||v.st==='won')) return ''; const as=r.as||'c';
+    const L=as==='v'?[['🧾 Quote bhejein'],['▦ Payment QR bhejein'],['📦 Order aage badhayein'],['🖼️ Product photo bhejein']]
+      :v.st==='won'?[['📦 Order chalayein / aage'],['💳 Payment karein'],['📍 Location bhejein'],['📞 Call karein']]
+      :[['✓ Approve — isse chunein'],['✕ Mana karein (band)'],['💬 Kam rate maangein'],['📷 Photo maangein']];
+    return `<div class="qx-bot">🙏 ${as==='v'?'<b>Jaldi kaam</b> — number dabayein ya likhein:':`<b>${E(r.o[0])}</b> — jaldi ke liye number dabayein ya likhein 👇`}<div class="g">${L.map((x,j)=>`<button onclick="qmCmd(${j+1})"><u>${j+1}</u>${x[0]}</button>`).join('')}</div><small>⚡ Automation · input me sirf “1”, “2”… likhne se bhi chalega</small></div>`; }
+  function vView(r,k){ const v=r.V[k], q=quoteOf(r,k); const as=r.as||'c';
     const list=r.M.filter(m=>(m.f==='c'&&(m.to==='all'||m.to===k))||((m.f==='v'||m.f==='s')&&m.v===k));
-    return `${r.req===k?rqHTML(r):''}${v.st==='in'&&q?`<div class="qm-pick"><div class="p">${E(v.n.split(' ')[0])} ka quote <b>${R(q.price)}</b> · ${E(q.eta)}</div><button onclick="qmPick(${k})">✓ Chunein</button></div>`:''}
-      ${v.st==='lost'?`<div class="qm-sys no"><span>🔒 Band — aapne ${E(r.V[r.won].n.split(' ')[0])} ko chuna · na aap likh sakte, na ye</span></div>`:''}${v.st==='won'?'<div class="qm-sys ok"><span>✓ Aapne inhe chuna — ab order shuru</span></div>':''}
+    const nm=E(v.n.split(' ')[0]);
+    return `<div class="qx-as"><button class="${as==='c'?'on':''}" onclick="qmAs('c')">👤 Grahak ki nazar</button><button class="${as==='v'?'on':''}" onclick="qmAs('v')">🏪 ${nm} ki nazar</button></div>
+      ${r.req===k&&as==='c'?rqHTML(r):''}${as==='c'&&v.st==='in'&&q?`<div class="qm-pick"><div class="p">${nm} ka quote <b>${R(q.price)}</b> · ${E(q.eta)}</div><button onclick="qmPick(${k})">✓ Chunein</button></div>`:''}
+      ${v.st==='lost'?`<div class="qm-sys no"><span>🔒 Band — ${v.rej?'aapne mana kiya':`aapne ${E(r.won!=null?r.V[r.won].n.split(' ')[0]:'kisi aur')} ko chuna`} · na aap likh sakte, na ye</span></div>`:''}
+      ${v.st==='won'?`<div class="qx-num"><span>✓ Chuna gaya · number khula<br><b>📞 98765 43210</b></span><button onclick="qmCall()">Call</button></div>`:''}
       ${v.st==='in'?`<div class="qm-sys"><span>⏳ ${left(v.at+24*H-now())} tak chat khuli rahegi</span></div>`:''}
-      ${list.map(m=>{ if(m.f==='s') return `<div class="qm-sys"><span>${E(m.t)}</span></div>`; if(m.q) return `<div class="qm-m qc"><div class="h">🧾 QUOTE</div><div class="b"><b>${R(m.price)}</b>${m.old?` <s style="opacity:.5">${R(m.old)}</s>`:''}<span>🕐 ${E(m.eta)}</span><span>${(m.inc||[]).map(x=>'✓ '+E(x)).join(' · ')}</span></div></div>`;
-        const mm=(m.f==='v'&&v.st!=='won')?mask(m.t):{t:m.t,hit:false};
-        return `<div class="qm-m ${m.f==='c'?'me':''}">${m.f==='c'&&m.to==='all'?'<span class="bc">📣 sabko</span>':''}<div>${E(mm.t)}</div>${mm.hit?'<span class="mask">🔒 Number chunne ke baad dikhega</span>':''}<small>${tm(m.at)}${m.f==='c'?' ✓✓':''}</small></div>`; }).join('')}`; }
-  function foot(r){ const one=r.tab!=='all'; const v=one?r.V[r.tab]:null; const W=r.won!=null?r.V[r.won]:null;
+      ${list.map(m=>{ if(m.f==='s') return `<div class="qm-sys"><span>${E(m.t)}</span></div>`; return bubble(r,v,m); }).join('')}
+      ${botCard(r,v)}`; }
+  function plusHTML(r){ if(!r.pl) return ''; const one=r.tab!=='all', v=one?r.V[r.tab]:null, as=r.as||'c', won=one&&v.st==='won';
+    const it=as==='v'?[['🧾','#EE6A0D','Quotation','qmQuoteForm()'],['🖼️','#8e5bd9','Product photo','qmPickFile()'],['📷','#e5383b','Photo','qmPickFile(1)'],['▦','#1d1408','Payment QR','qmQR()'],['💳','#0FA968','Payment link','qmQR(1)'],['📦','#2f7de1','Order update','qmOrder()'],['📍','#F58A2A','Location','qmLoc()'],['⚡','#14a3b8','Automation','qmBot()']]
+      :[['📷','#e5383b','Photo','qmPickFile(1)'],['🖼️','#8e5bd9','Gallery','qmPickFile()'],['📍','#F58A2A','Location','qmLoc()'],['🧾','#EE6A0D','Quote maangein',"qmSend('Naya quote bhejiye — rate, samay aur kya-kya shamil')"],
+         ['✓','#16A34A',won?'Approved':'Approve',one&&v.st==='in'?`qmCmd(1)`:'',!(one&&v.st==='in')],['✕','#B91C1C','Mana karein',one&&v.st==='in'?`qmCmd(2)`:'',!(one&&v.st==='in')],['📦','#2f7de1','Order chalayein',won?'qmOrder()':'',!won],['💳','#0FA968','Payment',won?'qmPay()':'',!won],['▦','#1d1408','QR se pay',won?'qmAskQR()':'',!won],['⚡','#14a3b8','Automation','qmBot()']];
+    return `<div class="qx-pl">${it.map(x=>`<button class="${x[4]?'off':''}" onclick="${x[3]?x[3]+';qmPlus(0)':"T('Pehle vendor chunein')"}"><i style="background:${x[1]}">${x[0]}</i>${x[2]}</button>`).join('')}</div>`; }
+  function foot(r){ const one=r.tab!=='all'; const v=one?r.V[r.tab]:null; const W=r.won!=null?r.V[r.won]:null; const as=r.as||'c';
     if(!one&&W) return `<div class="qm-done" onclick="qmTab(${W.k})">✓ ${E(W.n.split(' ')[0])} se baat unke tab me › · baaki band</div>`;
-    if(one&&v.st==='lost') return `<div class="qm-lk"><span>🔒 Chat band — aapne ${E(W?W.n.split(' ')[0]:'kisi aur')} ko chuna. Na aap likh sakte, na ${E(v.n.split(' ')[0])}.</span><button onclick="qmReopen(${v.k})">↺ Dobara baat karein · ₹10</button></div>`;
+    if(one&&v.st==='lost') return `<div class="qm-lk"><span>🔒 Chat band — ${v.rej?'aapne mana kiya':`aapne ${E(W?W.n.split(' ')[0]:'kisi aur')} ko chuna`}. Na aap likh sakte, na ${E(v.n.split(' ')[0])}.</span>${as==='c'?`<button onclick="qmReopen(${v.k})">↺ Dobara baat karein</button>`:`<button onclick="qmVReq(${v.k})">🙋 Dobara baat ki request bhejein · 1 coin</button>`}</div>`;
     if(one&&v.st==='wait') return '';
-    const Q=one?(v.st==='won'?['Kab tak aaoge?','Location bhejun?','Payment kaise karun?','Photo bhejiye']:['Thoda kam karoge?','Kal aa sakte ho?','Photo bhejiye','Final rate?']):['Sabse kam rate batayein','Kal subah chahiye','Guarantee kitni?','Pehle dekh kar rate'];
-    return `<div class="qm-ft"><div class="qm-chips">${Q.map(q=>`<button onclick="qmSend(this.textContent)">${q}</button>`).join('')}</div><div class="qm-in"><span class="qm-to ${one?'one':''}">${one?(v.st==='won'?'✓ ':'Sirf ')+E(v.n.split(' ')[0]):'📣 Sabko'}</span><input id="qmI" placeholder="${one?'Sirf inko likhein…':'Sabhi vendors ko likhein…'}" onkeydown="if(event.key==='Enter')qmSend()"><button class="sd" onclick="qmSend()">➤</button></div></div>`; }
+    const Q=as==='v'?['Ji, ho jayega 🙏','Aaj aa sakta hoon','Photo bhej raha hoon','Rate thoda kam kar diya']:one?(v.st==='won'?['Kab tak aaoge?','Location bhejun?','Payment kaise karun?','Photo bhejiye']:['Thoda kam karoge?','Kal aa sakte ho?','Photo bhejiye','Final rate?']):['Sabse kam rate batayein','Kal subah chahiye','Guarantee kitni?','Pehle dekh kar rate'];
+    const to=as==='v'?'🏪 '+E(v.n.split(' ')[0]):one?(v.st==='won'?'✓ ':'Sirf ')+E(v.n.split(' ')[0]):'📣 Sabko';
+    const comp=r.rec?`<div class="qx-rec"><button class="del" onclick="qmRec(0)">🗑️</button><i class="dot"></i><b id="qmRt">0:00</b><span>Recording… बोलिए</span><button class="ch-act" onclick="qmRec(1)">➤</button></div>`
+      :`<div class="ch-norm"><div class="qx-in"><input id="qmI" placeholder="संदेश लिखें…" oninput="qmInp()" onkeydown="if(event.key==='Enter')qmSend()"><button class="qx-dict" id="qmDict" onclick="qmDict(this)" title="बोलकर लिखें">🎤</button></div>
+        <div class="cc-row"><button class="ch-plus${r.pl?' open':''}" onclick="qmPlus()">＋</button><span class="qx-pill"><i>${E(r.o[1])}</i>${E(r.o[0])}</span><span class="cc-sp" style="flex:1"></span><span class="qx-to ${one?'':'all'}">${to}</span><button class="ch-act" id="qmAct" onclick="qmAct()" title="Voice note / Bhejein">🎙️</button></div></div>`;
+    return `<div class="qm-ft qx">${plusHTML(r)}<div class="qm-chips">${Q.map(q=>`<button onclick="qmSend(this.textContent)">${q}</button>`).join('')}</div><div class="ch-bar">${comp}</div></div>`; }
   function rqHTML(r){ if(r.req==null) return ''; const v=r.V[r.req]; return `<div class="qm-rq"><span>🙋 <b>${E(v.n.split(' ')[0])}</b> aapse dobara baat karna chahte hain${r.won!=null?' (aapka order '+E(r.V[r.won].n.split(' ')[0])+' ke paas hai)':''}</span><button class="y" onclick="qmReqOk(${v.k})">Haan, khol do</button><button class="n" onclick="qmReqNo()">Nahi</button></div>`; }
   function rowPaint(i){ document.querySelectorAll(`.od-vw[data-oi="${i}"]`).forEach(w=>{ try{ w.outerHTML=vendorsHTML(i); }catch(e){} }); }
-  function paint(){ const r=CUR, b=$('qmB'); if(!r||!b) return; const sc=(b.querySelector('.qm-bd')||{}).scrollTop;
+  function paint(){ const r=CUR, b=$('qmB'); if(!r||!b) return; const sc=(b.querySelector('.qm-bd')||{}).scrollTop; const iv=($('qmI')||{}).value||''; const foc=document.activeElement&&document.activeElement.id==='qmI';
     b.innerHTML=head(r)+tabs(r)+`<div class="qm-bd" id="qmBd">${r.tab==='all'?allView(r):vView(r,r.tab)}</div>`+foot(r);
-    rowPaint(r.i); const bd=$('qmBd'); if(bd) bd.scrollTop=r.tab==='all'?(sc||0):bd.scrollHeight; const on=b.querySelector('.qm-t.on'); if(on) try{ on.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} }
+    rowPaint(r.i); const bd=$('qmBd'); if(bd) bd.scrollTop=r.tab==='all'?(sc||0):bd.scrollHeight; const on=b.querySelector('.qm-t.on'); if(on) try{ on.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} const ni=$('qmI'); if(ni&&iv){ ni.value=iv; qmInp(); } if(ni&&foc) try{ ni.focus(); }catch(e){} lp(b); b.querySelectorAll('.qx-qrc[data-qr]').forEach(el=>{ try{ if(window.qrInto){ el.textContent=''; qrInto(el,el.dataset.qr); } }catch(e){} }); }
   /* ---------- bhejna: sabko ya ek ko ---------- */
-  window.qmSend=function(t){ const r=CUR; const i=$('qmI'); t=String(t||(i&&i.value)||'').trim(); if(!t) return; const to=r.tab==='all'?'all':r.tab; r.M.push({f:'c',to,t,at:now()}); paint();
+  window.qmSend=function(t){ const r=CUR; const i=$('qmI'); const typed=!t; t=String(t||(i&&i.value)||'').trim(); if(!t) return; if(typed&&i) i.value='';
+    if(/^[1-4]$/.test(t)&&r.tab!=='all'){ qmCmd(+t); return; }
+    if((r.as||'c')==='v'&&r.tab!=='all'){ const v=r.V[r.tab]; r.M.push({f:'v',v:v.k,t,at:now()}); paint(); setTimeout(()=>{ if(CUR!==r||v.st==='lost') return; r.M.push({f:'c',to:v.k,t:['Theek hai ji 👍','Ok, dekhta hoon','Achha, bhej dijiye','Shukriya 🙏'][r.M.length%4],at:now()}); paint(); try{ koChime&&koChime('note'); }catch(e){} },1800); return; }
+    const to=r.tab==='all'?'all':r.tab; r.M.push({f:'c',to,t,at:now()}); paint();
     const targets=(to==='all'?joined(r).filter(v=>v.st==='in'):[r.V[to]]); if(to==='all') T(`📣 ${targets.length} vendors ko gaya — har ek ko alag dikhega`);
     targets.forEach((v,n)=>{ setTimeout(()=>{ if(v.st!=='in'&&v.st!=='won') return; const cut=v.st==='in'&&/kam|sasta|final|rate/i.test(t); const q=quoteOf(r,v.k);
       if(cut&&q&&q.price>150){ const np=q.price-(20+10*(v.k%3)); r.M.push({f:'v',v:v.k,t:['Aapke liye thoda kam kar deta hoon 🙏','Theek hai ji, ye mera final rate','Chaliye, ye le lijiye'][v.k%3],at:now()},{f:'v',v:v.k,q:1,price:np,old:q.price,eta:q.eta,inc:q.inc,at:now()+1}); v.price=np; }
@@ -30995,6 +31097,71 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   window.qmReopenGo=k=>{ reopen(CUR,k,'↺ Aapne dobara baat shuru ki · ₹10 laga'); T('↺ Chat phir khul gayi'); };
   window.qmReqOk=k=>{ reopen(CUR,k,'✓ Aapne inki request maani · aapka kuch nahi laga (vendor ka 1 coin)'); T('✓ Chat khul gayi'); };
   window.qmReqNo=()=>{ CUR.req=null; paint(); T('Theek hai — request hata di'); };
+  /* ---------- v298: composer, plus, automation, edit/delete, sunein, call ---------- */
+  const cur=()=>{ const r=CUR; return {r,k:r.tab,v:r.tab!=='all'?r.V[r.tab]:null,as:r.as||'c'}; };
+  const push=m=>{ const {r,k,as}=cur(); if(k==='all'){ m.f='c'; m.to='all'; } else if(as==='v'){ m.f='v'; m.v=k; } else { m.f='c'; m.to=k; } m.at=now(); r.M.push(m); paint(); return m; };
+  const sheet=h=>{ const b=$('qmB'); const d=document.createElement('div'); d.className='qm-cf'; d.onclick=e=>{ if(e.target===d) d.remove(); }; d.innerHTML=`<div>${h}<button class="x" onclick="this.closest('.qm-cf').remove()">Band karein</button></div>`; b.appendChild(d); return d; };
+  window.qmAs=a=>{ CUR.as=a; CUR.pl=0; paint(); T(a==='v'?'🏪 Ab aap vendor ki nazar se dekh rahe hain (demo)':'👤 Grahak ki nazar'); };
+  window.qmInp=()=>{ const a=$('qmAct'), i=$('qmI'); if(a&&i) a.textContent=i.value.trim()?'➤':'🎙️'; };
+  window.qmAct=()=>{ const i=$('qmI'); if(i&&i.value.trim()) qmSend(); else qmRec(); };
+  window.qmPlus=o=>{ CUR.pl=o===0?0:(CUR.pl?0:1); paint(); };
+  window.qmBot=()=>{ CUR.bot=CUR.bot===false?true:false; paint(); T(CUR.bot===false?'⚡ Automation band':'⚡ Automation chalu'); };
+  window.qmDict=btn=>{ try{ if(window.ccDict){ ccDict('qmI',btn); return; } }catch(e){} T('🎤 Is phone par bolkar likhna uplabdh nahi'); };
+  /* voice note */
+  let MR=null, CH=[], RT=null;
+  window.qmRec=function(act){ const r=CUR;
+    if(act==null){ if(r.rec) return; r.rec={t0:now()}; paint(); RT=setInterval(()=>{ const e=$('qmRt'); if(e&&r.rec){ const s=Math.floor((now()-r.rec.t0)/1000); e.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); } },300);
+      try{ navigator.mediaDevices.getUserMedia({audio:true}).then(st=>{ if(!r.rec){ st.getTracks().forEach(t=>t.stop()); return; } CH=[]; MR=new MediaRecorder(st); MR.ondataavailable=e=>CH.push(e.data); MR.start(); }).catch(()=>{}); }catch(e){}
+      return; }
+    clearInterval(RT); const s=Math.max(1,Math.floor((now()-(r.rec?r.rec.t0:now()))/1000)); const dur=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); r.rec=null;
+    const fin=url=>{ if(act) push({voice:{url,dur}}); else paint(); };
+    if(MR&&MR.state!=='inactive'){ MR.onstop=()=>{ try{ MR.stream.getTracks().forEach(t=>t.stop()); }catch(e){} fin(act?URL.createObjectURL(new Blob(CH,{type:'audio/webm'})):null); MR=null; }; MR.stop(); } else fin(null); };
+  window.qmPlay=mi=>{ const m=CUR.M[mi]; if(m&&m.voice&&m.voice.url){ try{ new Audio(m.voice.url).play(); }catch(e){} } else T('▶ Voice note (demo)'); };
+  /* photo */
+  window.qmPickFile=cam=>{ let f=$('qmFile'); if(!f){ f=document.createElement('input'); f.type='file'; f.id='qmFile'; f.hidden=true; document.body.appendChild(f); f.onchange=()=>{ [...f.files].slice(0,5).forEach(x=>{ const rd=new FileReader(); rd.onload=()=>push({img:rd.result,t:''}); rd.readAsDataURL(x); }); f.value=''; }; }
+    f.accept='image/*'; f.multiple=!cam; if(cam) f.setAttribute('capture','environment'); else f.removeAttribute('capture'); f.click(); };
+  window.qmLoc=()=>{ push({t:'📍 Location: Sadar Bazaar, Delhi 110006 — map par dekhein'}); };
+  /* automation: 1 2 3 4 */
+  window.qmCmd=function(n){ const {r,k,v,as}=cur(); if(!v){ return; } T('⚡ '+n+' dabaya');
+    if(as==='v'){ [null,qmQuoteForm,()=>qmQR(),qmOrder,()=>qmPickFile()][n](); return; }
+    if(v.st==='won'){ [null,qmOrder,qmPay,qmLoc,qmCall][n](); return; }
+    if(v.st!=='in') return;
+    if(n===1) qmPick(k); else if(n===2) qmReject(k); else if(n===3) qmSend('Thoda kam karoge? Final rate batayein'); else qmSend('Kaam / saamaan ki photo bhejiye'); };
+  window.qmReject=function(k){ const r=CUR, v=r.V[k]; sheet(`<h4>✕ ${E(v.n)} ko mana karein?</h4><p>Inki chat dono taraf se band ho jayegi. Baad me chahein to dobara khol sakte hain.</p><button class="go" style="background:#B91C1C" onclick="this.closest('.qm-cf').remove();qmRejectGo(${k})">Haan, mana karein</button>`); };
+  window.qmRejectGo=k=>{ const r=CUR, v=r.V[k]; v.st='lost'; v.rej=1; r.M.push({f:'s',v:k,t:'✕ Aapne mana kiya — chat band',at:now()}); paint(); T('✕ '+v.n.split(' ')[0]+' ko mana kiya'); };
+  window.qmOrder=function(){ const {r,k,v}=cur(); if(!v||v.st!=='won'){ T('Pehle vendor chunein'); return; } const m=r.M.filter(x=>x.ord!=null&&x.v===k).pop();
+    if(!m){ r.M.push({f:'v',v:k,ord:0,at:now()},{f:'s',v:k,t:'📦 Order shuru · grahak PIN: 4821 (kaam poora hone par vendor ko batayein)',at:now()+1}); }
+    else if(m.ord<3){ m.ord++; r.M.push({f:'s',v:k,t:'📦 '+STEPS[m.ord],at:now()}); } else T('🎉 Order poora ho chuka');
+    paint(); try{ koChime&&koChime('ok'); }catch(e){} };
+  window.qmPay=function(){ const {v}=cur(); if(!v||v.st!=='won'){ T('Pehle vendor chunein'); return; } const q=quoteOf(CUR,v.k)||{price:v.price};
+    sheet(`<h4>💳 ${E(v.n.split(' ')[0])} ko payment</h4><p>Paisa seedha vendor ke khate me jata hai (escrow nahi).</p><label class="qx-q">Kitne ₹<input class="qx-fi" id="qxAmt" type="number" value="${q.price}"></label><button class="go" onclick="const a=+document.getElementById('qxAmt').value||0;this.closest('.qm-cf').remove();qmPayGo(a)">📲 UPI se ${R(q.price)} bhejein</button><button class="go" style="background:#1d1408;margin-top:6px" onclick="this.closest('.qm-cf').remove();qmAskQR()">▦ Vendor se QR mangaayein</button>`); };
+  window.qmPayGo=a=>{ push({pay:a,t:''}); T('✅ Payment bheja (demo)'); };
+  window.qmAskQR=()=>{ const {r,k,v}=cur(); qmSend('Payment QR bhejiye'); setTimeout(()=>{ if(CUR!==r) return; r.M.push({f:'v',v:k,qr:{amt:(quoteOf(r,k)||v).price,upi:v.n.split(' ')[0].toLowerCase()+'@upi'},t:'Ye raha QR — scan karke pay kar dijiye 🙏',at:now()}); paint(); },1600); };
+  window.qmQR=link=>{ const {r,k,v}=cur(); if(!v) return; const amt=(quoteOf(r,k)||v).price, upi=v.n.split(' ')[0].toLowerCase()+'@upi';
+    if(link) push({t:`💳 Payment link: upi://pay?pa=${upi}&am=${amt} — ${R(amt)}`}); else push({qr:{amt,upi},t:'Scan karke pay karein 🙏'}); };
+  window.qmQuoteForm=function(){ const {r,k,v}=cur(); if(!v) return; const q=quoteOf(r,k)||{price:v.price,eta:v.eta,inc:v.inc};
+    sheet(`<h4>🧾 Quotation bhejein</h4><label class="qx-q">Rate ₹<input class="qx-fi" id="qxP" type="number" value="${q.price}"></label><label class="qx-q">Kab tak<input class="qx-fi" id="qxE" value="${E(q.eta)}"></label><label class="qx-q">Kya shamil <small>(comma se)</small><input class="qx-fi" id="qxI" value="${E((q.inc||[]).join(', '))}"></label><button class="go" onclick="qmQuoteGo()">➤ Quote bhejein</button>`); };
+  window.qmQuoteGo=function(){ const {r,k,v}=cur(); const p=+$('qxP').value||0, e=$('qxE').value, inc=$('qxI').value.split(',').map(x=>x.trim()).filter(Boolean); const old=(quoteOf(r,k)||{}).price;
+    document.querySelector('.qm-cf:last-child').remove(); r.M.push({f:'v',v:k,q:1,price:p,old:old&&old!==p?old:undefined,eta:e,inc,at:now()}); v.price=p; paint(); T('🧾 Quote bheja'); };
+  window.qmVReq=k=>{ const r=CUR; r.req=k; r.M.push({f:'s',v:k,t:'🙋 Vendor ne dobara baat ki request bheji (1 coin)',at:now()}); paint(); T('🙋 Request gayi — grahak haan kahega to chat khulegi'); };
+  window.qmCall=function(){ const r=CUR; const W=r.won!=null?r.V[r.won]:null; if(!W){ T('Number chunne ke baad khulta hai'); return; } try{ vkCallGen(W.n,W.e,r.o[0]); }catch(e){ try{ location.href='tel:9876543210'; }catch(_){} } };
+  /* sunein (text → awaaz) */
+  window.qmSay=function(mi){ const m=CUR.M[mi]; if(!m) return; if(m.voice) return qmPlay(mi); const t=m.q?`Quote: ${m.price} rupaye, ${m.eta}. ${(m.inc||[]).join(', ')}`:(m.t||''); if(!t) return;
+    try{ if(window.k93Say){ k93Say(t); return; } }catch(e){} try{ const S=speechSynthesis; S.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='hi-IN'; S.speak(u); }catch(e){ T('🔊 Awaaz uplabdh nahi'); } };
+  /* lamba dabao: badlein / hatayein (purana likha dikhta rahe) */
+  function lp(root){ if(root._lp) return; root._lp=1; let tmr=null, sx=0, sy=0;
+    const st=e=>{ const el=e.target.closest('.qm-m[data-mi]'); if(!el||e.target.closest('button,img.qx-img')) return; sx=e.clientX||0; sy=e.clientY||0; clearTimeout(tmr); tmr=setTimeout(()=>{ try{ navigator.vibrate&&navigator.vibrate(18); }catch(_){} qmMenu(+el.dataset.mi); },480); };
+    const cx=()=>clearTimeout(tmr);
+    root.addEventListener('pointerdown',st); root.addEventListener('pointerup',cx); root.addEventListener('pointercancel',cx); root.addEventListener('pointermove',e=>{ if(Math.abs((e.clientX||0)-sx)>8||Math.abs((e.clientY||0)-sy)>8) cx(); });
+    root.addEventListener('contextmenu',e=>{ const el=e.target.closest('.qm-m[data-mi]'); if(el){ e.preventDefault(); qmMenu(+el.dataset.mi); } }); }
+  window.qmMenu=function(mi){ const r=CUR, m=r.M[mi]; if(!m) return; const as=r.as||'c', mine=as==='v'?m.f==='v':m.f==='c'; const txt=!m.q&&!m.del&&m.t;
+    const B=[]; if(mine&&txt) B.push(['✏️','Badlein',`qmEdit(${mi})`]); if(mine&&!m.del&&!m.q) B.push(['🗑️','Hatayein',`qmDel(${mi})`,'red']);
+    if(!m.del&&(m.t||m.q||m.voice)) B.push(['🔊','Sunein',`qmSay(${mi})`]); if(txt) B.push(['📋','Copy',`qmCopy(${mi})`]); if(!mine) B.push(['🚩','Report',`T('🚩 Report admin ko gaya')`,'red']);
+    sheet(`<h4>Message</h4><p style="background:#FBF6EC;border-radius:12px;padding:8px 10px">${E(m.del?m.del.t:(m.t||(m.q?'Quote '+m.price:'')))}</p><div class="qx-mn">${B.map(b=>`<button class="${b[3]||''}" onclick="this.closest('.qm-cf').remove();${b[2]}"><i>${b[0]}</i>${b[1]}</button>`).join('')}</div><p style="font-size:11px;color:#8a7a5a;margin-top:10px">🔒 Suraksha: badla ya hataya message dono taraf dikhta rahega — pehle kya likha tha</p>`); };
+  window.qmEdit=mi=>{ const m=CUR.M[mi]; sheet(`<h4>✏️ Message badlein</h4><textarea id="qxEd">${E(m.t)}</textarea><button class="go" onclick="qmEditGo(${mi})">✓ Save</button>`); setTimeout(()=>{ const t=$('qxEd'); if(t){ t.focus(); t.setSelectionRange(t.value.length,t.value.length); } },50); };
+  window.qmEditGo=mi=>{ const m=CUR.M[mi]; const nv=($('qxEd').value||'').trim(); document.querySelector('.qm-cf:last-child').remove(); if(!nv||nv===m.t) return; (m.hist=m.hist||[]).push({t:m.t,at:now()}); m.t=nv; m.ed=now(); paint(); T('✏️ Badal diya — purana bhi dikhega'); };
+  window.qmDel=mi=>{ const m=CUR.M[mi]; m.del={t:m.t||(m.img?'[photo]':m.voice?'[voice note]':m.qr?'[QR]':''),at:now()}; paint(); T('🗑️ Hata diya — suraksha ke liye purana likha dikhta rahega'); };
+  window.qmCopy=mi=>{ const m=CUR.M[mi]; try{ navigator.clipboard.writeText(m.t); T('📋 Copy ho gaya'); }catch(e){} };
   /* ---------- vendor ko kaisa dikhta hai (discussion ke liye) ---------- */
   window.qmVendorView=function(){ const r=CUR; const J=joined(r); const a=J[0], b2=J[1]||J[0]; const cm=r.M.filter(m=>m.f==='c'&&m.to==='all').slice(-2);
     const N=Math.max(1,J.length), sh=+(5/N).toFixed(2); const ph=(v,lost)=>`<div class="qm-ph"><div class="t">${v.e} ${E(v.n.split(' ')[0])} ka phone</div><div class="c"><div class="hint">👤 Naya grahak · ${E(r.o[0])}<br>Aap akele nahi — achha quote dein<br>🪙 Is lead ka kharcha: ${sh} coin</div>${cm.map(m=>`<div class="m">${E(m.t)}</div>`).join('')}<div class="m me">Mera rate ${R((quoteOf(r,v.k)||{}).price||v.price)}</div>${lost?'<div class="lost">Grahak ne is baar kisi aur ko chuna 🙏<br><span style="font-weight:600">(kaun, kitne me — nahi dikhta)</span><br>🔒 Chat band · [🙋 Dobara baat ki request — 1 coin]</div>':''}</div></div>`;
@@ -31004,7 +31171,7 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   try{ window.odvTap=function(i,k){ qrmOpen(i,k); }; }catch(e){}
   try{ const _vh=vendorsHTML; vendorsHTML=function(i){ const o=ORDERS[i]; if(!o||!o[5]) return _vh(i); const r=room(i); const J=joined(r); const W=r.won!=null?r.V[r.won]:null;
       const qs=r.V.filter(v=>v.st==='in').map(v=>quoteOf(r,v.k)).filter(Boolean); const lab=W?'✓ '+E(W.n.split(' ')[0]):qs.length?R(Math.min(...qs.map(q=>q.price)))+' se':J.length+'/5';
-      return `<div class="od-vw qv" data-oi="${i}"><div class="qv-r"><div class="qv-s">${r.V.map(v=>`<button class="qv-v ${v.st}" onclick="event.stopPropagation();qrmOpen(${i},${v.k})"><span class="a">${v.e}${v.st==='in'||v.st==='won'?'<i></i>':''}${v.un?`<u>${v.un}</u>`:''}</span><b>${E(v.n.split(' ')[0])}</b></button>`).join('')}</div><button class="qv-go" onclick="event.stopPropagation();qrmOpen(${i})">📣 <em>${lab}</em> ›</button></div></div>`; }; }catch(e){}
+      return `<div class="od-vw qv" data-oi="${i}"><div class="qv-r"><div class="qv-s">${r.V.map(v=>`<button class="qv-v ${v.st}" onclick="event.stopPropagation();qrmOpen(${i},${v.k})"><span class="a">${v.e}${v.st==='in'||v.st==='won'?'<i></i>':''}${v.un?`<u>${v.un}</u>`:''}</span><b>${E(v.n.split(' ')[0])}</b><s>${v.st==='wait'?'…':v.st==='lost'?'band':v.st==='won'?'✓ chuna':(quoteOf(r,v.k)?R(quoteOf(r,v.k).price):'')}</s></button>`).join('')}</div><button class="qv-go" onclick="event.stopPropagation();qrmOpen(${i})">📣 <em>${lab}</em> ›</button></div></div>`; }; }catch(e){}
   setInterval(()=>{ const o=$('qrmOv'); if(o&&o.classList.contains('on')&&CUR&&CUR.tab==='all') paint(); },30000);
 })();
 </script>
@@ -31091,7 +31258,11 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   window.koCoinCfg=cfgLoad;
   function catFor(txt){ const C=(CF&&CF.cats)||[]; const s=String(txt||''); for(const c of C){ if(!c.active||c.key==='default') continue; for(const k of String(c.keys||'').split(',')){ const kk=k.trim(); if(!kk) continue; const re=new RegExp('(^|[^a-z0-9])'+kk.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'); if(re.test(s)) return c; } } return C.find(c=>c.key==='default')||{label:'Baaki sab',pool:5,win:2,icon:'📌'}; }
   window.koCoinCat=catFor;
-  function shares(pool,cfg){ const fp=+(cfg&&cfg.fast_pct)||0, cap=+(cfg&&cfg.solo_cap)||0; return [1,2,3,4,5].slice(0,+(cfg&&cfg.max_vendors)||5).map(n=>{ let s=pool/n; if(n===1&&cap>0) s=Math.min(s,cap); return {n,s:Math.round(s*100)/100,f:Math.round(s*(1-fp/100)*100)/100}; }); }
+  /* pool sirf jinse grahak ne baat ki unme; chune gaye (🏆) ka hissa win_weight guna */
+  const rd=x=>Math.round(x*100)/100;
+  function shares(pool,cfg){ const ww=Math.max(1,+(cfg&&cfg.win_weight)||2), fp=+(cfg&&cfg.fast_pct)||0, cap=+(cfg&&cfg.solo_cap)||0;
+    return [1,2,3,4,5].slice(0,+(cfg&&cfg.max_vendors)||5).map(n=>{ if(n===1){ let w=pool; if(cap>0) w=Math.min(w,cap); return {n,w:rd(w),o:0,s:rd(w),f:rd(w*(1-fp/100))}; } const u=pool/(n-1+ww); return {n,w:rd(u*ww),o:rd(u),s:rd(u),f:rd(u*(1-fp/100))}; }); }
+  const shTxt=x=>x.n===1?`1 se baat: 🏆${x.w}`:`${x.n} se baat: 🏆${x.w} · baaki ${x.o}`;
 
   /* =================== ADMIN: 🪙 Coin & Kamai =================== */
   try{ if(!AD_NAV[1][1].some(x=>x[0]==='coin')) AD_NAV[1][1].unshift(['coin','🪙','Coin & Kamai']); }catch(e){}
@@ -31130,7 +31301,7 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
         ${pend.length?`<div class="kc-note">🔔 ${pend.length} coin kharid request jaanch ke liye ruki hai — <a href="#" onclick="kcT('wal');return false">Wallet tab me dekhein ›</a></div>`:''}
         <div class="kc-h">KAMAI KAHAN SE AAYI</div><div class="kc-ls">${Object.keys(ea).length?Object.entries(ea).map(([k,v])=>`<div class="kc-r"><div><b>${E(KIND[k]||k)}</b></div><em>${n2(v)} 🪙 · ${RS(v*rs)}</em></div>`).join(''):'<p style="color:#6b7280;font-size:13px">Abhi asli kamai nahi — "🧪 Jaanch" tab se test karke dekhein (test kamai yahan nahi judti)</p>'}</div>
         <div class="kc-h">KAMAI KE SAARE RASTE (niyam)</div><div class="kc-ls">
-          ${[['🪙','Lead coin (Quick Service)',`Category ke hisaab se ${Math.min(...KC.cats.map(x=>+x.pool))}–${Math.max(...KC.cats.map(x=>+x.pool))} coin / request`,'✅ chalu'],['🏆','Jeet ka coin','Kaam poora hone par chune gaye vendor se','✅ chalu'],['↺','Dobara baat','Vendor '+c.reopen_vendor+' + grahak '+c.reopen_customer+' coin','✅ chalu'],['💳','Coin pack bikri',(c.packs||[]).map(p=>p.c+' = ₹'+p.rs).join(' · '),'✅ chalu'],
+          ${[['🪙','Lead coin (Quick Service)',`Category ke hisaab se ${Math.min(...KC.cats.map(x=>+x.pool))}–${Math.max(...KC.cats.map(x=>+x.pool))} coin / request`,'✅ chalu'],['🏆','Chune gaye ka zyada hissa','Pool sirf baat wale vendors me — chune gaye ka '+(c.win_weight||2)+' guna','✅ chalu'],['↺','Dobara baat','Vendor '+c.reopen_vendor+' + grahak '+c.reopen_customer+' coin','✅ chalu'],['💳','Coin pack bikri',(c.packs||[]).map(p=>p.c+' = ₹'+p.rs).join(' · '),'✅ chalu'],
              ['🏪','Dukaan ka kiraya',(c.dukaan_plans||[]).map(p=>p.n+' ₹'+p.rs).join(' · '),'🕐 jald'],['🛍️','Order commission (All Shops)',`₹${(c.commission||{}).upto} tak ₹${(c.commission||{}).flat}, upar ${(c.commission||{}).pct}%`,'🕐 order server par aane ke baad'],['🛵','Delivery margin','₹'+c.delivery_margin+' / delivery','🕐 jald'],['📈','Upar dikho (Boost)','₹'+c.boost_day+' / din','🕐 jald'],['✓','Verified badge','₹'+c.badge_fee+' ek baar','🕐 jald'],['🖨️','QR stand','₹'+c.qr_fee,'🕐 jald']]
              .map(x=>`<div class="kc-r"><span style="font-size:20px">${x[0]}</span><div><b>${x[1]}</b><small>${E(x[2])}</small></div><em>${x[3]}</em></div>`).join('')}</div>`; }
     if(KC.t==='niyam'){ b=`<div class="kc-note">Yahan badlo → <b>turant</b> sab app me lagu. App update ki zaroorat nahi.</div>
@@ -31139,7 +31310,9 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
         ${num('max_vendors','Ek request me max vendor','5 se zyada nahi')}
         ${num('join_hours','Judne ka samay (ghante)','Itne ghante baad naya vendor nahi jud sakta')}
         ${num('fast_min','Jaldi jawab (minute)','Itne minute me judne wale ko chhoot')}
-        ${num('fast_pct','Jaldi chhoot %','Jaldi wale ka hissa itna % kam (0 = band)')}
+        ${num('fast_pct','Jaldi chhoot %','Jaldi wale ka hissa itna % kam (0 = band, tab company ke poore coin pakke)')}
+        ${num('win_weight','Chune gaye ka hissa (guna)','2 = double · 3 vendor se baat, pool 5 → chuna 2.5, baaki 1.25-1.25')}
+        <label class="ck"><input type="checkbox" ${c.win_extra?'checked':''} onchange="kcSet('win_extra',this.checked)"><span>Kaam poora hone par extra jeet coin bhi<small style="display:block">Category ka "jeet" coin alag se (aam taur par band)</small></span></label>
         ${num('solo_cap','Akele vendor ki seema','Sirf 1 vendor juda to max itne coin (0 = seema nahi)')}
         ${num('ghost_refund_pct','Ghost lead wapsi %','Grahak ne baat hi nahi ki → itna % coin wapas')}
         ${num('festival_plus','Tyohaar +coin','Har request par itne coin zyada (0 = normal)')}
@@ -31160,10 +31333,10 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
         ${(c.dukaan_plans||[]).map((p,i)=>`<label>🏪 ${E(p.n)}<input type="number" value="${p.rs}" oninput="kcArr('dukaan_plans',${i},'rs',this.value)"><small>${E(p.f)}</small></label>`).join('')}
         ${(c.vendor_plans||[]).map((p,i)=>`<label>⭐ ${E(p.n)}<span style="display:flex;gap:6px"><input type="number" value="${p.rs}" oninput="kcArr('vendor_plans',${i},'rs',this.value)" title="₹"><input type="number" value="${p.coins}" oninput="kcArr('vendor_plans',${i},'coins',this.value)" title="coin"></span><small>₹ · coin — ${E(p.f)}</small></label>`).join('')}
       </div><div class="kc-bar"><button class="ad-btn" style="flex:1" onclick="kcSave('cfg')">💾 Niyam save karein</button><button class="ad-btn dk" onclick="kcRe()">↺ Raddh</button></div>`; }
-    if(KC.t==='cat'){ b=`<div class="kc-note">Har category ka <b>pool</b> = ek request par kul coin, jo judne wale vendors me <b>baraabar baTte</b> hain. <b>Jeet</b> = kaam poora hone par chune gaye vendor se. <b>Shabd</b> = service ke naam me ye shabd ho to ye category (comma se).<br>⚡ = ${c.fast_min} min me jawab dene wale ka hissa (${c.fast_pct}% chhoot)</div>
+    if(KC.t==='cat'){ b=`<div class="kc-note">Har category ka <b>pool</b> = ek request par kul coin, jo <b>sirf un vendors me baTte hain jinse grahak ne baat ki</b>. Jise grahak ne chuna (🏆) uska hissa <b>${c.win_weight||2} guna</b>, baaki ka 1 hissa. Jinse baat nahi hui unka 0. <b>Shabd</b> = service ke naam me ye shabd ho to ye category (comma se).<br>⚡ = ${c.fast_min} min me jawab dene wale ka hissa (${c.fast_pct}% chhoot)</div>
       <div class="kc-ct">${KC.cats.map((x,i)=>x.del?'':`<div class="kc-cr ${x.active?'':'off'}"><input class="ic" value="${E(x.icon)}" oninput="kcCat(${i},'icon',this.value)"><input value="${E(x.label)}" oninput="kcCat(${i},'label',this.value)" placeholder="Naam"><input type="number" step="0.5" value="${x.pool}" oninput="kcCat(${i},'pool',this.value)" title="Pool coin"><input type="number" step="0.5" value="${x.win}" oninput="kcCat(${i},'win',this.value)" title="Jeet coin"><button onclick="${x.key==='default'?'':`kcCatDel(${i})`}" title="Hatao">${x.key==='default'?'🔒':'🗑'}</button>
         <input class="k" value="${E(x.keys)}" oninput="kcCat(${i},'keys',this.value)" placeholder="${x.key==='default'?'Jo kisi category me na aaye':'shabd: silai, tailor, darzi'}" ${x.key==='default'?'disabled':''}>
-        <div class="sp"><span class="c">Pool ${x.pool} · Jeet ${x.win} · ${RS(x.pool*rs)}</span>${shares(+x.pool,c).map(s=>`<span>${s.n} vendor: ${s.s}${c.fast_pct?` (⚡${s.f})`:''}</span>`).join('')}<label style="margin-left:auto;font-size:11px;font-weight:800;display:flex;gap:5px;align-items:center"><input type="checkbox" ${x.active?'checked':''} onchange="kcCat(${i},'active',this.checked)">chalu</label></div></div>`).join('')}</div>
+        <div class="sp"><span class="c">Pool ${x.pool} · ${RS(x.pool*rs)}${c.win_extra?' · extra jeet '+x.win:''}</span>${shares(+x.pool,c).map(s=>`<span>${shTxt(s)}</span>`).join('')}<label style="margin-left:auto;font-size:11px;font-weight:800;display:flex;gap:5px;align-items:center"><input type="checkbox" ${x.active?'checked':''} onchange="kcCat(${i},'active',this.checked)">chalu</label></div></div>`).join('')}</div>
       <div class="kc-bar"><button class="ad-btn dk" onclick="kcCatAdd()">＋ Nayi category</button><button class="ad-btn" style="flex:1" onclick="kcSave('cat')">💾 Category save</button></div>`; }
     if(KC.t==='wal'){ const pend=(D.buys||[]);
       b=`<div class="kc-h">COIN DEIN / KAATEIN</div><div class="kc-f"><label>Vendor mobile<input id="kcPh" type="text" inputmode="numeric" placeholder="98xxxxxxxx"></label><label>Coin (− = kaatein)<input id="kcCo" type="number" step="0.5" placeholder="10"></label><label>Wajah<input id="kcNt" type="text" placeholder="Free coin / offer"></label></div><button class="ad-btn" style="margin-top:8px" onclick="kcAdd()">✓ Lagu karein</button>
@@ -31204,8 +31377,8 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
           ${c.pay_upi?`<a class="kw-go" href="upi://pay?pa=${encodeURIComponent(c.pay_upi)}&pn=${encodeURIComponent('Karo Online')}&am=${P[W.pk].rs}&cu=INR&tn=${encodeURIComponent(P[W.pk].c+' coin')}">📲 UPI se ${RS(P[W.pk].rs)} pay karein</a><div style="height:8px"></div>`:''}
           <input id="kwUtr" inputmode="numeric" placeholder="UTR / transaction number (12 ank)"><button class="kw-go dk" onclick="kwBuy()">✓ Pay kar diya — coin bhejein</button></div>`:''}</div>
       <div class="kw-s"><h5>PLAN — SASTE COIN</h5><div class="kw-pl">${(c.vendor_plans||[]).map(p=>`<div class="${p.k==='gold'?'g':''}"><b>${E(p.n)}</b><strong>${p.rs?RS(p.rs)+'/mahina':'Free'}</strong><small>${E(p.f)}</small>${p.rs?`<button onclick="kwPlan('${E(p.n)}')">Chahiye</button>`:''}</div>`).join('')}</div></div>
-      <div class="kw-s"><h5>COIN KAISE KATTE HAIN</h5><div class="kw-how">📋 Har request ke coin fix hain — <b>jitne vendor judein, utne me baraabar baT jaate hain</b> (max ${c.max_vendors||5}).<br>⚡ ${c.fast_min} minute me judein → aapka hissa <b>${c.fast_pct}% kam</b>.<br>💚 Grahak ne aapse baat hi nahi ki → ${c.ghost_refund_pct}% coin <b>wapas</b>.<br>🏆 Chune gaye aur kaam poora → jeet ka coin.<br>↺ Band hone ke baad dobara baat → ${c.reopen_vendor} coin.
-        <table><tr><th>Kaam</th><th>Kul</th><th>1</th><th>2</th><th>3</th><th>5 vendor</th><th>Jeet</th></tr>${C.filter(x=>x.active).map(x=>{ const s=shares(+x.pool,c); const g=k=>(s.find(y=>y.n===k)||{}).s??'—'; return `<tr><td>${E(x.icon)} ${E(x.label)}</td><td><b>${n2(x.pool)}</b></td><td>${g(1)}</td><td>${g(2)}</td><td>${g(3)}</td><td>${g(5)}</td><td>${n2(x.win)}</td></tr>`; }).join('')}</table></div></div>
+      <div class="kw-s"><h5>COIN KAISE KATTE HAIN</h5><div class="kw-how">📋 Har request ke coin fix hain — <b>sirf un vendors me baTte hain jinse grahak ne baat ki</b> (max ${c.max_vendors||5} jud sakte).<br>🏆 Grahak ne aapko chuna → aapka hissa <b>${c.win_weight||2} guna</b> (order bhi aapka).<br>⚡ ${c.fast_min} minute me judein → aapka hissa <b>${c.fast_pct}% kam</b>.<br>💚 Grahak ne aapse baat hi nahi ki → <b>poore coin wapas</b>.<br>⏳ Judte waqt andaazan coin roke jaate hain, aakhir me pakka hisaab.<br>↺ Band hone ke baad dobara baat → ${c.reopen_vendor} coin.
+        <table><tr><th>Kaam</th><th>Kul</th><th>1 se baat</th><th>2 se</th><th>3 se</th><th>5 se</th></tr>${C.filter(x=>x.active).map(x=>{ const s=shares(+x.pool,c); const g=k=>{ const y=s.find(z=>z.n===k); return y?(k===1?'🏆'+y.w:'🏆'+y.w+'<br><small>'+y.o+'</small>'):'—'; }; return `<tr><td>${E(x.icon)} ${E(x.label)}</td><td><b>${n2(x.pool)}</b></td><td>${g(1)}</td><td>${g(2)}</td><td>${g(3)}</td><td>${g(5)}</td></tr>`; }).join('')}</table><div style="font-size:10.5px;color:#8a7a5a;margin-top:4px">🏆 = chune gaye ka · neeche = baaki har ek ka</div></div></div>
       <div class="kw-s"><h5>HISAAB</h5><div class="kw-tx">${(d.tx||[]).map(t=>{ const I=TXI[t.k]||['•',t.k]; const a=+t.a, hd=+t.h; const cls=a>0?'p':(a<0||t.k==='charge')?'m':'h'; const val=a?((a>0?'+':'')+n2(a)):(t.k==='charge'?('−'+n2(Math.abs(hd))):(hd?('⏳ '+n2(Math.abs(hd))):'—')); return `<div class="kw-t"><i>${I[0]}</i><div><b>${E(t.n||I[1])}</b><small>${t.l?'Request #'+t.l+' · ':''}${ago(t.t)} pehle</small></div><u class="${cls}">${val}</u></div>`; }).join('')||'<div class="kw-how">Abhi koi len-den nahi</div>'}</div></div>`; }
     o.innerHTML=`<div class="kw"><div class="kw-hd"><span style="font-size:22px">🪙</span><b>Coin Wallet</b><button onclick="kwOpen()" title="Taaza">↻</button><button onclick="kwClose()">✕</button></div>${h}</div>`; }
 
@@ -31219,8 +31392,8 @@ body.k93-say .k93f i{animation:none;opacity:0}body.k93-say .k93f i.wv{opacity:1;
   try{ const _vv=window.qmVendorView; window.qmVendorView=function(){ _vv.apply(this,arguments); try{ const box=document.querySelector('.qm-cf:last-child>div'); if(!box||!CF) return; const t=(document.querySelector('.qm-hd b')||{}).textContent||''; const c=catFor(t), cfg=CF.cfg||{}; const J=document.querySelectorAll('.qm-t:not(.all):not(.wait)').length||1; const s=shares(+c.pool,cfg);
       const old=box.querySelector('.qm-coin'); const prevP=old&&old.previousElementSibling; if(prevP&&/Coin ka hisaab/.test(prevP.textContent)) prevP.remove(); if(old) old.remove();
       const mine=(s.find(x=>x.n===Math.min(J,s.length))||s[0]);
-      box.querySelector('h4').insertAdjacentHTML('afterend',`<div class="qm-coin2">🪙 <b>${E(c.icon)} ${E(c.label)}</b> — is request ke <b>${n2(c.pool)} coin</b> (₹${Math.round(c.pool*(+cfg.coin_rs||10))}) jitne vendor judein unme baraabar baTte hain. Abhi ${J} vendor → <b>${mine.s} coin</b> har ek${cfg.fast_pct?` · ⚡ ${cfg.fast_min} min me judne wale ka ${mine.f}`:''} · 🏆 jeet +${n2(c.win)} · 💚 grahak ne baat nahi ki to wapas</div><div class="qm-coin">${s.map(x=>`<span class="${x.n===mine.n?'on':''}">${x.n} vendor: ${x.s}</span>`).join('')}</div>`);
-      box.querySelectorAll('.qm-ph .hint').forEach(hn=>{ hn.innerHTML=hn.innerHTML.replace(/🪙 Is lead ka kharcha: [^<]*/,'🪙 Is lead ka kharcha: '+mine.s+' coin'); }); }catch(e){} }; }catch(e){}
+      box.querySelector('h4').insertAdjacentHTML('afterend',`<div class="qm-coin2">🪙 <b>${E(c.icon)} ${E(c.label)}</b> — is request ke <b>${n2(c.pool)} coin</b> (₹${Math.round(c.pool*(+cfg.coin_rs||10))}) <b>sirf jinse grahak ne baat ki</b> unme baTte hain. Abhi ${J} se baat → chune gaye ka <b>🏆 ${mine.w}</b>${J>1?`, baaki ka <b>${mine.o}</b>`:''} · 💚 jinse baat nahi hui unke poore wapas</div><div class="qm-coin">${s.map(x=>`<span class="${x.n===mine.n?'on':''}">${shTxt(x)}</span>`).join('')}</div>`);
+      box.querySelectorAll('.qm-ph .hint').forEach(hn=>{ hn.innerHTML=hn.innerHTML.replace(/🪙 Is lead ka kharcha: [^<]*/,'🪙 Kharcha: chune gaye '+mine.w+(J>1?' · warna '+mine.o:'')+' coin'); }); }catch(e){} }; }catch(e){}
 })();
 </script>
 
