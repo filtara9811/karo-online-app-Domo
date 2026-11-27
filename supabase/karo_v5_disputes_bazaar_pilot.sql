@@ -1,0 +1,9 @@
+-- v5 (Supabase migration "karo_v5_disputes_bazaar_pilot" me poora laga hai)
+-- ko_lead_cancel(lead, phone, reason): baat nahi hui → poore wapas; "galti/plan" se cancel_window_min ke andar → cancel_refund_pct% bharosa coin;
+--   order ke baad kaam se pehle → chune gaye ka double wala extra wapas. Grahak trust −5.
+-- ko_lead_report(vendor, lead, reason, note) / ko_lead_report_shop(phone,pin,...): nakli lead. fake_auto_reports vendor bolein,
+--   ya kisi se baat nahi hui, ya grahak trust<40 → apne aap refund; warna admin (ko_admin_reports / ko_admin_report_set).
+-- ko_lead_noshow(lead, phone): vendor nahi aaya → noshow_penalty coin jurmana, grahak ko coupon coin.
+-- ko_lead_to_bazaar(lead, phone): koi vendor nahi mila → bazaar_hours tak khuli. ko_lead_bazaar(vendor) / _shop / ko_lead_accept_shop.
+-- ko_pilot_join(p): agent_codes me code ho to dukaan register + pilot_coins. ko_admin_agents(pin).
+-- Nayi vendor rows (in functions) coins=0 se — sirf niyam wale coin.
